@@ -9,6 +9,7 @@ import {
 	TableColumn,
 	TableHeader,
 	TableRow,
+	Image
 } from "@nextui-org/react";
 import { useState } from "react";
 
@@ -16,6 +17,7 @@ interface Inmuebles {
 	h4: string;
 	p: string;
 	span: string;
+	bgImage: string;
 }
 
 export default function Home() {
@@ -38,14 +40,14 @@ export default function Home() {
 
 	return (
 		<main className="flex flex-col gap-3 items-center justify-center !max-h-screen">
-			<div className="flex flex-row items-center justify-center gap-5 my-5">
-			<Input
+			<div className="flex flex-row items-center justify-center gap-10 my-5">
+			{/* <Input
 				className="w-1/6"
 				type="text"
 				value={inputValue}
 				onChange={(event) => setInputValue(event.target.value)}
-			/>
-			<Button onClick={getInfo}>Buscar</Button>
+			/>*/}
+			<Button onClick={getInfo}>Scrappear</Button> 
 			</div>
 			{inmuebles && (
 				<div className="!max-w-1/2 !max-h-[600px]">
@@ -54,6 +56,7 @@ export default function Home() {
 							<TableColumn>Nombre</TableColumn>
 							<TableColumn>Ubicación</TableColumn>
 							<TableColumn>Precio</TableColumn>
+							<TableColumn>Imagen</TableColumn>
 						</TableHeader>
 						<TableBody>
 							{inmuebles.map((item, index) => (
@@ -61,6 +64,7 @@ export default function Home() {
 									<TableCell>{item.h4}</TableCell>
 									<TableCell>{item.p}</TableCell>
 									<TableCell>{item.span}</TableCell>
+									<TableCell><Image src={item.bgImage} alt="imagen inmueble" width={100}></Image></TableCell>
 								</TableRow>
 							))}
 						</TableBody>
