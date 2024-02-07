@@ -67,6 +67,20 @@ class ServiceClass {
         throw { ...error?.response?.data, status: error?.response?.status };
       });
   }
+
+  protected async deleteQuery<T>({
+    URL,
+    path,
+    params,
+    headers,
+  }: PutRequest): Promise<T> {
+    return await axios
+      .delete<T>(`${URL}/${path}`, { headers, params })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw { ...error?.response?.data, status: error?.response?.status };
+      });
+  }
 }
 
 export default ServiceClass;

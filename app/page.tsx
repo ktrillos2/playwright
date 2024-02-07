@@ -1,131 +1,192 @@
 // Archivo: page.tsx
 "use client";
 import {
-	Button,
-	Input,
-	Table,
-	TableBody,
-	TableCell,
-	TableColumn,
-	TableHeader,
-	TableRow,
-	Image,
+  Button,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Image,
 } from "@nextui-org/react";
-import { useState } from "react";
-
-interface Inmuebles {
-	h4: string;
-	p: string;
-	span: string;
-	bgImage: string;
-	code: string;
-}
+import { useCallback, useEffect, useState } from "react";
 
 import Lottie from "lottie-react";
 
 import loadingAnimation from "../public/lottie/loading.json";
 import errorAnimation from "../public/lottie/error.json";
-import { motion } from "framer-motion";
+import { generalService } from "./service";
+import { Inmueble } from "./interfaces";
+import { useRouter } from "next/navigation";
+
+const columns = [
+  {
+    key: "page",
+    label: "Inmobiliaria",
+  },
+  {
+    key: "name",
+    label: "Nombre",
+  },
+  {
+    key: "location",
+    label: "Ubicación",
+  },
+  {
+    key: "price",
+    label: "Precio",
+  },
+  {
+    key: "image",
+    label: "Imagen",
+  },
+  {
+    key: "url",
+    label: "Detalles",
+  },
+];
 
 export default function Home() {
-	const [inputValue, setInputValue] = useState("");
-	const [inmuebles, setInmuebles] = useState<Inmuebles[]>();
+  const [inputValue, setInputValue] = useState("");
+  const [inmuebles, setInmuebles] = useState<Inmueble[]>([]);
 
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [error, setError] = useState<null | any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<null | any>(null);
 
-	const getInfo = async () => {
-		setIsLoading(true);
-		setError(null);
-		try {
-			const response = await fetch("/api", {
-				method: "POST",
-				body: JSON.stringify({ searchParams: inputValue }),
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			const data = await response.json();
-			setInmuebles(data.data);
-		} catch (error) {
-			setError(error);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+  const scrapePages = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await generalService.scrappingData({
+        searchParams: inputValue,
+      });
+      console.log(response);
+      setInmuebles(response.data);
+    } catch (error: any) {
+      console.log(error);
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-	console.log({ error });
+  const getInmuebles = async () => {
+    setIsLoading(true);
 
-	return (
-		<main className="flex flex-col gap-3 items-center justify-center !max-h-screen">
-			<div className="flex flex-row items-center justify-center gap-10 my-5">
-				{/* <Input
+    setError(null);
+    try {
+      const response = await generalService.getInmuebles();
+      setInmuebles(response);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteInmuebles = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await generalService.deleteInmuebles();
+      setInmuebles([]);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getInmuebles();
+  }, []);
+
+  const renderCell = useCallback((inmueble: Inmueble, columnKey: React.Key) => {
+    const cellValue = inmueble[columnKey as keyof Inmueble];
+    const { image, url } = inmueble;
+
+    switch (columnKey) {
+      case "image":
+        return image ? (
+          <Image src={image} alt="imagen inmueble" width={100}></Image>
+        ) : null;
+
+      case "url":
+        return (
+          <Button onClick={() => window.open(url, "_blank")}>Ver más</Button>
+        );
+
+      default:
+        return cellValue;
+    }
+  }, []);
+
+  return (
+    <main className="flex flex-col gap-3 items-center justify-center !max-h-screen">
+      <div className="flex flex-row items-center justify-center gap-10 my-5">
+        {/* <Input
 				className="w-1/6"
 				type="text"
 				value={inputValue}
 				onChange={(event) => setInputValue(event.target.value)}
 			/>*/}
 
-				<motion.div drag>
-					<Button disabled={isLoading} onClick={getInfo}>
-						Scrappear
-					</Button>
-				</motion.div>
-			</div>
+        <div className="flex gap-4">
+          <Button disabled={isLoading} onClick={scrapePages} color="success">
+            Scrappear
+          </Button>
+          <Button disabled={isLoading} onClick={getInmuebles} color="secondary">
+            Recargar tabla
+          </Button>
+          <Button disabled={isLoading} onClick={deleteInmuebles} color="danger">
+            Borrar datos
+          </Button>
+        </div>
+      </div>
 
-			{isLoading && (
-				<Lottie animationData={loadingAnimation} loop={true} />
-			)}
+      {isLoading && <Lottie animationData={loadingAnimation} loop={true} />}
 
-			{error && (
-				<motion.div className="" drag>
-					<Lottie
-						animationData={errorAnimation}
-						draggable
-						loop={true}
-					/>
-					<pre className="text-center">
-						{JSON.stringify(error || null)}
-					</pre>
-				</motion.div>
-			)}
+      {error && (
+        <div className="flex flex-col items-center w-1/2">
+          <Lottie
+            animationData={errorAnimation}
+            draggable
+            loop={false}
+            style={{ width: 300 }}
+          />
+          <pre className="">{JSON.stringify(error || null, null, 3)}</pre>
+        </div>
+      )}
 
-			{inmuebles && (
-				<motion.div className="!max-w-1/2 !max-h-[600px]" drag>
-					<Table
-						isHeaderSticky
-						className="max-h-10"
-						aria-label="Example static collection table"
-					>
-						<TableHeader>
-							<TableColumn>Indice</TableColumn>
-							<TableColumn>Nombre</TableColumn>
-							<TableColumn>Ubicación</TableColumn>
-							<TableColumn>Precio</TableColumn>
-							<TableColumn>Imagen</TableColumn>
-							<TableColumn>Codigo</TableColumn>
-						</TableHeader>
-						<TableBody>
-							{inmuebles.map((item, index) => (
-								<TableRow key={index}>
-									<TableCell>{index}</TableCell>
-									<TableCell>{item.h4}</TableCell>
-									<TableCell>{item.p}</TableCell>
-									<TableCell>{item.span}</TableCell>
-									<TableCell>
-										<Image
-											src={item.bgImage}
-											alt="imagen inmueble"
-											width={100}
-										></Image>
-									</TableCell>
-									<TableCell>{item.code}</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</motion.div>
-			)}
-		</main>
-	);
+      {inmuebles && (
+        <div className="!max-w-1/2 !max-h-[600px]">
+          <Table
+            isHeaderSticky
+            className="max-h-10"
+            aria-label="Example static collection table"
+          >
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn key={column.key}>{column.label}</TableColumn>
+              )}
+            </TableHeader>
+            <TableBody
+              emptyContent={"No hay inmuebles para mostrar"}
+              items={inmuebles}
+            >
+              {(item) => (
+                <TableRow key={item.url}>
+                  {(columnKey) => (
+                    <TableCell>{renderCell(item, columnKey)}</TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </main>
+  );
 }
