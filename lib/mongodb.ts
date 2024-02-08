@@ -1,6 +1,6 @@
 //IMPORT MONGOOSE
 import mongoose, { Model } from "mongoose";
-import { Inmueble } from "../app/interfaces";
+import { Inmueble } from "../src/interfaces";
 
 // CONNECTING TO MONGOOSE (Get Database Url from .env.local)
 const { MONGODB_URI } = process.env;

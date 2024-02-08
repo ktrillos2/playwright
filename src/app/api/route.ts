@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import puppeteer, { Browser, Page } from "puppeteer";
-import { Inmueble } from "../interfaces";
-import { generalService } from "../service";
-import { connect } from "../../lib";
+import { Inmueble } from "../../interfaces";
+import { generalService } from "../../service";
+import { connect } from "../../../lib";
 
 export async function POST(request: Request) {
 	const { linkParams: pageScrape } = await request.json();

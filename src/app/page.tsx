@@ -19,13 +19,13 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import Lottie from "lottie-react";
 
-import loadingAnimation from "../public/lottie/loading.json";
-import errorAnimation from "../public/lottie/error.json";
-import { generalService } from "./service";
-import { Columns, Exito, Inmueble, Pages } from "./interfaces";
+import loadingAnimation from "../../public/lottie/loading.json";
+import errorAnimation from "../../public/lottie/error.json";
+import { generalService } from "../service";
+import { Columns, Exito, Inmueble, Pages } from "../interfaces";
 import { useRouter } from "next/navigation";
-import { CustomTable } from "./components";
-import { links } from "./constants";
+import { CustomTable } from "../components";
+import { links } from "../constants";
 
 // const columns: Columns[] = [
 // 	{
