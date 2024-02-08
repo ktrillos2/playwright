@@ -11,6 +11,8 @@ import {
 	TableRow,
 	Image,
 	Pagination,
+	Select,
+	SelectItem,
 } from "@nextui-org/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -19,10 +21,11 @@ import Lottie from "lottie-react";
 import loadingAnimation from "../public/lottie/loading.json";
 import errorAnimation from "../public/lottie/error.json";
 import { generalService } from "./service";
-import { Inmueble } from "./interfaces";
+import { Columns, Inmueble, Pages } from "./interfaces";
 import { useRouter } from "next/navigation";
+import { CustomTable } from "./components";
 
-const columns = [
+const columns:Columns[] = [
 	{
 		key: "page",
 		label: "Inmobiliaria",
@@ -52,21 +55,14 @@ const columns = [
 export default function Home() {
 	const [inputValue, setInputValue] = useState("");
 	const [inmuebles, setInmuebles] = useState<Inmueble[]>([]);
+	const [pages, setpages] = useState<Pages[]>([
+		{ label: "Éxito", value: "exito.com" },
+		{ label: "Inmobiliaria pita Ibiza", value: "https://pitaibizainmobiliaria.com.co/inmuebles/" },
+	]);
+
 
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [error, setError] = useState<null | any>(null);
-
-	const [page, setPage] = useState(1);
-	const rowsPerPage = 5;
-
-	const pages = Math.ceil(inmuebles.length / rowsPerPage) || 1;
-
-	const items = useMemo(() => {
-		const start = (page - 1) * rowsPerPage;
-		const end = start + rowsPerPage;
-
-		return inmuebles.slice(start, end);
-	}, [page, inmuebles]);
 
 	const scrapePages = async () => {
 		setIsLoading(true);
@@ -116,34 +112,7 @@ export default function Home() {
 		getInmuebles();
 	}, []);
 
-	const renderCell = useCallback(
-		(inmueble: Inmueble, columnKey: React.Key) => {
-			const cellValue = inmueble[columnKey as keyof Inmueble];
-			const { image, url } = inmueble;
-
-			switch (columnKey) {
-				case "image":
-					return image ? (
-						<Image
-							src={image}
-							alt="imagen inmueble"
-							width={100}
-						></Image>
-					) : null;
-
-				case "url":
-					return (
-						<Button onClick={() => window.open(url, "_blank")}>
-							Ver más
-						</Button>
-					);
-
-				default:
-					return cellValue;
-			}
-		},
-		[]
-	);
+	
 
 	return (
 		<main className="flex flex-col gap-3 items-center justify-center !max-h-screen">
@@ -156,6 +125,13 @@ export default function Home() {
 			/>*/}
 
 				<div className="flex gap-4">
+					{/* <Select label="Select an animal" className="max-w-xs">
+						{animals.map((animal) => (
+							<SelectItem key={animal.value} value={animal.value}>
+								{animal.label}
+							</SelectItem>
+						))}
+					</Select> */}
 					<Button
 						disabled={isLoading}
 						onClick={scrapePages}
@@ -198,49 +174,11 @@ export default function Home() {
 				</div>
 			)}
 
-			{inmuebles && (
-				<div className="!max-w-1/2">
-					<Table
-						className="h-full"
-						aria-label="Example table with client side pagination"
-						bottomContent={
-							<div className="flex w-full justify-center">
-								<Pagination
-									isCompact
-									showControls
-									showShadow
-									color="secondary"
-									page={1}
-									total={pages}
-									onChange={(page) => setPage(page)}
-								/>
-							</div>
-						}
-					>
-						<TableHeader columns={columns}>
-							{(column) => (
-								<TableColumn key={column.key}>
-									{column.label}
-								</TableColumn>
-							)}
-						</TableHeader>
-						<TableBody
-							emptyContent={"No hay inmuebles para mostrar"}
-							items={items}
-						>
-							{(item) => (
-								<TableRow key={item.url}>
-									{(columnKey) => (
-										<TableCell>
-											{renderCell(item, columnKey)}
-										</TableCell>
-									)}
-								</TableRow>
-							)}
-						</TableBody>
-					</Table>
-				</div>
-			)}
+{inmuebles && (
+  <div className="!max-w-1/2">
+    <CustomTable data={inmuebles} columns={columns} />
+  </div>
+)}
 		</main>
 	);
 }
