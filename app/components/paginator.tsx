@@ -25,13 +25,13 @@ export const CustomTable: FC<Props> = ({ data, columns }) => {
 
 	const renderCell = useCallback((data: any, columnKey: React.Key) => {
 		const cellValue = data[columnKey as keyof any];
-		const { image, url } = data;
+		const { imageFromHeader, url } = data;
 
 		switch (columnKey) {
-			case "image":
-				return image ? (
+			case "imageFromHeader":
+				return imageFromHeader ? (
 					<Image
-						src={image}
+						src={imageFromHeader}
 						alt="imagen inmueble"
 						width={100}
 					></Image>
@@ -77,7 +77,7 @@ export const CustomTable: FC<Props> = ({ data, columns }) => {
 				items={items}
 			>
 				{(item: any) => (
-					<TableRow key={item.url}>
+					<TableRow key={item.titleSection}>
 						{(columnKey) => (
 							<TableCell>{renderCell(item, columnKey)}</TableCell>
 						)}

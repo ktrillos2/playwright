@@ -1,116 +1,214 @@
 import { NextResponse } from "next/server";
-import puppeteer, { Page } from "puppeteer";
+import puppeteer, { Browser, Page } from "puppeteer";
 import { Inmueble } from "../interfaces";
 import { generalService } from "../service";
 import { connect } from "../../lib";
 
 export async function POST(request: Request) {
-  // const { searchParams: userSearch } = await request.json();
-
-  // if (!userSearch) {
-  //   return NextResponse.json(
-  //     { error: "Please provide a search query" },
-  //     { status: 400 }
-  //   );
-  // }
-
-  let browser;
-  try {
-    browser = await puppeteer.launch({
-      // args: [`--proxy-server=http://154.6.96.222:3128`],
-    });
-    const page = await browser.newPage();
-
-    const userAgents = (await generalService.getUserAgents()).result;
-    const browserHeaders = (await generalService.getBrowserHeaders()).result;
-
-    const userAgent = getRandomElement(userAgents);
-    const headers = getRandomElement(browserHeaders);
-
-    await page.setUserAgent(userAgent);
-    await page.setExtraHTTPHeaders(headers);
-
-    await page.goto("https://pitaibizainmobiliaria.com.co/inmuebles/");
-
-    let data: any[] = [];
-    let lastPageText: any = "";
-
-    do {
-      const pageData = await getDataFromPitaIbiza(page);
-
-      data = [...data, ...pageData];
-
-      const nextPage = await page.waitForSelector("#siguienteA");
-      const lastPage = await page.waitForSelector("#finalA");
-      lastPageText = await page.evaluate((el) => el?.textContent, lastPage);
-
-      const userAgent = getRandomElement(userAgents);
-      const headers = getRandomElement(browserHeaders);
-
-      await page.setUserAgent(userAgent);
-      await page.setExtraHTTPHeaders(headers);
-
-      await Promise.all([
-        nextPage?.click(),
-        page.waitForNavigation({ waitUntil: "networkidle0" }),
-      ]);
-    } while (!page.url().includes("2"));
-
-    await page.close();
-
-    saveData(data);
-
-    return NextResponse.json({ data }, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: "Ha ocurrido un error", possibleError: error?.message },
-      { status: 500 }
-    );
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
-  }
+	const { linkParams: pageScrape } = await request.json();
+	if (!pageScrape) {
+		return NextResponse.json(
+			{ error: "Envía un link a scrapear" },
+			{ status: 400 }
+		);
+	}
+	let browser: Browser;
+	browser = await puppeteer.launch({headless:false});
+	return getDataFromExitoPage(browser, pageScrape);
 }
 
 const getDataFromPitaIbiza = async (page: Page) => {
-  const pageData = await page.$$eval("div.card-in-list", (cards) =>
-    cards.map((card) => {
-      const name = card.querySelector("h4")?.textContent;
-      const location = card.querySelector("div > p")?.textContent;
-      const price = card.querySelector("div.img > span")?.textContent;
-      const imgDiv = card.querySelector("div.img");
-      card.querySelector("div.img > div")?.textContent;
-      const path = card.querySelector("a.button")?.getAttribute("href");
-      let image = imgDiv
-        ? window.getComputedStyle(imgDiv).backgroundImage
-        : null;
-      if (image) {
-        const match = image.match(/url\("([^"]*)"\)/);
-        image = match ? match[1] : null;
-      }
-      return {
-        name,
-        location,
-        price,
-        image,
-        url: `https://pitaibizainmobiliaria.com.co${path}`,
-        page: "Pita Ibiza",
-      };
-    })
-  );
+	const pageData = await page.$$eval("div.card-in-list", (cards) =>
+		cards.map((card) => {
+			const name = card.querySelector("h4")?.textContent;
+			const location = card.querySelector("div > p")?.textContent;
+			const price = card.querySelector("div.img > span")?.textContent;
+			const imgDiv = card.querySelector("div.img");
+			card.querySelector("div.img > div")?.textContent;
+			const path = card.querySelector("a.button")?.getAttribute("href");
+			let image = imgDiv
+				? window.getComputedStyle(imgDiv).backgroundImage
+				: null;
+			if (image) {
+				const match = image.match(/url\("([^"]*)"\)/);
+				image = match ? match[1] : null;
+			}
+			return {
+				name,
+				location,
+				price,
+				image,
+				url: `https://pitaibizainmobiliaria.com.co${path}`,
+				page: "Pita Ibiza",
+			};
+		})
+	);
 
-  return pageData;
+	return pageData;
+};
+
+const getDataFromExito = async (page: Page) => {
+  const data = await page.evaluate(() => {
+    const linkImagesHeader = Array.from(
+      document.querySelectorAll("a.link_fs-link__6oAwa")
+    ).map((a: Element) => (a as HTMLAnchorElement).href);
+    const imagesFromHeader = Array.from(
+      document.querySelectorAll("a.link_fs-link__6oAwa span img")
+    ).map((img: Element) => (img as HTMLImageElement).src);
+    const sectionPromos = Array.from(
+      document.querySelectorAll("section.layout__section")
+    );
+    const titleSections = sectionPromos.map((section) =>
+      section.querySelector("div div.TitleProductShelf_ProductShelfTitle__wh4yq h3")?.textContent
+    );
+    const viewMoreSections = sectionPromos.map((section) =>
+      (section.querySelector("button a") as HTMLAnchorElement)?.href
+    );
+    const redirectionAndPromoSections = sectionPromos.map((section) => {
+      const slides = Array.from(
+        section.querySelectorAll(
+          "div.ProductShelfRotary_fs-product-shelf__YfQB8 div.swiper div.swiper-wrapper div.swiper-slide"
+        )
+      );
+      return slides.map((slide: Element) => {
+        const a = slide.querySelector(
+          'article div[data-fs-product-card-image-promotion="true"] div[data-product-card-image="true"] a'
+        ) as HTMLAnchorElement;
+        const promotionDiv = slide.querySelector(
+          "div.product-card_container-promotion__Cexgr"
+        );
+        const p1 = promotionDiv
+          ? promotionDiv.querySelector("p")?.textContent
+          : null;
+        const span = promotionDiv
+          ? promotionDiv.querySelector("span")?.textContent
+          : null;
+        const p2 = promotionDiv
+          ? promotionDiv.querySelectorAll("p")[1]?.textContent
+          : null;
+        return {
+          href: a ? a.href : null,
+          promotion: p1 && span && p2 ? p1 + span + p2 : null,
+        };
+      });
+    });
+    return {
+      linkImagesHeader,
+      imagesFromHeader,
+      titleSections,
+      viewMoreSections,
+      redirectionAndPromoSections,
+    };
+  });
+
+  return data;
 };
 
 const getRandomElement = (array: any[]) => {
-  return array[Math.floor(Math.random() * array.length)];
+	return array[Math.floor(Math.random() * array.length)];
 };
 
 const saveData = async (data: Inmueble[]) => {
-  try {
-    const { Inmueble } = await connect();
-    await Inmueble.deleteMany({});
-    await Inmueble.insertMany(data);
-  } catch (error: any) {}
+	try {
+		const { Inmueble } = await connect();
+		await Inmueble.deleteMany({});
+		await Inmueble.insertMany(data);
+	} catch (error: any) {}
+};
+
+const setUserAgentAndHeaders = async (page: Page) => {
+	const userAgents = (await generalService.getUserAgents()).result;
+	const browserHeaders = (await generalService.getBrowserHeaders()).result;
+
+	const userAgent = getRandomElement(userAgents);
+	const headers = getRandomElement(browserHeaders);
+
+	await page.setUserAgent(userAgent);
+	await page.setExtraHTTPHeaders(headers);
+};
+
+const getDataFromPitaIbizaPage = async (browser: Browser, link: string) => {
+	try {
+		let data: any[] = [];
+		let lastPageText: any = "";
+		const page = await browser.newPage();
+
+		setUserAgentAndHeaders(page);
+
+		await page.goto(link);
+
+		do {
+			const pageData = await getDataFromPitaIbiza(page);
+
+			data = [...data, ...pageData];
+
+			const nextPage = await page.waitForSelector("#siguienteA");
+			const lastPage = await page.waitForSelector("#finalA");
+			lastPageText = await page.evaluate(
+				(el) => el?.textContent,
+				lastPage
+			);
+
+			setUserAgentAndHeaders(page);
+
+			await Promise.all([
+				nextPage?.click(),
+				page.waitForNavigation({ waitUntil: "networkidle0" }),
+			]);
+		} while (!page.url().includes("2"));
+
+		await page.close();
+
+		saveData(data);
+
+		return NextResponse.json({ data }, { status: 200 });
+	} catch (error: any) {
+		return NextResponse.json(
+			{ error: "Ha ocurrido un error", possibleError: error?.message },
+			{ status: 500 }
+		);
+	} finally {
+		if (browser) {
+			await browser.close();
+		}
+	}
+};
+
+const autoScroll = async (page: Page) => {
+  await page.evaluate(async () => {
+    await new Promise<void>((resolve, reject) => {
+      let totalHeight = 0;
+      const distance = 100;
+      const timer = setInterval(() => {
+        const scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight >= scrollHeight) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 100);
+    });
+  });
+};
+
+const getDataFromExitoPage = async (browser: Browser, link: string) => {
+	const page = await browser.newPage();
+  await page.goto(link, { waitUntil: 'networkidle0' });
+  await autoScroll(page);
+	try {
+		const pageData = await getDataFromExito(page);
+
+		return NextResponse.json({ pageData }, { status: 200 });
+	} catch (error: any) {
+		return NextResponse.json(
+			{ error: "Ha ocurrido un error", possibleError: error?.message },
+			{ status: 500 }
+		);
+	} finally {
+		if (browser) {
+			await browser.close();
+		}
+	}
 };
