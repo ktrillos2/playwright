@@ -1,2 +1,2 @@
-export * from './paginator';
+export * from './custom-table';
 export * from './providers';

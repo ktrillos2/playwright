@@ -19,9 +19,9 @@ interface Props {
 }
 
 export const CustomTable: FC<Props> = ({ data, columns }) => {
-	const { items, page, pagesPaginator, setPage } = usePropsPaginator({
-		data,
-	});
+	// const { items, page, pagesPaginator, setPage } = usePropsPaginator({
+	// 	data,
+	// });
 
 	const renderCell = useCallback((data: any, columnKey: React.Key) => {
 		const cellValue = data[columnKey as keyof any];
@@ -55,7 +55,7 @@ export const CustomTable: FC<Props> = ({ data, columns }) => {
 			aria-label="Example table with client side pagination"
 			bottomContent={
 				<div className="flex w-full justify-center">
-					<Pagination
+					{/* <Pagination
 						isCompact
 						showControls
 						showShadow
@@ -63,7 +63,7 @@ export const CustomTable: FC<Props> = ({ data, columns }) => {
 						page={page}
 						total={pagesPaginator}
 						onChange={(page) => setPage(page)}
-					/>
+					/> */}
 				</div>
 			}
 		>
@@ -74,7 +74,7 @@ export const CustomTable: FC<Props> = ({ data, columns }) => {
 			</TableHeader>
 			<TableBody
 				emptyContent={"No hay inmuebles para mostrar"}
-				items={items}
+				items={data}
 			>
 				{(item: any) => (
 					<TableRow key={item.titleSection}>
