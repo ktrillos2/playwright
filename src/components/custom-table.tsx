@@ -19,20 +19,20 @@ interface Props {
 }
 
 export const CustomTable: FC<Props> = ({ data, columns }) => {
-	// const { items, page, pagesPaginator, setPage } = usePropsPaginator({
-	// 	data,
-	// });
+	const { items, page, pagesPaginator, setPage } = usePropsPaginator({
+		data,
+	});
 
 	const renderCell = useCallback((data: any, columnKey: React.Key) => {
 		const cellValue = data[columnKey as keyof any];
-		const { imageFromHeader, url } = data;
+		const { image, url } = data;
 
 		switch (columnKey) {
-			case "imageFromHeader":
-				return imageFromHeader ? (
+			case "image":
+				return image ? (
 					<Image
-						src={imageFromHeader}
-						alt="imagen inmueble"
+						src={image[0].url||image}
+						alt="image"
 						width={100}
 					></Image>
 				) : null;
@@ -55,7 +55,7 @@ export const CustomTable: FC<Props> = ({ data, columns }) => {
 			aria-label="Example table with client side pagination"
 			bottomContent={
 				<div className="flex w-full justify-center">
-					{/* <Pagination
+					<Pagination
 						isCompact
 						showControls
 						showShadow
@@ -63,7 +63,7 @@ export const CustomTable: FC<Props> = ({ data, columns }) => {
 						page={page}
 						total={pagesPaginator}
 						onChange={(page) => setPage(page)}
-					/> */}
+					/>
 				</div>
 			}
 		>
@@ -74,10 +74,10 @@ export const CustomTable: FC<Props> = ({ data, columns }) => {
 			</TableHeader>
 			<TableBody
 				emptyContent={"No hay inmuebles para mostrar"}
-				items={data}
+				items={items}
 			>
 				{(item: any) => (
-					<TableRow key={item.titleSection}>
+					<TableRow key={item._id??item.name}>
 						{(columnKey) => (
 							<TableCell>{renderCell(item, columnKey)}</TableCell>
 						)}
