@@ -8,7 +8,7 @@ interface Props {
 
 export const usePropsPaginator = ({ data }: Props) => {
     const [page, setPage] = useState(1);
-    const rowsPerPage = 4;
+    const rowsPerPage = 20;
 
     const pagesPaginator = Math.ceil(data.length / rowsPerPage) || 1;
 

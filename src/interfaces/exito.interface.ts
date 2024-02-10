@@ -3,6 +3,8 @@ export interface Exito {
     brandName: string;
     image:     Image[];
     lowPrice:  number;
+    discountPercentage: number;
+    PriceWithoutDiscount: number
 }
 
 export interface Image {

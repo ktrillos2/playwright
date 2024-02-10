@@ -8,6 +8,7 @@ import {
 	TableColumn,
 	TableHeader,
 	TableRow,
+	getKeyValue,
 } from "@nextui-org/react";
 import { useCallback, type FC } from "react";
 import { usePropsPaginator } from "../hooks";
@@ -16,38 +17,13 @@ import { Columns } from "../interfaces";
 interface Props {
 	data: any[];
 	columns: Columns[];
+	renderCell?: (...props: any) => any
 }
 
-export const CustomTable: FC<Props> = ({ data, columns }) => {
+export const CustomTable: FC<Props> = ({ data, columns, renderCell = getKeyValue }) => {
 	const { items, page, pagesPaginator, setPage } = usePropsPaginator({
 		data,
 	});
-
-	const renderCell = useCallback((data: any, columnKey: React.Key) => {
-		const cellValue = data[columnKey as keyof any];
-		const { image, url } = data;
-
-		switch (columnKey) {
-			case "image":
-				return image ? (
-					<Image
-						src={image[0].url||image}
-						alt="image"
-						width={100}
-					></Image>
-				) : null;
-
-			case "url":
-				return (
-					<Button onClick={() => window.open(url, "_blank")}>
-						Ver más
-					</Button>
-				);
-
-			default:
-				return cellValue;
-		}
-	}, []);
 
 	return (
 		<Table
