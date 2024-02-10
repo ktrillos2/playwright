@@ -45,7 +45,7 @@ export const CustomTable: FC<Props> = ({ data, columns, renderCell = getKeyValue
 		>
 			<TableHeader columns={columns}>
 				{(column) => (
-					<TableColumn key={column.key}>{column.label}</TableColumn>
+					<TableColumn className="text-center" key={column.key}>{column.label}</TableColumn>
 				)}
 			</TableHeader>
 			<TableBody
@@ -53,7 +53,7 @@ export const CustomTable: FC<Props> = ({ data, columns, renderCell = getKeyValue
 				items={items}
 			>
 				{(item: any) => (
-					<TableRow key={item._id??item.name}>
+					<TableRow className="text-center" key={item._id??item.name}>
 						{(columnKey) => (
 							<TableCell>{renderCell(item, columnKey)}</TableCell>
 						)}
