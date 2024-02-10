@@ -105,7 +105,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                       ></NextImage>
                       <h1 className="font-bold leading-4 text-black">{name}</h1>
                     </div>
-                    <div className="absolute bg-[#e81819] text-white text-md w-10 h-10 rounded-full grid place-content-center right-3 bottom-3">
+                    <div className="absolute bg-[#e81819] text-white text-xl w-14 h-14 rounded-full grid place-content-center right-3 bottom-3 font-bold">
                       {discountPercentage}%
                     </div>
                     <div className="absolute text-black bottom-3 left-3">
