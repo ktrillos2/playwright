@@ -43,13 +43,13 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
     },
   });
 
-  // const [backgroundColor, setBackgroundColor] = useState<string>(
-  //   "linear-gradient(90deg, rgba(96,93,93,1) 0%, rgba(255,255,255,1) 100%)"
-  // );
-  // const { setSolid, setGradient } = useColorPicker(
-  //   backgroundColor,
-  //   setBackgroundColor
-  // );
+  const [backgroundColor, setBackgroundColor] = useState<string>(
+    ""
+  );
+  const { setSolid, setGradient } = useColorPicker(
+    backgroundColor,
+    setBackgroundColor
+  );
 
   useEffect(() => {
     const convertImage = async () => {
@@ -93,7 +93,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                   <div
                     ref={ref}
                     className="w-[500px] h-[250px] bg-white bg-gradient-to-br from-[#fce802] from-25% relative flex justify-center"
-                    // style={{ background: backgroundColor }}
+                    style={{ background: backgroundColor }}
                   >
                     <div className="absolute top-3 px-3 flex gap-3 items-center">
                       <NextImage
@@ -128,25 +128,26 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                     </div>
                   </div>
                   {isLoading ? (
-                    <p className="text-center text-sm">Quitando fondo...</p>
+                    <p className="text-center text-sm pt-4">Quitando fondo...</p>
                   ) : null}{" "}
+                  <div className="pt-4">
+
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Cerrar
+                    </Button>
+                    <Button disabled={!displayImage} color="primary" onPress={convertToPng}>
+                      Descargar
+                    </Button>
+                  </div>
                 </div>
-                {/* <div className="scale-50 w-[200px] h-[200px]">
+                <div className="">
                   <ColorPicker
                     value={backgroundColor}
                     onChange={setBackgroundColor}
                   />
-                </div> */}
+                </div>
               </div>
             </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Cerrar
-              </Button>
-              <Button color="primary" onPress={convertToPng}>
-                Descargar
-              </Button>
-            </ModalFooter>
           </>
         )}
       </ModalContent>

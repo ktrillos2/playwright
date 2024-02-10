@@ -331,7 +331,9 @@ export default function Home() {
 
       {pageUrl === links[1].value && (
         <div className="!max-w-1/2">
-          <CustomTable data={inmuebles ?? []} columns={columnsPitaIbiza} />
+          <CustomTable data={inmuebles ?? []} columns={columnsPitaIbiza}
+            renderCell={renderCellExito}
+            />
         </div>
       )}
     </main>
