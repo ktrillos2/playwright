@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import puppeteer, { Browser, Page } from "puppeteer";
-import { Inmueble } from "../../interfaces";
-import { generalService } from "../../service";
-import { connect } from "../../../lib";
+import { Inmueble } from "../../../interfaces";
+import { generalService } from "../../../service";
+import { connect } from "../../../../lib";
 import { autoScroll } from "@/helpers";
 
 export async function POST(request: Request) {
@@ -234,7 +234,7 @@ const saveData = async (data: Inmueble[]) => {
 		const { Inmueble } = await connect();
 		await Inmueble.deleteMany({});
 		await Inmueble.insertMany(data);
-	} catch (error: any) {}
+	} catch (error: any) { }
 };
 
 const setUserAgentAndHeaders = async (page: Page) => {

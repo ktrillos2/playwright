@@ -9,7 +9,7 @@ class GeneralService extends ServiceClass {
 	async scrappingData(body: any): Promise<any> {
 		return await super.postQuery<Inmueble[]>({
 			URL: BASE_API_URL,
-			path: "api",
+			path: "api/scrappy",
 			body,
 		});
 	}
