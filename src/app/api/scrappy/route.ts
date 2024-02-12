@@ -15,12 +15,11 @@ export async function POST(request: Request) {
             );
         }
         console.log("paso if")
-        let browser: Browser;
         console.log("browser")
-        browser = await puppeteer.launch({
-            executablePath: process.env.AWS_LAMBDA_FUNCTION_NAME ? '/usr/bin/google-chrome' : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process']
-        });
+const browser = await puppeteer.launch({
+	executablePath: process.env.AWS_LAMBDA_FUNCTION_NAME ? '/usr/bin/google-chrome' : 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+	args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process']
+});
         console.log("otro browser launch")
         if (page === "Exito") {
             console.log("if exito")
