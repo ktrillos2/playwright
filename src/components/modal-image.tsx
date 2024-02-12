@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Modal,
@@ -34,6 +34,8 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
   const { name, discountPercentage, PriceWithoutDiscount, lowPrice, image } =
     info || {};
 
+  const [showEditor, setShowEditor] = useState(false);
+
   const [state, convertToPng, ref] = useToPng({
     onSuccess: (data) => {
       const link = document.createElement("a");
@@ -43,9 +45,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
     },
   });
 
-  const [backgroundColor, setBackgroundColor] = useState<string>(
-    ""
-  );
+  const [backgroundColor, setBackgroundColor] = useState<string>("");
   const { setSolid, setGradient } = useColorPicker(
     backgroundColor,
     setBackgroundColor
@@ -128,23 +128,36 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                     </div>
                   </div>
                   {isLoading ? (
-                    <p className="text-center text-sm pt-4">Quitando fondo...</p>
+                    <p className="text-center text-sm pt-4">
+                      Quitando fondo...
+                    </p>
                   ) : null}{" "}
-                  <div className="pt-4">
-
+                  <div className="pt-4 flex gap-2">
                     <Button color="danger" variant="light" onPress={onClose}>
                       Cerrar
                     </Button>
-                    <Button disabled={!displayImage} color="primary" onPress={convertToPng}>
+                    <Button
+                      disabled={!displayImage}
+                      color="primary"
+                      onPress={convertToPng}
+                    >
                       Descargar
+                    </Button>
+                    <Button
+                      disabled={!displayImage}
+                      onPress={() => setShowEditor(!showEditor)}
+                    >
+                      {showEditor ? "Quitar editor" : "Mostrar editor"}
                     </Button>
                   </div>
                 </div>
                 <div className="">
-                  <ColorPicker
-                    value={backgroundColor}
-                    onChange={setBackgroundColor}
-                  />
+                  {showEditor ? (
+                    <ColorPicker
+                      value={backgroundColor}
+                      onChange={setBackgroundColor}
+                    />
+                  ) : null}
                 </div>
               </div>
             </ModalBody>
