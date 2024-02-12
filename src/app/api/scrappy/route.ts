@@ -13,11 +13,16 @@ export async function POST(request: Request) {
 			{ status: 400 }
 		);
 	}
+	console.log("paso if")
 	let browser: Browser;
+	console.log("browser")
 	browser = await puppeteer.launch();
+	console.log("otro browser launch")
 	if (page === "Exito") {
+		console.log("if exito")
 		return getDataFromExitoPage(browser, pageScrape);
 	} else {
+		console.log("else if")
 		return getDataFromPitaIbizaPage(browser, pageScrape);
 	}
 }
