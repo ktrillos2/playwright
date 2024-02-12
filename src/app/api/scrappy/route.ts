@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import puppeteer, { Browser, Page } from "puppeteer";
-import { Inmueble } from "../../interfaces";
-import { generalService } from "../../service";
-import { connect } from "../../../lib";
+import { Inmueble } from "../../../interfaces";
+import { generalService } from "../../../service";
+import { connect } from "../../../../lib";
 import { autoScroll } from "@/helpers";
 
 export async function POST(request: Request) {
@@ -32,7 +32,6 @@ const getDataFromPitaIbizaPage = async (browser: Browser, link: string) => {
 		setUserAgentAndHeaders(page);
 
 		await page.goto(link);
-
 		do {
 			const pageData = await getDataFromPitaIbiza(page);
 
@@ -103,21 +102,30 @@ const getDataFromPitaIbiza = async (page: Page) => {
 // EXITO
 
 const getDataFromExitoPage = async (browser: Browser, link: string) => {
-	const page = await browser.newPage();
-	await page.goto(link, { waitUntil: "networkidle0" });
+	console.log("entro a funcion")
 	try {
+		console.log("paso el try")
+		const page = await browser.newPage();
+		console.log(page,"pagina 1")
+		await page.goto(link, { waitUntil: "networkidle0" });
+		console.log(page,"pagina 2")
 		const preContent = await page.$eval(
 			"body pre",
 			(element) => element.textContent
-		);
-		const data = preContent ? JSON.parse(preContent) : null;
+			);
+			console.log(preContent,"coontenido")
+			
+			const data = preContent ? JSON.parse(preContent) : null;
+			console.log(data,"data")
 		return NextResponse.json({ data: data || {} }, { status: 200 });
 	} catch (error: any) {
+		console.log(error,"error")
 		return NextResponse.json(
 			{ error: "Ha ocurrido un error", possibleError: error?.message },
 			{ status: 500 }
 		);
 	} finally {
+		console.log(browser,"navegador")
 		if (browser) {
 			await browser.close();
 		}
@@ -234,7 +242,7 @@ const saveData = async (data: Inmueble[]) => {
 		const { Inmueble } = await connect();
 		await Inmueble.deleteMany({});
 		await Inmueble.insertMany(data);
-	} catch (error: any) {}
+	} catch (error: any) { }
 };
 
 const setUserAgentAndHeaders = async (page: Page) => {

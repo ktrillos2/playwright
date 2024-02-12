@@ -190,7 +190,7 @@ export default function Home() {
 					image,
 					lowPrice,
 					urlExito:
-						"www.exito.com" +
+						"https://www.exito.com" +
 						itemListElement[itemListElement.length - 1].item,
 					...sellerData,
 					// options: "options",
