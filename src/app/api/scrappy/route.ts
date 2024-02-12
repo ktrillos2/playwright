@@ -7,31 +7,34 @@ import { autoScroll } from "@/helpers";
 
 export async function POST(request: Request) {
 	try {
-		const { linkParams: pageScrape, page } = await request.json();
-		if (!pageScrape || !page) {
-			return NextResponse.json(
-				{ error: "Envía un link a scrapear" },
-				{ status: 400 }
-			);
-		}
-		console.log("paso if")
-		let browser: Browser;
-		console.log("browser")
-		browser = await puppeteer.launch();
-		console.log("otro browser launch")
-		if (page === "Exito") {
-			console.log("if exito")
-			return getDataFromExitoPage(browser, pageScrape);
-		} else {
-			console.log("else if")
-			return getDataFromPitaIbizaPage(browser, pageScrape);
-		}
-	} catch (error :any) {
-		return NextResponse.json(
-			{ error: "Ha ocurrido un error", possibleError: error?.message,errorComplete:error },
-			{ status: 500 }
-		);
-	}
+        const { linkParams: pageScrape, page } = await request.json();
+        if (!pageScrape || !page) {
+            return NextResponse.json(
+                { error: "Envía un link a scrapear" },
+                { status: 400 }
+            );
+        }
+        console.log("paso if")
+        let browser: Browser;
+        console.log("browser")
+        browser = await puppeteer.launch({
+            executablePath: process.env.AWS_LAMBDA_FUNCTION_NAME ? '/usr/bin/google-chrome' : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process']
+        });
+        console.log("otro browser launch")
+        if (page === "Exito") {
+            console.log("if exito")
+            return getDataFromExitoPage(browser, pageScrape);
+        } else {
+            console.log("else if")
+            return getDataFromPitaIbizaPage(browser, pageScrape);
+        }
+    } catch (error :any) {
+        return NextResponse.json(
+            { error: "Ha ocurrido un error", possibleError: error?.message,errorComplete:error },
+            { status: 500 }
+        );
+    }
 }
 
 // PITA IBIZA
