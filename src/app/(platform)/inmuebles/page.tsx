@@ -1,3 +1,5 @@
+import { Metadata } from "next";
+
 import { InmueblesTable } from "@/modules";
 import { generalService } from "@/service";
 
@@ -7,6 +9,11 @@ interface Props {
     limit: string;
   };
 }
+
+export const metadata: Metadata = {
+  title: "Inmuebles",
+  description: "Tabla de inmuebles",
+};
 
 export default async function InmueblesPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
@@ -18,7 +25,7 @@ export default async function InmueblesPage({ searchParams }: Props) {
   });
 
   return (
-    <main className="flex flex-col gap-3 items-center justify-center min-h-screen p-10">
+    <div>
       <h1 className="text-left">Inmuebles Spider</h1>
       <InmueblesTable
         inmuebles={docs}
@@ -27,6 +34,6 @@ export default async function InmueblesPage({ searchParams }: Props) {
         totalInmuebles={totalDocs}
         limit={limit}
       />
-    </main>
+    </div>
   );
 }

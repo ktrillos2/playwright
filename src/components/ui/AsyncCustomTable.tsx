@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
-import { Columns } from "../interfaces";
+import { Columns } from "../../interfaces";
 import { useMemo } from "react";
 
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 100];
@@ -76,9 +76,13 @@ export const AsyncCustomTable: React.FC<Props> = ({
           <span className="text-default-400 text-small">
             Total {totalItems} {itemsName}
           </span>
-          <label className="flex items-center text-default-400 text-small">
+          <label
+            className="flex items-center text-default-400 text-small"
+            htmlFor="rows-per-page"
+          >
             Filas por página:
             <select
+              id="rows-per-page"
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
               value={limit}
