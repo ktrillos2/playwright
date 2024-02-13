@@ -72,7 +72,7 @@ const columnsExito: Columns[] = [
     label: "Precio con tarjeta",
   },
   {
-    key: "PriceWithoutDiscount",
+    key: "priceWithoutDiscount",
     label: "Precio sin descuento",
   },
   { key: "urlExito", label: "Link" },

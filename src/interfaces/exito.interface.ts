@@ -4,7 +4,7 @@ export interface Exito {
     images:     string[];
     lowPrice:  number;
     discountPercentage: number;
-    PriceWithoutDiscount: number
+    priceWithoutDiscount: number
 }
 
 export interface Image {
@@ -132,7 +132,7 @@ export interface ItemSeller {
 export interface PurpleCommertialOffer {
     AvailableQuantity:    number;
     Price:                number;
-    PriceWithoutDiscount: number;
+    priceWithoutDiscount: number;
     ListPrice:            number;
     Tax:                  number;
     teasers?:             Teaser[];

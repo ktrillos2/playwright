@@ -31,7 +31,7 @@ interface Props {
 export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
   const [displayImage, setDisplayImage] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { name, discountPercentage, PriceWithoutDiscount, lowPrice, image } =
+  const { name, discountPercentage, priceWithoutDiscount, lowPrice, image } =
     info || {};
 
   const [showEditor, setShowEditor] = useState(false);
@@ -109,7 +109,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                     </div>
                     <div className="absolute text-black bottom-3 left-3">
                       <span className="line-through block text-xs">
-                        ${PriceWithoutDiscount?.toLocaleString()}
+                        ${priceWithoutDiscount?.toLocaleString()}
                       </span>
                       <span className="font-bold">
                         {"$"}

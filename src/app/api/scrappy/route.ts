@@ -137,7 +137,7 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
       for (let i = 0; i < sellers.length; i++) {
         const {
           sellerName,
-          commertialOffer: { PriceWithoutDiscount, teasers },
+          commertialOffer: { priceWithoutDiscount, teasers },
         } = sellers[i];
         let discountWithCard = null;
 
@@ -154,14 +154,14 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
         });
 
         if (discountWithCard !== null) {
-          const priceWithCard = PriceWithoutDiscount - discountWithCard;
+          const priceWithCard = priceWithoutDiscount - discountWithCard;
           const discountPercentage = Math.round(
-            (discountWithCard / PriceWithoutDiscount) * 100
+            (discountWithCard / priceWithoutDiscount) * 100
           );
           sellerData = {
             sellerName,
             priceWithCard,
-            PriceWithoutDiscount,
+            priceWithoutDiscount,
             discountPercentage,
           };
           break;
