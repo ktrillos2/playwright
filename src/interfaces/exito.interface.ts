@@ -132,7 +132,7 @@ export interface ItemSeller {
 export interface PurpleCommertialOffer {
     AvailableQuantity:    number;
     Price:                number;
-    priceWithoutDiscount: number;
+    PriceWithoutDiscount: number;
     ListPrice:            number;
     Tax:                  number;
     teasers?:             Teaser[];

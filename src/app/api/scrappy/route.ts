@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import puppeteer, { Browser, Page } from "puppeteer";
-import { Inmueble, PromosTecnologyExito, PromosTecnologyExitoData } from "../../../interfaces";
+import {
+  Inmueble,
+  PromosTecnologyExito,
+  PromosTecnologyExitoData,
+} from "../../../interfaces";
 import { generalService } from "../../../service";
 import { autoScroll } from "@/helpers";
 import { dbConnect, inmuebleService } from "@/app/lib";
@@ -113,13 +117,13 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
 
     if (!preContent) throw new Error("No se encontró el contenido");
 
-    const preContentOb: PromosTecnologyExitoData = JSON.parse(preContent ?? "{}");
-
+    const preContentOb: PromosTecnologyExitoData = JSON.parse(
+      preContent ?? "{}"
+    );
 
     const products = preContentOb.data.search.products.edges;
 
     let productsPromo: any[] = [];
-
     products.forEach((product) => {
       const {
         node: {
@@ -137,7 +141,10 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
       for (let i = 0; i < sellers.length; i++) {
         const {
           sellerName,
-          commertialOffer: { priceWithoutDiscount, teasers },
+          commertialOffer: {
+            PriceWithoutDiscount: priceWithoutDiscount,
+            teasers,
+          },
         } = sellers[i];
         let discountWithCard = null;
 
@@ -168,7 +175,7 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
         }
       }
 
-			const images = image.map(({url}) => url);
+      const images = image?.map(({ url }: any) => url);
 
       if (sellerData !== null) {
         const data = {
