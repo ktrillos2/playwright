@@ -45,9 +45,8 @@ export const InmueblesTable: React.FC<Props> = ({
   page,
   totalPages,
   totalInmuebles,
-  limit
+  limit,
 }) => {
-  
   const renderCell = useCallback((data: any, columnKey: React.Key) => {
     const cellValue = data[columnKey as keyof any];
     const { image, url } = data;

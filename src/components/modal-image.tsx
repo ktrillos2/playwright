@@ -73,7 +73,6 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
       setDisplayImage(null);
     }
   }, [isOpen]);
-
   return (
     <Modal
       isOpen={isOpen}

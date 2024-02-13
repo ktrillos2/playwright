@@ -31,6 +31,10 @@ class InmuebleDbService {
   async deleteAllInmuebles() {
     return this.inmuebleModel.deleteMany({});
   }
+
+  async saveInmuebles(inmuebles: Inmueble[]) {
+    return this.inmuebleModel.insertMany(inmuebles);
+  }
 }
 
 export const inmuebleService = new InmuebleDbService();

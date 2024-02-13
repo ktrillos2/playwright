@@ -43,10 +43,7 @@ export const dbConnect = async () => {
     return;
   }
 
-  const db = await mongoose.connect(MONGODB_URI as string, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } as ConnectOptions);
+  const db = await mongoose.connect(MONGODB_URI ?? '');
 
   connection.isConnected = db.connections[0].readyState;
-}
+};

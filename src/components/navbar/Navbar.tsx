@@ -24,7 +24,7 @@ const PAGES = [
 export const Navbar = () => {
   return (
     <NavbarNextUI>
-      <NavbarBrand className="gap-2" as={Link} href={"/"}>
+      <NavbarBrand className="gap-2" as={Link} href={PagePaths.HOME}>
         <FaSpider size={25} />
         <p className="font-bold text-inherit">{Info.TITLE}</p>
       </NavbarBrand>
