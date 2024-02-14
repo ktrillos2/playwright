@@ -10,20 +10,31 @@ import { autoScroll } from "@/helpers";
 import { dbConnect, inmuebleService } from "@/app/lib";
 
 export async function POST(request: Request) {
-  const { linkParams: pageScrape, page } = await request.json();
-  if (!pageScrape || !page) {
-    return NextResponse.json(
-      { error: "Envía un link a scrapear" },
-      { status: 400 }
-    );
-  }
-  let browser: Browser;
-  browser = await puppeteer.launch();
-  if (page === "Exito") {
-    return getDataFromExitoPage(browser, pageScrape);
-  } else {
-    return getDataFromPitaIbizaPage(browser, pageScrape);
-  }
+	const { linkParams: pageScrape, page } = await request.json();
+	if (!pageScrape || !page) {
+		return NextResponse.json(
+			{ error: "Envía un link a scrapear" },
+			{ status: 400 }
+		);
+	}
+	let browser: Browser;
+	browser = await puppeteer.launch({
+		args: [
+			"--disable-setuid-sandbox",
+			"--no-sandbox",
+			"--single-process",
+			"--no-zygote",
+		],
+		executablePath:
+			process.env.NODE_ENV === "production"
+				? process.env.PUPPETEER_EXECUTABLE_PATH
+				: puppeteer.executablePath(),
+	});
+	if (page === "Exito") {
+		return getDataFromExitoPage(browser, pageScrape);
+	} else {
+		return getDataFromPitaIbizaPage(browser, pageScrape);
+	}
 }
 
 // PITA IBIZA
