@@ -1,15 +1,11 @@
 # Establecer la imagen base
 FROM ghcr.io/puppeteer/puppeteer:22.0.0
 
-# Configurar Puppeteer para usar la versión preinstalada de Chromium
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
-
 # Establecer el directorio de trabajo en el contenedor
 WORKDIR /usr/src/app
 
 # Copiar el archivo .env
-COPY .env ./
+COPY .env.production .env
 
 # Copiar el archivo package.json y package-lock.json
 COPY package*.json ./

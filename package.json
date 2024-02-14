@@ -5,9 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start ",
-    "chrome":"npx puppeteer browsers install chrome",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
     "@hugocxl/react-to-image": "^0.0.9",
