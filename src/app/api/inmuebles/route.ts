@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { dbConnect, inmuebleService } from "@/app/lib";
+import { dbConnect, inmuebleService } from "@/lib";
 import { getSearchParams } from "@/helpers";
 
 export async function GET(request: NextRequest) {

@@ -7,34 +7,42 @@ import {
 } from "../../../interfaces";
 import { generalService } from "../../../service";
 import { autoScroll } from "@/helpers";
-import { dbConnect, inmuebleService } from "@/app/lib";
+import { dbConnect, inmuebleService } from "@/lib";
 
 export async function POST(request: Request) {
-	const { linkParams: pageScrape, page } = await request.json();
-	if (!pageScrape || !page) {
-		return NextResponse.json(
-			{ error: "Envía un link a scrapear" },
-			{ status: 400 }
-		);
-	}
-	let browser: Browser;
-	browser = await puppeteer.launch({
-		args: [
-			"--disable-setuid-sandbox",
-			"--no-sandbox",
-			"--single-process",
-			"--no-zygote",
-		],
-		executablePath:
-			process.env.NODE_ENV === "production"
-				? process.env.PUPPETEER_EXECUTABLE_PATH
-				: puppeteer.executablePath(),
-	});
-	if (page === "Exito") {
-		return getDataFromExitoPage(browser, pageScrape);
-	} else {
-		return getDataFromPitaIbizaPage(browser, pageScrape);
-	}
+  const { linkParams: pageScrape, page } = await request.json();
+  if (!pageScrape || !page) {
+    return NextResponse.json(
+      { error: "Envía un link a scrapear" },
+      { status: 400 }
+    );
+  }
+  let browser: Browser;
+  try {
+    browser = await puppeteer.launch({
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+      	process.env.NODE_ENV === "production"
+      		? process.env.PUPPETEER_EXECUTABLE_PATH
+      		: puppeteer.executablePath(),
+    });
+    if (page === "Exito") {
+      return getDataFromExitoPage(browser, pageScrape);
+    } else {
+      return getDataFromPitaIbizaPage(browser, pageScrape);
+    }
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: "No se ha podido conectar", posibleError: error?.message},
+      { status: 500 }
+    );
+  }
+ 
 }
 
 // PITA IBIZA
@@ -202,6 +210,8 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
         };
         productsPromo.push(data);
       }
+
+      console.log(productsPromo);
     });
 
     return NextResponse.json({ data: productsPromo }, { status: 200 });

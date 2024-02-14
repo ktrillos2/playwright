@@ -119,15 +119,20 @@ export default function Home() {
   const setDataExito = async () => {
     setIsLoading(true);
     setError(null);
-    const response: any = await generalService.scrappingData({
-      linkParams: pageUrl,
-      page: "Exito",
-    });
+    try {
+      const response: any = await generalService.scrappingData({
+        linkParams: pageUrl,
+        page: "Exito",
+      });
 
-    const { data } = response
+      const { data } = response
 
-    setExitoPage(data);
-    setIsLoading(false);
+      setExitoPage(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getInmuebles = async () => {
