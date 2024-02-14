@@ -31,7 +31,7 @@ interface Props {
 export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
   const [displayImage, setDisplayImage] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { name, discountPercentage, priceWithoutDiscount, lowPrice, image } =
+  const { name, discountPercentage, priceWithoutDiscount, lowPrice, images } =
     info || {};
 
   const [showEditor, setShowEditor] = useState(false);
@@ -57,7 +57,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
       if (!info) return;
       setIsLoading(true);
       try {
-        const response = await removeBackground(info.image[0].url);
+        const response = await removeBackground(info.images[0]);
         setDisplayImage(response);
       } catch (error) {
         console.log(error);
@@ -119,7 +119,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                     <div className="absolute bottom-0">
                       <div className={!displayImage ? "opacity-50" : ""}>
                         <Image
-                          src={displayImage ?? image[0].url}
+                          src={displayImage ?? images[0]}
                           alt="image"
                           width={200}
                         ></Image>
