@@ -8,6 +8,9 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # Establecer el directorio de trabajo en el contenedor
 WORKDIR /usr/src/app
 
+# Copiar el archivo .env
+COPY .env ./
+
 # Copiar el archivo package.json y package-lock.json
 COPY package*.json ./
 
