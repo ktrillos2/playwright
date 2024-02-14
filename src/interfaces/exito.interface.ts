@@ -1,7 +1,7 @@
 export interface Exito {
     name:      string;
     brandName: string;
-    image:     Image[];
+    images:     string[];
     lowPrice:  number;
     discountPercentage: number;
     PriceWithoutDiscount: number
