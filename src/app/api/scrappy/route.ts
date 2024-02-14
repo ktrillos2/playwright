@@ -14,7 +14,18 @@ export async function POST(request: Request) {
 		);
 	}
 	let browser: Browser;
-	browser = await puppeteer.launch();
+	browser = await puppeteer.launch({
+		args: [
+			"--disable-setuid-sandbox",
+			"--no-sandbox",
+			"--single-process",
+			"--no-zygote",
+		],
+		executablePath:
+			process.env.NODE_ENV === "production"
+				? process.env.PUPPETEER_EXECUTABLE_PATH
+				: puppeteer.executablePath(),
+	});
 	if (page === "Exito") {
 		return getDataFromExitoPage(browser, pageScrape);
 	} else {
@@ -102,30 +113,30 @@ const getDataFromPitaIbiza = async (page: Page) => {
 // EXITO
 
 const getDataFromExitoPage = async (browser: Browser, link: string) => {
-	console.log("entro a funcion")
+	console.log("entro a funcion");
 	try {
-		console.log("paso el try")
+		console.log("paso el try");
 		const page = await browser.newPage();
-		console.log(page,"pagina 1")
+		console.log(page, "pagina 1");
 		await page.goto(link, { waitUntil: "networkidle0" });
-		console.log(page,"pagina 2")
+		console.log(page, "pagina 2");
 		const preContent = await page.$eval(
 			"body pre",
 			(element) => element.textContent
-			);
-			console.log(preContent,"coontenido")
-			
-			const data = preContent ? JSON.parse(preContent) : null;
-			console.log(data,"data")
+		);
+		console.log(preContent, "coontenido");
+
+		const data = preContent ? JSON.parse(preContent) : null;
+		console.log(data, "data");
 		return NextResponse.json({ data: data || {} }, { status: 200 });
 	} catch (error: any) {
-		console.log(error,"error")
+		console.log(error, "error");
 		return NextResponse.json(
 			{ error: "Ha ocurrido un error", possibleError: error?.message },
 			{ status: 500 }
 		);
 	} finally {
-		console.log(browser,"navegador")
+		console.log(browser, "navegador");
 		if (browser) {
 			await browser.close();
 		}
@@ -242,7 +253,7 @@ const saveData = async (data: Inmueble[]) => {
 		const { Inmueble } = await connect();
 		await Inmueble.deleteMany({});
 		await Inmueble.insertMany(data);
-	} catch (error: any) { }
+	} catch (error: any) {}
 };
 
 const setUserAgentAndHeaders = async (page: Page) => {
