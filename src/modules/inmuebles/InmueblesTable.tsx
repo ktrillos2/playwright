@@ -1,9 +1,9 @@
-'use client';
+"use client";
 import { useCallback } from "react";
 import { Button, Image } from "@nextui-org/react";
 
-import { CustomTable } from "@/components";
 import { Columns, Inmueble } from "@/interfaces";
+import { AsyncCustomTable } from "@/components";
 
 const columns: Columns[] = [
   {
@@ -34,9 +34,19 @@ const columns: Columns[] = [
 
 interface Props {
   inmuebles: Inmueble[];
+  page: number;
+  totalPages: number;
+  totalInmuebles: number;
+  limit: number;
 }
 
-export const InmueblesTable: React.FC<Props> = ({ inmuebles }) => {
+export const InmueblesTable: React.FC<Props> = ({
+  inmuebles,
+  page,
+  totalPages,
+  totalInmuebles,
+  limit,
+}) => {
   const renderCell = useCallback((data: any, columnKey: React.Key) => {
     const cellValue = data[columnKey as keyof any];
     const { image, url } = data;
@@ -57,10 +67,15 @@ export const InmueblesTable: React.FC<Props> = ({ inmuebles }) => {
   }, []);
 
   return (
-    <CustomTable
-      data={inmuebles ?? []}
+    <AsyncCustomTable
+      items={inmuebles ?? []}
       columns={columns}
       renderCell={renderCell}
+      page={page}
+      totalPages={totalPages}
+      totalItems={totalInmuebles}
+      limit={limit}
+      itemsName="inmuebles"
     />
   );
 };

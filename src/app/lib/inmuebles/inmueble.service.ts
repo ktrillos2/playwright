@@ -20,7 +20,7 @@ class InmuebleDbService {
   }
 
   async getPaginateInmuebles({
-    limit = 20,
+    limit = 25,
     page = 1,
     sort = "createdAt",
     query = {},
@@ -30,6 +30,10 @@ class InmuebleDbService {
 
   async deleteAllInmuebles() {
     return this.inmuebleModel.deleteMany({});
+  }
+
+  async saveInmuebles(inmuebles: Inmueble[]) {
+    return this.inmuebleModel.insertMany(inmuebles);
   }
 }
 

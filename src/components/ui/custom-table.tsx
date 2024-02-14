@@ -10,8 +10,9 @@ import {
 	TableRow,
 	getKeyValue,
 } from "@nextui-org/react";
-import { usePropsPaginator } from "../hooks";
-import { Columns } from "../interfaces";
+import { useCallback, type FC } from "react";
+import { usePropsPaginator } from "../../hooks";
+import { Columns } from "../../interfaces";
 
 interface Props {
 	data: any[];
@@ -19,9 +20,8 @@ interface Props {
 	renderCell?: (...props: any) => any
 }
 
-export const AsyncCustomTable: React.FC<Props> = ({ data, columns, renderCell = getKeyValue }) => {
-	
-  const { items, page, pagesPaginator, setPage } = usePropsPaginator({
+export const CustomTable: FC<Props> = ({ data, columns, renderCell = getKeyValue }) => {
+	const { items, page, pagesPaginator, setPage } = usePropsPaginator({
 		data,
 	});
 

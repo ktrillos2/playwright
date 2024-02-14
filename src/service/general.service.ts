@@ -14,10 +14,18 @@ class GeneralService extends ServiceClass {
     });
   }
 
-  async getInmuebles(): Promise<PaginationResponse<Inmueble>> {
+  async getInmuebles({
+    page,
+    limit,
+  }: {
+    page?: string | number;
+    limit?: string | number;
+  }): Promise<PaginationResponse<Inmueble>> {
+    const params = { page, limit };
     return await super.getQuery<PaginationResponse<Inmueble>>({
       URL: BASE_API_URL,
       path: "api/inmuebles",
+      params,
     });
   }
 
