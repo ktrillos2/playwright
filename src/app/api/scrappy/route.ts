@@ -27,9 +27,9 @@ export async function POST(request: Request) {
         "--no-zygote",
       ],
       executablePath:
-      	process.env.NODE_ENV === "production"
-      		? process.env.PUPPETEER_EXECUTABLE_PATH
-      		: puppeteer.executablePath(),
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
     });
     if (page === "Exito") {
       return getDataFromExitoPage(browser, pageScrape);
@@ -38,11 +38,10 @@ export async function POST(request: Request) {
     }
   } catch (error: any) {
     return NextResponse.json(
-      { error: "No se ha podido conectar", posibleError: error?.message},
+      { error: "No se ha podido conectar", posibleError: error?.message },
       { status: 500 }
     );
   }
- 
 }
 
 // PITA IBIZA
