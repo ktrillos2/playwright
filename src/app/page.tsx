@@ -124,8 +124,8 @@ export default function Home() {
       page: "Exito",
     });
 
-    const {data} = response
-    
+    const { data } = response
+
     setExitoPage(data);
     setIsLoading(false);
   };
@@ -174,7 +174,7 @@ export default function Home() {
       const cellValue = data[columnKey as keyof any];
       const { image, url } = data;
 
-			switch (columnKey) {
+      switch (columnKey) {
         case "image":
           return image ? (
             <Image src={image} alt="image" width={100}></Image>
@@ -212,7 +212,7 @@ export default function Home() {
         onOpenChange={onOpenChange}
       />
 
-      <div className="flex flex-row items-center justify-center gap-10 w-full">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-10 w-full">
         <Select
           label="Selecciona un link para scrapear"
           size="sm"
@@ -254,7 +254,7 @@ export default function Home() {
       )}
 
       {pageUrl === links[0].value && (
-        <div className="!max-w-1/2">
+        <div className="w-[80vw]">
           <CustomTable
             data={exitoPage ?? []}
             columns={columnsExito}
@@ -264,7 +264,7 @@ export default function Home() {
       )}
 
       {pageUrl === links[1].value && (
-        <div className="!max-w-1/2">
+        <div className="w-[80vw]">
           <CustomTable
             data={inmuebles ?? []}
             columns={columnsPitaIbiza}
