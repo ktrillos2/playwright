@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Modal,
@@ -31,8 +31,10 @@ interface Props {
 export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
   const [displayImage, setDisplayImage] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { name, discountPercentage, PriceWithoutDiscount, lowPrice, image } =
+  const { name, discountPercentage, priceWithoutDiscount, lowPrice, image } =
     info || {};
+
+  const [showEditor, setShowEditor] = useState(false);
 
   const [state, convertToPng, ref] = useToPng({
     onSuccess: (data) => {
@@ -43,9 +45,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
     },
   });
 
-  const [backgroundColor, setBackgroundColor] = useState<string>(
-    ""
-  );
+  const [backgroundColor, setBackgroundColor] = useState<string>("");
   const { setSolid, setGradient } = useColorPicker(
     backgroundColor,
     setBackgroundColor
@@ -73,7 +73,6 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
       setDisplayImage(null);
     }
   }, [isOpen]);
-
   return (
     <Modal
       isOpen={isOpen}
@@ -110,7 +109,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                     </div>
                     <div className="absolute text-black bottom-3 left-3">
                       <span className="line-through block text-xs">
-                        ${PriceWithoutDiscount?.toLocaleString()}
+                        ${priceWithoutDiscount?.toLocaleString()}
                       </span>
                       <span className="font-bold">
                         {"$"}
@@ -128,23 +127,36 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                     </div>
                   </div>
                   {isLoading ? (
-                    <p className="text-center text-sm pt-4">Quitando fondo...</p>
+                    <p className="text-center text-sm pt-4">
+                      Quitando fondo...
+                    </p>
                   ) : null}{" "}
-                  <div className="pt-4">
-
+                  <div className="pt-4 flex gap-2">
                     <Button color="danger" variant="light" onPress={onClose}>
                       Cerrar
                     </Button>
-                    <Button disabled={!displayImage} color="primary" onPress={convertToPng}>
+                    <Button
+                      disabled={!displayImage}
+                      color="primary"
+                      onPress={convertToPng}
+                    >
                       Descargar
+                    </Button>
+                    <Button
+                      disabled={!displayImage}
+                      onPress={() => setShowEditor(!showEditor)}
+                    >
+                      {showEditor ? "Quitar editor" : "Mostrar editor"}
                     </Button>
                   </div>
                 </div>
                 <div className="">
-                  <ColorPicker
-                    value={backgroundColor}
-                    onChange={setBackgroundColor}
-                  />
+                  {showEditor ? (
+                    <ColorPicker
+                      value={backgroundColor}
+                      onChange={setBackgroundColor}
+                    />
+                  ) : null}
                 </div>
               </div>
             </ModalBody>
