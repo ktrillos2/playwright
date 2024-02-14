@@ -1,16 +1,17 @@
 export interface Exito {
     name:      string;
     brandName: string;
-    images:     string[];
+    image:     Image[];
     lowPrice:  number;
     discountPercentage: number;
-    priceWithoutDiscount: number
+    PriceWithoutDiscount: number
 }
 
 export interface Image {
     url:           string;
     alternateName: string;
 }
+
 
 export interface PromosTecnologyExito {
     data: PromosTecnologyExitoData;
