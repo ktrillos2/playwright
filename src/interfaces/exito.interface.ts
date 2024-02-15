@@ -237,3 +237,8 @@ export interface NodeProperty {
 export interface PageInfo {
     totalCount: number;
 }
+
+export interface Variables{
+    first?: number;
+    after?: string;
+}

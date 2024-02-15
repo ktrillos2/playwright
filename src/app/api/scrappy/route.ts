@@ -4,38 +4,78 @@ import {
   Inmueble,
   PromosTecnologyExito,
   PromosTecnologyExitoData,
+  Variables,
 } from "../../../interfaces";
 import { generalService } from "../../../service";
 import { autoScroll } from "@/helpers";
 import { dbConnect, inmuebleService } from "@/app/lib";
+import locateChrome from "locate-chrome";
+
+const getLocateChrome = async () => {
+  let localeChrome: string | null = await locateChrome();
+  if (!localeChrome) throw new Error("No se encontró el path de Chrome");
+  return localeChrome;
+};
+
+const getBrowser = async () => {
+  const locateBrowser = await getLocateChrome();
+
+  const browser = await puppeteer.launch({
+    args: [
+      "--disable-setuid-sandbox",
+      "--no-sandbox",
+      "--single-process",
+      "--no-zygote",
+    ],
+    executablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETEER_EXECUTABLE_PATH
+        : locateBrowser,
+  });
+
+  return browser;
+};
 
 export async function POST(request: Request) {
-	const { linkParams: pageScrape, page } = await request.json();
-	if (!pageScrape || !page) {
-		return NextResponse.json(
-			{ error: "Envía un link a scrapear" },
-			{ status: 400 }
-		);
-	}
-	let browser: Browser;
-	browser = await puppeteer.launch({
-		args: [
-			"--disable-setuid-sandbox",
-			"--no-sandbox",
-			"--single-process",
-			"--no-zygote",
-		],
-		executablePath:
-			process.env.NODE_ENV === "production"
-				? process.env.PUPPETEER_EXECUTABLE_PATH
-				: puppeteer.executablePath(),
-	});
-	if (page === "Exito") {
-		return getDataFromExitoPage(browser, pageScrape);
-	} else {
-		return getDataFromPitaIbizaPage(browser, pageScrape);
-	}
+  const { linkParams: pageScrape, page } = await request.json();
+  if (!pageScrape || !page) {
+    return NextResponse.json(
+      { error: "Envía un link a scrapear" },
+      { status: 400 }
+    );
+  }
+
+	const browser = await getBrowser();
+
+  if (page === "Exito") {
+    return getDataFromExitoPage(browser, pageScrape);
+  } else {
+    return getDataFromPitaIbizaPage(browser, pageScrape);
+  }
 }
+
+const updateUrlVariables = (url: string, { after }: Variables) => {
+  const regex = /("after"%3A")(\d+?)("%2C)/;
+
+  // Reemplaza el valor actual de 'after' con el nuevo valor
+  const updatedUrl = url.replace(regex, `$1${after}$3`);
+
+  return updatedUrl;
+};
+
+const extractAfterFromUrl = (url: string) => {
+  // Parsea la URL y sus parámetros
+  const urlObj = new URL(url);
+  const params = new URLSearchParams(urlObj.search);
+
+  // Obtiene las variables actuales
+  const currentVariables = JSON.parse(
+    decodeURIComponent(params.get("variables") ?? "")
+  );
+
+  // Devuelve el valor de 'after'
+  return Number(currentVariables.after);
+};
 
 // PITA IBIZA
 const getDataFromPitaIbizaPage = async (browser: Browser, link: string) => {
@@ -114,105 +154,107 @@ const getDataFromPitaIbiza = async (page: Page) => {
 // EXITO
 
 const getDataFromExitoPage = async (browser: Browser, link: string) => {
-  console.log("entro a funcion");
   try {
-    console.log("paso el try");
-    const page = await browser.newPage();
-    console.log(page, "pagina 1");
-    await page.goto(link, { waitUntil: "networkidle0" });
-    console.log(page, "pagina 2");
-    const preContent = await page.$eval(
-      "body pre",
-      (element) => element.textContent
-    );
-
-    if (!preContent) throw new Error("No se encontró el contenido");
-
-    const preContentOb: PromosTecnologyExitoData = JSON.parse(
-      preContent ?? "{}"
-    );
-
-    const products = preContentOb.data.search.products.edges;
-
     let productsPromo: any[] = [];
-    products.forEach((product) => {
-      const {
-        node: {
-          name,
-          brand: { brandName },
-          image,
-          offers: { lowPrice },
-          sellers,
-          breadcrumbList: { itemListElement },
-        },
-      } = product;
+    let limitUrl = extractAfterFromUrl(link);
+    let totalCounts;
+    let products;
+    do {
+      const page = await browser.newPage();
+      await page.goto(link, { waitUntil: "networkidle0" });
+      const preContent = await page.$eval(
+        "body pre",
+        (element) => element.textContent
+      );
 
-      let sellerData = null;
+      if (!preContent) throw new Error("No se encontró el contenido");
 
-      for (let i = 0; i < sellers.length; i++) {
+      const preContentOb: PromosTecnologyExitoData = JSON.parse(
+        preContent ?? "{}"
+      );
+
+      products = preContentOb.data.search.products.edges;
+      totalCounts = preContentOb.data.search.products.pageInfo.totalCount;
+      products.forEach((product) => {
         const {
-          sellerName,
-          commertialOffer: {
-            PriceWithoutDiscount: priceWithoutDiscount,
-            teasers,
+          node: {
+            name,
+            brand: { brandName },
+            image,
+            offers: { lowPrice },
+            sellers,
+            breadcrumbList: { itemListElement },
           },
-        } = sellers[i];
-        let discountWithCard = null;
+        } = product;
 
-        teasers?.forEach((teaser) => {
+        let sellerData = null;
+
+        for (let i = 0; i < sellers.length; i++) {
           const {
-            effects: { parameters },
-          } = teaser;
-          parameters.forEach((parameter) => {
-            const { name, value } = parameter;
-            if (name === "PromotionalPriceTableItemsDiscount") {
-              discountWithCard = +value;
-            }
-          });
-        });
-
-        if (discountWithCard !== null) {
-          const priceWithCard = priceWithoutDiscount - discountWithCard;
-          const discountPercentage = Math.round(
-            (discountWithCard / priceWithoutDiscount) * 100
-          );
-          sellerData = {
             sellerName,
-            priceWithCard,
-            priceWithoutDiscount,
-            discountPercentage,
-          };
-          break;
+            commertialOffer: {
+              PriceWithoutDiscount: priceWithoutDiscount,
+              teasers,
+            },
+          } = sellers[i];
+          let discountWithCard = null;
+
+          teasers?.forEach((teaser) => {
+            const {
+              effects: { parameters },
+            } = teaser;
+            parameters.forEach((parameter) => {
+              const { name, value } = parameter;
+              if (name === "PromotionalPriceTableItemsDiscount") {
+                discountWithCard = +value;
+              }
+            });
+          });
+
+          if (discountWithCard !== null) {
+            const priceWithCard = priceWithoutDiscount - discountWithCard;
+            const discountPercentage = Math.round(
+              (discountWithCard / priceWithoutDiscount) * 100
+            );
+            sellerData = {
+              sellerName,
+              priceWithCard,
+              priceWithoutDiscount,
+              discountPercentage,
+            };
+            break;
+          }
         }
-      }
 
-      const images = image?.map(({ url }: any) => url);
-
-      if (sellerData !== null) {
-        const data = {
-          name,
-          brandName,
-          image: images,
-          lowPrice,
-          urlExito:
-            "https://www.exito.com" +
-            itemListElement[itemListElement.length - 1].item,
-          ...sellerData,
-          // options: "options",
-        };
+        const images = image?.map(({ url }: any) => url);
+        let data: any;
+        if (sellerData !== null) {
+          data = {
+            name,
+            brandName,
+            images,
+            lowPrice,
+            urlExito:
+              "https://www.exito.com" +
+              itemListElement[itemListElement.length - 1].item,
+            ...sellerData,
+            // options: "options",
+          };
+        }
         productsPromo.push(data);
-      }
-    });
+      });
+      // Actualiza la URL para la próxima iteración
+      limitUrl += 16;
+      link = updateUrlVariables(link, { after: limitUrl.toString() });
+    } while (limitUrl < totalCounts);
 
     return NextResponse.json({ data: productsPromo }, { status: 200 });
   } catch (error: any) {
-    console.log(error, "error");
     return NextResponse.json(
       { error: "Ha ocurrido un error", possibleError: error?.message },
       { status: 500 }
     );
   } finally {
-    console.log(browser, "navegador");
     if (browser) {
       await browser.close();
     }

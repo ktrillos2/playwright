@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function InmueblesPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
-  const limit = +searchParams.limit || 25;
+  const limit = +searchParams.limit || 5;
 
   const { docs, totalPages, totalDocs } = await generalService.getInmuebles({
     page,

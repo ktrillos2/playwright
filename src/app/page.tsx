@@ -15,8 +15,8 @@ import loadingAnimation from "../../public/lottie/loading.json";
 import errorAnimation from "../../public/lottie/error.json";
 
 import { generalService } from "../service";
-import { Columns, Exito, Inmueble, PromosTecnologyExito } from "../interfaces";
-import { CustomTable, ModalImage } from "../components";
+import { Columns, Exito, Inmueble } from "../interfaces";
+import { CopyClipboardButton, CustomTable, ModalImage } from "../components";
 import { links } from "../constants";
 
 const columnsPitaIbiza: Columns[] = [
@@ -65,7 +65,7 @@ const columnsExito: Columns[] = [
   },
   {
     key: "discountPercentage",
-    label: "porcentaje de descuento",
+    label: "Descuento",
   },
   {
     key: "priceWithCard",
@@ -99,7 +99,6 @@ export default function Home() {
         setDataPitaIbiza();
       }
     } catch (error: any) {
-      console.log(error);
       setError(error);
     } finally {
       if (!(pageUrl === links[0].value)) {
@@ -118,16 +117,19 @@ export default function Home() {
 
   const setDataExito = async () => {
     setIsLoading(true);
-    setError(null);
-    const response: any = await generalService.scrappingData({
-      linkParams: pageUrl,
-      page: "Exito",
-    });
-
-    const { data } = response
-
-    setExitoPage(data);
-    setIsLoading(false);
+    try {
+      setError(null);
+      const response: any = await generalService.scrappingData({
+        linkParams: pageUrl,
+        page: "Exito",
+      });
+      const { data } = response;
+      setExitoPage(data);
+    } catch (error: any) {
+      return error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getInmuebles = async () => {
@@ -172,17 +174,25 @@ export default function Home() {
   const renderCellExito = useCallback(
     (data: any, columnKey: React.Key) => {
       const cellValue = data[columnKey as keyof any];
-      const { image, url } = data;
-
+      const { images, image, urlExito } = data;
       switch (columnKey) {
         case "image":
-          return image ? (
-            <Image src={image} alt="image" width={100}></Image>
-          ) : null;
+          return images ? (
+            <div className="w-[80px]">
+              <Image src={images[0]} alt="image" className="!w-full"></Image>
+            </div>
+          ) : (
+            <Image src={image} alt="image" className="!w-[90px]"></Image>
+          );
 
-        case "url":
+        case "urlExito":
           return (
-            <Button onClick={() => window.open(url, "_blank")}>Ver más</Button>
+            <div className="flex gap-2">
+              <Button onClick={() => window.open(urlExito, "_blank")}>
+                Ver más
+              </Button>
+              <CopyClipboardButton content={urlExito} />
+            </div>
           );
 
         case "options":
@@ -203,6 +213,25 @@ export default function Home() {
     },
     [onOpen]
   );
+
+  const renderCellPitiIbiza = useCallback((data: any, columnKey: React.Key) => {
+    const cellValue = data[columnKey as keyof any];
+    const { image, url } = data;
+    switch (columnKey) {
+      case "image":
+        return image ? (
+          <Image src={image} alt="image" width={100}></Image>
+        ) : null;
+
+      case "url":
+        return (
+          <Button onClick={() => window.open(url, "_blank")}>Ver más</Button>
+        );
+
+      default:
+        return cellValue;
+    }
+  }, []);
 
   return (
     <main className="flex flex-col gap-3 items-center justify-center min-h-screen p-10">
@@ -268,7 +297,7 @@ export default function Home() {
           <CustomTable
             data={inmuebles ?? []}
             columns={columnsPitaIbiza}
-            renderCell={renderCellExito}
+            renderCell={renderCellPitiIbiza}
           />
         </div>
       )}
