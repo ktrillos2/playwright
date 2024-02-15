@@ -23,7 +23,7 @@ class CouponDbService {
   async getPaginateCoupons({
     limit = 5,
     page = 1,
-    sort = "createdAt",
+    sort = "-discountPercentage",
     query = {},
   }: PaginatorProps<Coupon> = {}) {
     return this.couponModel.paginate(query, { limit, page, sort });

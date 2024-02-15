@@ -1,6 +1,6 @@
 import { Coupon } from ".";
 
-export interface Exito extends Coupon {
+export interface CalculatedCoupon extends Coupon {
     lowPrice:  number;
     priceWithCard: number | null;
 }

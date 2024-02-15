@@ -40,9 +40,11 @@ class GeneralService extends ServiceClass {
   async getCoupons({
     page,
     limit,
+    sort
   }: {
     page?: string | number;
     limit?: string | number;
+    sort?: string | string;
   }): Promise<PaginationResponse<Coupon>> {
     const params = { page, limit };
 

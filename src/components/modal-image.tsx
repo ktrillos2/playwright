@@ -11,21 +11,18 @@ import {
   Image,
 } from "@nextui-org/react";
 import { removeBackground } from "@/helpers";
-import { Exito } from "@/interfaces";
+import { Coupon, CalculatedCoupon } from "@/interfaces";
 
 import NextImage from "next/image";
 
 import ColorPicker, { useColorPicker } from "react-best-gradient-color-picker";
 
-import { useRef } from "react";
-import * as htmlToImage from "html-to-image";
-import { toPng } from "html-to-image";
 import { useToPng } from "@hugocxl/react-to-image";
 
 interface Props {
   isOpen: boolean;
   onOpenChange: (value: boolean) => void;
-  info: Exito;
+  info: CalculatedCoupon;
 }
 
 export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
