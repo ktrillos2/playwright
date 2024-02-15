@@ -20,7 +20,7 @@ class InmuebleDbService {
   }
 
   async getPaginateInmuebles({
-    limit = 25,
+    limit = 5,
     page = 1,
     sort = "createdAt",
     query = {},

@@ -15,11 +15,9 @@ import loadingAnimation from "../../public/lottie/loading.json";
 import errorAnimation from "../../public/lottie/error.json";
 
 import { generalService } from "../service";
-import { Columns, Exito, Inmueble, PromosTecnologyExito } from "../interfaces";
+import { Columns, Exito, Inmueble } from "../interfaces";
 import { CopyClipboardButton, CustomTable, ModalImage } from "../components";
 import { links } from "../constants";
-
-import { useCopyToClipboard } from 'usehooks-ts'
 
 const columnsPitaIbiza: Columns[] = [
   {
@@ -128,7 +126,7 @@ export default function Home() {
       const { data } = response;
       setExitoPage(data);
     } catch (error: any) {
-      return error
+      return error;
     } finally {
       setIsLoading(false);
     }
@@ -181,20 +179,19 @@ export default function Home() {
         case "image":
           return images ? (
             <div className="w-[80px]">
-              <Image src={images[0] } alt="image" className="!w-full"></Image>
+              <Image src={images[0]} alt="image" className="!w-full"></Image>
             </div>
-          ) : <Image src={image } alt="image" className="!w-[90px]"></Image>;
+          ) : (
+            <Image src={image} alt="image" className="!w-[90px]"></Image>
+          );
 
         case "urlExito":
           return (
             <div className="flex gap-2">
-
-            <Button onClick={() => window.open(urlExito, "_blank")}>
-              Ver más
-            </Button>
-            <CopyClipboardButton 
-              content={urlExito}
-            />
+              <Button onClick={() => window.open(urlExito, "_blank")}>
+                Ver más
+              </Button>
+              <CopyClipboardButton content={urlExito} />
             </div>
           );
 
@@ -260,32 +257,18 @@ export default function Home() {
             </SelectItem>
           )}
         </Select>
-        <Button
-          disabled={isLoading}
-          onClick={scrapePages}
-          color="success"
-        >
+        <Button disabled={isLoading} onClick={scrapePages} color="success">
           Scrappear
         </Button>
-        <Button
-          disabled={isLoading}
-          onClick={getInmuebles}
-          color="secondary"
-        >
+        <Button disabled={isLoading} onClick={getInmuebles} color="secondary">
           Recargar tabla
         </Button>
-        <Button
-          disabled={isLoading}
-          onClick={deleteInmuebles}
-          color="danger"
-        >
+        <Button disabled={isLoading} onClick={deleteInmuebles} color="danger">
           Borrar datos
         </Button>
       </div>
 
-      {isLoading && (
-        <Lottie animationData={loadingAnimation} loop={true} />
-      )}
+      {isLoading && <Lottie animationData={loadingAnimation} loop={true} />}
 
       {error && (
         <div className="flex flex-col items-center w-1/2">
@@ -295,9 +278,7 @@ export default function Home() {
             loop={false}
             style={{ width: 300 }}
           />
-          <pre className="">
-            {JSON.stringify(error || null, null, 3)}
-          </pre>
+          <pre className="">{JSON.stringify(error || null, null, 3)}</pre>
         </div>
       )}
 
