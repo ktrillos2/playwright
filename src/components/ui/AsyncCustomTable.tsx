@@ -1,6 +1,5 @@
 "use client";
 import {
-  Input,
   Pagination,
   Table,
   TableBody,
@@ -39,15 +38,6 @@ export const AsyncCustomTable: React.FC<Props> = ({
 }) => {
   const router = useRouter();
 
-  // const onSearchChange = React.useCallback((value?: string) => {
-  //   if (value) {
-  //     setFilterValue(value);
-  //     setPage(1);
-  //   } else {
-  //     setFilterValue("");
-  //   }
-  // }, []);
-
   const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLimit = e.target.value;
     router.replace(`?page=1&limit=${newLimit}`);
@@ -61,20 +51,11 @@ export const AsyncCustomTable: React.FC<Props> = ({
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
-          {/* <Input
-            isClearable
-            className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          /> */}
           <div className="flex gap-3"></div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {totalItems} {itemsName}
+            Total: {totalItems} {itemsName}
           </span>
           <label
             className="flex items-center text-default-400 text-small"

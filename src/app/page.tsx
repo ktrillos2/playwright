@@ -15,9 +15,11 @@ import loadingAnimation from "../../public/lottie/loading.json";
 import errorAnimation from "../../public/lottie/error.json";
 
 import { generalService } from "../service";
-import { Columns, Exito, Inmueble } from "../interfaces";
+import { Columns, Coupon, CalculatedCoupon, Inmueble } from "../interfaces";
 import { CopyClipboardButton, CustomTable, ModalImage } from "../components";
 import { links } from "../constants";
+import { formatCalculatedCoupon, formatToMoney } from "@/helpers";
+import { clsx } from "clsx";
 
 const columnsPitaIbiza: Columns[] = [
   {
@@ -75,7 +77,7 @@ const columnsExito: Columns[] = [
     key: "priceWithoutDiscount",
     label: "Precio sin descuento",
   },
-  { key: "urlExito", label: "Link" },
+  { key: "url", label: "Link" },
   {
     key: "options",
     label: "Opciones",
@@ -84,7 +86,7 @@ const columnsExito: Columns[] = [
 
 export default function Home() {
   const [inmuebles, setInmuebles] = useState<Inmueble[]>();
-  const [exitoPage, setExitoPage] = useState<Exito[]>();
+  const [exitoPage, setExitoPage] = useState<CalculatedCoupon[]>();
   const [pageUrl, setPageUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<null | any>(null);
@@ -94,9 +96,9 @@ export default function Home() {
     setError(null);
     try {
       if (pageUrl === links[0].value) {
-        setDataExito();
+        scrapeDataExito();
       } else {
-        setDataPitaIbiza();
+        scrapeDataPitaIbiza();
       }
     } catch (error: any) {
       setError(error);
@@ -107,7 +109,7 @@ export default function Home() {
     }
   };
 
-  const setDataPitaIbiza = async () => {
+  const scrapeDataPitaIbiza = async () => {
     const response = await generalService.scrappingData({
       linkParams: pageUrl,
       page: "Pita Ibiza",
@@ -115,16 +117,19 @@ export default function Home() {
     setInmuebles(response.data);
   };
 
-  const setDataExito = async () => {
+  const scrapeDataExito = async () => {
     setIsLoading(true);
     try {
       setError(null);
-      const response: any = await generalService.scrappingData({
+      const response = await generalService.scrappingData({
         linkParams: pageUrl,
         page: "Exito",
       });
-      const { data } = response;
-      setExitoPage(data);
+      const data: Coupon[] = response.data;
+
+      const formattedData = formatCalculatedCoupon(data);
+
+      setExitoPage(formattedData);
     } catch (error: any) {
       return error;
     } finally {
@@ -133,16 +138,35 @@ export default function Home() {
   };
 
   const getInmuebles = async () => {
-    setIsLoading(true);
-
-    setError(null);
     try {
       const response = await generalService.getInmuebles({ limit: 1000 });
       setInmuebles(response.docs);
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getCoupons = async () => {
+    try {
+      const response = await generalService.getCoupons({ limit: 1000 });
+
+      const { docs } = response;
+
+      const formattedData = formatCalculatedCoupon(docs);
+
+      setExitoPage(formattedData);
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getData = async () => {
+    try {
+      await Promise.all([getInmuebles(), getCoupons()]);
     } catch (error) {
       setError(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -164,52 +188,73 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getInmuebles();
+    getData();
   }, []);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const [selectedInfo, setSelectedInfo] = useState<Exito | null>(null);
+  const [selectedInfo, setSelectedInfo] = useState<CalculatedCoupon | null>(
+    null
+  );
 
   const renderCellExito = useCallback(
     (data: any, columnKey: React.Key) => {
       const cellValue = data[columnKey as keyof any];
-      const { images, image, urlExito } = data;
-      switch (columnKey) {
-        case "image":
-          return images ? (
-            <div className="w-[80px]">
-              <Image src={images[0]} alt="image" className="!w-full"></Image>
-            </div>
-          ) : (
-            <Image src={image} alt="image" className="!w-[90px]"></Image>
-          );
+      const { images, image, url } = data;
 
-        case "urlExito":
-          return (
-            <div className="flex gap-2">
-              <Button onClick={() => window.open(urlExito, "_blank")}>
-                Ver más
-              </Button>
-              <CopyClipboardButton content={urlExito} />
-            </div>
-          );
-
-        case "options":
-          return (
-            <Button
-              onClick={() => {
-                onOpen();
-                setSelectedInfo(data);
-              }}
-            >
-              Ver cupón
-            </Button>
-          );
-
-        default:
-          return cellValue;
+      if (columnKey === "image") {
+        return images ? (
+          <div className="w-[80px]">
+            <Image src={images[0]} alt="image" className="!w-full"></Image>
+          </div>
+        ) : (
+          <Image src={image} alt="image" className="!w-[90px]"></Image>
+        );
       }
+
+      if (columnKey === "url") {
+        return (
+          <div className="flex gap-2">
+            <Button onClick={() => window.open(url, "_blank")}>Ver más</Button>
+            <CopyClipboardButton content={url} />
+          </div>
+        );
+      }
+
+      if (columnKey === "discountPercentage") {
+        return (
+          <span
+            className={clsx({
+              "text-success-500": cellValue >= 50,
+            })}
+          >
+            {cellValue} %
+          </span>
+        );
+      }
+
+      if (
+        ["lowPrice", "priceWithCard", "priceWithoutDiscount"].includes(
+          columnKey as string
+        )
+      ) {
+        return formatToMoney(cellValue);
+      }
+
+      if (columnKey === "options") {
+        return (
+          <Button
+            onClick={() => {
+              onOpen();
+              setSelectedInfo(data);
+            }}
+          >
+            Ver cupón
+          </Button>
+        );
+      }
+
+      return cellValue;
     },
     [onOpen]
   );

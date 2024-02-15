@@ -1,10 +1,8 @@
-export interface Exito {
-    name:      string;
-    brandName: string;
-    images:     string[];
+import { Coupon } from ".";
+
+export interface CalculatedCoupon extends Coupon {
     lowPrice:  number;
-    discountPercentage: number;
-    priceWithoutDiscount: number
+    priceWithCard: number | null;
 }
 
 export interface Image {

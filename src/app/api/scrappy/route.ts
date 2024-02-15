@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import puppeteer, { Browser, Page } from "puppeteer";
 import {
+  Coupon,
   Inmueble,
   PromosTecnologyExito,
   PromosTecnologyExitoData,
@@ -8,8 +9,9 @@ import {
 } from "../../../interfaces";
 import { generalService } from "../../../service";
 import { autoScroll } from "@/helpers";
-import { dbConnect, inmuebleService } from "@/app/lib";
+import { dbConnect, inmuebleService, couponService } from "@/lib";
 import locateChrome from "locate-chrome";
+import { CouponPages } from "@/enums";
 
 const getLocateChrome = async () => {
   let localeChrome: string | null = await locateChrome();
@@ -45,7 +47,7 @@ export async function POST(request: Request) {
     );
   }
 
-	const browser = await getBrowser();
+  const browser = await getBrowser();
 
   if (page === "Exito") {
     return getDataFromExitoPage(browser, pageScrape);
@@ -106,7 +108,7 @@ const getDataFromPitaIbizaPage = async (browser: Browser, link: string) => {
 
     await page.close();
 
-    saveData(data);
+    saveInmobiliarias(data);
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error: any) {
@@ -212,16 +214,20 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
           });
 
           if (discountWithCard !== null) {
-            const priceWithCard = priceWithoutDiscount - discountWithCard;
+            // const priceWithCard = priceWithoutDiscount - discountWithCard;
             const discountPercentage = Math.round(
               (discountWithCard / priceWithoutDiscount) * 100
             );
             sellerData = {
-              sellerName,
-              priceWithCard,
               priceWithoutDiscount,
               discountPercentage,
+              discountWithCard,
             };
+            // sellerData = {
+            //   sellerName,
+            //   priceWithoutDiscount,
+            //   discountPercentage,
+            // };
             break;
           }
         }
@@ -233,20 +239,23 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
             name,
             brandName,
             images,
-            lowPrice,
-            urlExito:
+            // lowPrice,
+            url:
               "https://www.exito.com" +
               itemListElement[itemListElement.length - 1].item,
             ...sellerData,
             // options: "options",
+            page: CouponPages.EXITO,
           };
         }
-        productsPromo.push(data);
+        if (data) productsPromo.push(data);
       });
       // Actualiza la URL para la próxima iteración
       limitUrl += 16;
       link = updateUrlVariables(link, { after: limitUrl.toString() });
     } while (limitUrl < totalCounts);
+
+    await saveCoupons(productsPromo);
 
     return NextResponse.json({ data: productsPromo }, { status: 200 });
   } catch (error: any) {
@@ -364,12 +373,23 @@ const getRandomElement = (array: any[]) => {
   return array[Math.floor(Math.random() * array.length)];
 };
 
-const saveData = async (data: Inmueble[]) => {
+const saveInmobiliarias = async (data: Inmueble[]) => {
   try {
     await dbConnect();
     await inmuebleService.deleteAllInmuebles();
     await inmuebleService.saveInmuebles(data);
   } catch (error: any) {}
+};
+
+const saveCoupons = async (data: Coupon[]) => {
+  try {
+    await dbConnect();
+    await couponService.deleteAllCoupons();
+    await couponService.saveCoupons(data);
+    return true;
+  } catch (error: any) {
+    console.log(error);
+  }
 };
 
 const setUserAgentAndHeaders = async (page: Page) => {

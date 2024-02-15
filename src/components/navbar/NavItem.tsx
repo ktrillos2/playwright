@@ -13,8 +13,7 @@ interface Props {
 
 export const NavItem: React.FC<Props> = ({ name, path }) => {
   const pathname = usePathname();
-
-  const isActive = pathname === path;
+  const isActive = pathname === `/${path}`;
   const color = isActive ? "secondary" : "foreground";
 
   return (
