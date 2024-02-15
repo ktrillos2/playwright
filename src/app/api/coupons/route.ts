@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-import { dbConnect, inmuebleService } from "@/lib";
+import { couponService, dbConnect,  } from "@/lib";
 import { getSearchParams } from "@/helpers";
 
 export async function GET(request: NextRequest) {
@@ -9,11 +8,11 @@ export async function GET(request: NextRequest) {
   const limit = +limitParam || 25;
   try {
     await dbConnect();
-    const inmuebles = await inmuebleService.getPaginateInmuebles({
+    const coupons = await couponService.getPaginateCoupons({
       page,
       limit,
     });
-    return new NextResponse(JSON.stringify(inmuebles), { status: 200 });
+    return new NextResponse(JSON.stringify(coupons), { status: 200 });
   } catch (error: any) {
     return new NextResponse(error.message, { status: 500 });
   }
@@ -22,7 +21,7 @@ export async function GET(request: NextRequest) {
 export async function DELETE(request: Request) {
   try {
     await dbConnect();
-    await inmuebleService.deleteAllInmuebles();
+    await couponService.deleteAllCoupons();
     return new NextResponse(JSON.stringify({}), { status: 200 });
   } catch (error: any) {
     return new NextResponse(error.message, { status: 500 });

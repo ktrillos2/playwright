@@ -15,7 +15,7 @@ import loadingAnimation from "../../public/lottie/loading.json";
 import errorAnimation from "../../public/lottie/error.json";
 
 import { generalService } from "../service";
-import { Columns, Exito, Inmueble } from "../interfaces";
+import { Columns, Coupon, Exito, Inmueble } from "../interfaces";
 import { CopyClipboardButton, CustomTable, ModalImage } from "../components";
 import { links } from "../constants";
 
@@ -82,6 +82,17 @@ const columnsExito: Columns[] = [
   },
 ];
 
+const formatExitoData = (data: Coupon[]) => {
+  const formattedData: Exito[] = data.map((coupon) => ({
+    lowPrice: coupon.priceWithoutDiscount * (coupon.discountPercentage / 100),
+    priceWithCard: coupon.discountWithCard
+      ? coupon.priceWithoutDiscount - coupon.discountWithCard
+      : null,
+    ...coupon,
+  }));
+  return formattedData;
+};
+
 export default function Home() {
   const [inmuebles, setInmuebles] = useState<Inmueble[]>();
   const [exitoPage, setExitoPage] = useState<Exito[]>();
@@ -94,9 +105,9 @@ export default function Home() {
     setError(null);
     try {
       if (pageUrl === links[0].value) {
-        setDataExito();
+        scrapeDataExito();
       } else {
-        setDataPitaIbiza();
+        scrapeDataPitaIbiza();
       }
     } catch (error: any) {
       setError(error);
@@ -107,7 +118,7 @@ export default function Home() {
     }
   };
 
-  const setDataPitaIbiza = async () => {
+  const scrapeDataPitaIbiza = async () => {
     const response = await generalService.scrappingData({
       linkParams: pageUrl,
       page: "Pita Ibiza",
@@ -115,16 +126,19 @@ export default function Home() {
     setInmuebles(response.data);
   };
 
-  const setDataExito = async () => {
+  const scrapeDataExito = async () => {
     setIsLoading(true);
     try {
       setError(null);
-      const response: any = await generalService.scrappingData({
+      const response = await generalService.scrappingData({
         linkParams: pageUrl,
         page: "Exito",
       });
-      const { data } = response;
-      setExitoPage(data);
+      const data: Coupon[] = response.data;
+
+      const formattedData = formatExitoData(data);
+
+      setExitoPage(formattedData);
     } catch (error: any) {
       return error;
     } finally {
@@ -133,16 +147,35 @@ export default function Home() {
   };
 
   const getInmuebles = async () => {
-    setIsLoading(true);
-
-    setError(null);
     try {
       const response = await generalService.getInmuebles({ limit: 1000 });
       setInmuebles(response.docs);
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getCoupons = async () => {
+    try {
+      const response = await generalService.getCoupons({ limit: 1000 });
+
+      const { docs } = response;
+
+      const formattedData = formatExitoData(docs);
+
+      setExitoPage(formattedData);
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getData = async () => {
+    try {
+      await Promise.all([getInmuebles(), getCoupons()]);
     } catch (error) {
       setError(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -165,6 +198,7 @@ export default function Home() {
 
   useEffect(() => {
     getInmuebles();
+    getCoupons();
   }, []);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

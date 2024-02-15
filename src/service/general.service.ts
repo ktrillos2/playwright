@@ -1,7 +1,7 @@
 import ServiceClass from "./ServiceClass";
 
 import { ApiKeys, Urls } from "../enums";
-import { Inmueble } from "../interfaces";
+import { Coupon, Inmueble } from "../interfaces";
 import { BASE_API_URL } from "@/config";
 import { PaginationResponse } from "@/types";
 
@@ -22,6 +22,7 @@ class GeneralService extends ServiceClass {
     limit?: string | number;
   }): Promise<PaginationResponse<Inmueble>> {
     const params = { page, limit };
+
     return await super.getQuery<PaginationResponse<Inmueble>>({
       URL: BASE_API_URL,
       path: "api/inmuebles",
@@ -33,6 +34,29 @@ class GeneralService extends ServiceClass {
     return await super.deleteQuery({
       URL: BASE_API_URL,
       path: "api/inmuebles",
+    });
+  }
+
+  async getCoupons({
+    page,
+    limit,
+  }: {
+    page?: string | number;
+    limit?: string | number;
+  }): Promise<PaginationResponse<Coupon>> {
+    const params = { page, limit };
+
+    return await super.getQuery<PaginationResponse<Coupon>>({
+      URL: BASE_API_URL,
+      path: "api/coupons",
+      params,
+    });
+  }
+
+  async deleteCoupons(): Promise<void> {
+    return await super.deleteQuery({
+      URL: BASE_API_URL,
+      path: "api/coupons",
     });
   }
 
@@ -57,6 +81,7 @@ class GeneralService extends ServiceClass {
       },
     });
   }
+  
 }
 
 export const generalService = new GeneralService();
