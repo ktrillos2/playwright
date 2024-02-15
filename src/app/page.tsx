@@ -117,16 +117,19 @@ export default function Home() {
 
   const setDataExito = async () => {
     setIsLoading(true);
-    setError(null);
-    const response: any = await generalService.scrappingData({
-      linkParams: pageUrl,
-      page: "Exito",
-    });
-
-    const { data } = response
-
-    setExitoPage(data);
-    setIsLoading(false);
+    try {
+      setError(null);
+      const response: any = await generalService.scrappingData({
+        linkParams: pageUrl,
+        page: "Exito",
+      });
+      const { data } = response;
+      setExitoPage(data);
+    } catch (error: any) {
+      return error
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getInmuebles = async () => {
@@ -171,17 +174,20 @@ export default function Home() {
   const renderCellExito = useCallback(
     (data: any, columnKey: React.Key) => {
       const cellValue = data[columnKey as keyof any];
-      const { image, url } = data;
-
+      const { images, image, url } = data;
       switch (columnKey) {
         case "image":
-          return image ? (
-            <Image src={image} alt="image" width={100}></Image>
-          ) : null;
+          return images ? (
+            <div className="w-[80px]">
+              <Image src={images[0] } alt="image" className="!w-full"></Image>
+            </div>
+          ) : <Image src={image } alt="image" className="!w-[90px]"></Image>;
 
         case "url":
           return (
-            <Button onClick={() => window.open(url, "_blank")}>Ver más</Button>
+            <Button onClick={() => window.open(url, "_blank")}>
+              Ver más
+            </Button>
           );
 
         case "options":
@@ -227,18 +233,32 @@ export default function Home() {
             </SelectItem>
           )}
         </Select>
-        <Button disabled={isLoading} onClick={scrapePages} color="success">
+        <Button
+          disabled={isLoading}
+          onClick={scrapePages}
+          color="success"
+        >
           Scrappear
         </Button>
-        <Button disabled={isLoading} onClick={getInmuebles} color="secondary">
+        <Button
+          disabled={isLoading}
+          onClick={getInmuebles}
+          color="secondary"
+        >
           Recargar tabla
         </Button>
-        <Button disabled={isLoading} onClick={deleteInmuebles} color="danger">
+        <Button
+          disabled={isLoading}
+          onClick={deleteInmuebles}
+          color="danger"
+        >
           Borrar datos
         </Button>
       </div>
 
-      {isLoading && <Lottie animationData={loadingAnimation} loop={true} />}
+      {isLoading && (
+        <Lottie animationData={loadingAnimation} loop={true} />
+      )}
 
       {error && (
         <div className="flex flex-col items-center w-1/2">
@@ -248,7 +268,9 @@ export default function Home() {
             loop={false}
             style={{ width: 300 }}
           />
-          <pre className="">{JSON.stringify(error || null, null, 3)}</pre>
+          <pre className="">
+            {JSON.stringify(error || null, null, 3)}
+          </pre>
         </div>
       )}
 
