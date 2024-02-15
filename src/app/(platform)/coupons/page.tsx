@@ -1,8 +1,12 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
-import { CouponsTable, InmueblesTable } from "@/modules";
+import { CouponsTable, DeleteCouponsButton } from "@/modules";
 import { generalService } from "@/service";
 import { formatCalculatedCoupon } from "@/helpers";
+import { Button } from "@nextui-org/react";
+import { revalidatePath } from "next/cache";
+
 
 interface Props {
   searchParams: {
@@ -29,7 +33,15 @@ export default async function CouponsPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="text-left">Cupones Spider</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-left">Cupones Spider</h1>
+        <div className="flex gap-2">
+          <Button as={Link} href="/coupons/scraper" color="success">
+            Scrappear
+          </Button>
+          <DeleteCouponsButton />
+        </div>
+      </div>
       <CouponsTable
         coupons={coupons}
         page={page ?? 1}

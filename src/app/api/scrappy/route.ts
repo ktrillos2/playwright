@@ -255,7 +255,7 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
       link = updateUrlVariables(link, { after: limitUrl.toString() });
     } while (limitUrl < totalCounts);
 
-    saveCoupons(productsPromo);
+    await saveCoupons(productsPromo);
 
     return NextResponse.json({ data: productsPromo }, { status: 200 });
   } catch (error: any) {
@@ -386,6 +386,7 @@ const saveCoupons = async (data: Coupon[]) => {
     await dbConnect();
     await couponService.deleteAllCoupons();
     await couponService.saveCoupons(data);
+    return true;
   } catch (error: any) {
     console.log(error);
   }

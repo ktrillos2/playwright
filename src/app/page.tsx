@@ -19,7 +19,7 @@ import { Columns, Coupon, CalculatedCoupon, Inmueble } from "../interfaces";
 import { CopyClipboardButton, CustomTable, ModalImage } from "../components";
 import { links } from "../constants";
 import { formatCalculatedCoupon, formatToMoney } from "@/helpers";
-import { clsx } from 'clsx';
+import { clsx } from "clsx";
 
 const columnsPitaIbiza: Columns[] = [
   {
@@ -83,8 +83,6 @@ const columnsExito: Columns[] = [
     label: "Opciones",
   },
 ];
-
-
 
 export default function Home() {
   const [inmuebles, setInmuebles] = useState<Inmueble[]>();
@@ -190,13 +188,14 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getInmuebles();
-    getCoupons();
+    getData();
   }, []);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const [selectedInfo, setSelectedInfo] = useState<CalculatedCoupon | null>(null);
+  const [selectedInfo, setSelectedInfo] = useState<CalculatedCoupon | null>(
+    null
+  );
 
   const renderCellExito = useCallback(
     (data: any, columnKey: React.Key) => {
