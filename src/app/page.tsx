@@ -75,7 +75,7 @@ const columnsExito: Columns[] = [
     key: "priceWithoutDiscount",
     label: "Precio sin descuento",
   },
-  { key: "urlExito", label: "Link" },
+  { key: "url", label: "Link" },
   {
     key: "options",
     label: "Opciones",
@@ -174,7 +174,7 @@ export default function Home() {
   const renderCellExito = useCallback(
     (data: any, columnKey: React.Key) => {
       const cellValue = data[columnKey as keyof any];
-      const { images, image, urlExito } = data;
+      const { images, image, url } = data;
       switch (columnKey) {
         case "image":
           return images ? (
@@ -185,13 +185,13 @@ export default function Home() {
             <Image src={image} alt="image" className="!w-[90px]"></Image>
           );
 
-        case "urlExito":
+        case "url":
           return (
             <div className="flex gap-2">
-              <Button onClick={() => window.open(urlExito, "_blank")}>
+              <Button onClick={() => window.open(url, "_blank")}>
                 Ver más
               </Button>
-              <CopyClipboardButton content={urlExito} />
+              <CopyClipboardButton content={url} />
             </div>
           );
 

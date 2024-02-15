@@ -234,7 +234,7 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
             brandName,
             images,
             lowPrice,
-            urlExito:
+            url:
               "https://www.exito.com" +
               itemListElement[itemListElement.length - 1].item,
             ...sellerData,
