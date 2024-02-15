@@ -16,8 +16,10 @@ import errorAnimation from "../../public/lottie/error.json";
 
 import { generalService } from "../service";
 import { Columns, Exito, Inmueble, PromosTecnologyExito } from "../interfaces";
-import { CustomTable, ModalImage } from "../components";
+import { CopyClipboardButton, CustomTable, ModalImage } from "../components";
 import { links } from "../constants";
+
+import { useCopyToClipboard } from 'usehooks-ts'
 
 const columnsPitaIbiza: Columns[] = [
   {
@@ -174,7 +176,7 @@ export default function Home() {
   const renderCellExito = useCallback(
     (data: any, columnKey: React.Key) => {
       const cellValue = data[columnKey as keyof any];
-      const { images, image, url } = data;
+      const { images, image, urlExito } = data;
       switch (columnKey) {
         case "image":
           return images ? (
@@ -183,11 +185,17 @@ export default function Home() {
             </div>
           ) : <Image src={image } alt="image" className="!w-[90px]"></Image>;
 
-        case "url":
+        case "urlExito":
           return (
-            <Button onClick={() => window.open(url, "_blank")}>
+            <div className="flex gap-2">
+
+            <Button onClick={() => window.open(urlExito, "_blank")}>
               Ver más
             </Button>
+            <CopyClipboardButton 
+              content={urlExito}
+            />
+            </div>
           );
 
         case "options":
@@ -208,6 +216,25 @@ export default function Home() {
     },
     [onOpen]
   );
+
+  const renderCellPitiIbiza = useCallback((data: any, columnKey: React.Key) => {
+    const cellValue = data[columnKey as keyof any];
+    const { image, url } = data;
+    switch (columnKey) {
+      case "image":
+        return image ? (
+          <Image src={image} alt="image" width={100}></Image>
+        ) : null;
+
+      case "url":
+        return (
+          <Button onClick={() => window.open(url, "_blank")}>Ver más</Button>
+        );
+
+      default:
+        return cellValue;
+    }
+  }, []);
 
   return (
     <main className="flex flex-col gap-3 items-center justify-center min-h-screen p-10">
@@ -289,7 +316,7 @@ export default function Home() {
           <CustomTable
             data={inmuebles ?? []}
             columns={columnsPitaIbiza}
-            renderCell={renderCellExito}
+            renderCell={renderCellPitiIbiza}
           />
         </div>
       )}
