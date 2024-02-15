@@ -12,25 +12,15 @@ import { dbConnect, inmuebleService } from "@/app/lib";
 import locateChrome from "locate-chrome";
 
 const getLocateChrome = async () => {
-	let localeChrome: string | null = await locateChrome();
-	if (!localeChrome) throw new Error("No se encontró el path de Chrome");
-	return localeChrome;
+  let localeChrome: string | null = await locateChrome();
+  if (!localeChrome) throw new Error("No se encontró el path de Chrome");
+  return localeChrome;
 };
 
-export async function POST(request: Request) {
-  const { linkParams: pageScrape, page } = await request.json();
-  if (!pageScrape || !page) {
-    return NextResponse.json(
-      { error: "Envía un link a scrapear" },
-      { status: 400 }
-    );
-  }
-
+const getBrowser = async () => {
   const locateBrowser = await getLocateChrome();
 
-  let browser: Browser;
-
-  browser = await puppeteer.launch({
+  const browser = await puppeteer.launch({
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
@@ -42,6 +32,20 @@ export async function POST(request: Request) {
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : locateBrowser,
   });
+
+  return browser;
+};
+
+export async function POST(request: Request) {
+  const { linkParams: pageScrape, page } = await request.json();
+  if (!pageScrape || !page) {
+    return NextResponse.json(
+      { error: "Envía un link a scrapear" },
+      { status: 400 }
+    );
+  }
+
+	const browser = await getBrowser();
 
   if (page === "Exito") {
     return getDataFromExitoPage(browser, pageScrape);
