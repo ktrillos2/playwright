@@ -65,7 +65,7 @@ const columnsExito: Columns[] = [
   },
   {
     key: "discountPercentage",
-    label: "porcentaje de descuento",
+    label: "Descuento",
   },
   {
     key: "priceWithCard",
@@ -99,7 +99,6 @@ export default function Home() {
         setDataPitaIbiza();
       }
     } catch (error: any) {
-      console.log(error);
       setError(error);
     } finally {
       if (!(pageUrl === links[0].value)) {
