@@ -108,10 +108,11 @@ const getDataFromPitaIbizaPage = async (browser: Browser, link: string) => {
 
     await page.close();
 
-    saveInmobiliarias(data);
+    await saveInmobiliarias(data);
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error: any) {
+    console.log({error})
     return NextResponse.json(
       { error: "Ha ocurrido un error", possibleError: error?.message },
       { status: 500 }
@@ -378,7 +379,10 @@ const saveInmobiliarias = async (data: Inmueble[]) => {
     await dbConnect();
     await inmuebleService.deleteAllInmuebles();
     await inmuebleService.saveInmuebles(data);
-  } catch (error: any) {}
+    return true;
+  } catch (error: any) {
+    console.log(error);
+  }
 };
 
 const saveCoupons = async (data: Coupon[]) => {

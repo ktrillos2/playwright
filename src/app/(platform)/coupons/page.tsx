@@ -1,12 +1,11 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { Button } from "@nextui-org/react";
 
 import { CouponsTable, DeleteCouponsButton } from "@/modules";
 import { generalService } from "@/service";
 import { formatCalculatedCoupon } from "@/helpers";
-import { Button } from "@nextui-org/react";
 import { revalidatePath } from "next/cache";
-
 
 interface Props {
   searchParams: {
@@ -20,6 +19,11 @@ export const metadata: Metadata = {
   description: "Tabla de cupones",
 };
 
+const handleDeleteCoupons = async () => {
+  await generalService.deleteCoupons();
+  revalidatePath("/coupons");
+};
+
 export default async function CouponsPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
   const limit = +searchParams.limit || 5;
@@ -30,6 +34,8 @@ export default async function CouponsPage({ searchParams }: Props) {
   });
 
   const coupons = formatCalculatedCoupon(docs);
+
+
 
   return (
     <div>

@@ -1,3 +1,3 @@
 export enum Info {
-  TITLE = "Scrapper"
+  TITLE = "Scraper"
 }

@@ -96,9 +96,9 @@ export default function Home() {
     setError(null);
     try {
       if (pageUrl === links[0].value) {
-        scrapeDataExito();
+       await scrapeDataExito();
       } else {
-        scrapeDataPitaIbiza();
+        await  scrapeDataPitaIbiza();
       }
     } catch (error: any) {
       setError(error);
@@ -110,11 +110,16 @@ export default function Home() {
   };
 
   const scrapeDataPitaIbiza = async () => {
-    const response = await generalService.scrappingData({
-      linkParams: pageUrl,
-      page: "Pita Ibiza",
-    });
-    setInmuebles(response.data);
+    try {
+      const response = await generalService.scrappingData({
+        linkParams: pageUrl,
+        page: "Pita Ibiza",
+      });
+      setInmuebles(response.data);
+    } catch (error) {
+      throw error
+    }
+   
   };
 
   const scrapeDataExito = async () => {

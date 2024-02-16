@@ -7,7 +7,7 @@ import { PaginateModel } from "mongoose";
 interface InmuebleDocument extends Document, Inmueble {}
 
 const InmuebleSchema = new Schema<InmuebleDocument>({
-  image: { type: String, required: true },
+  image: { type: String },
   location: { type: String, required: true },
   name: { type: String, required: true },
   page: { type: String, required: true },

@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 
-import { InmueblesTable } from "@/modules";
+import { DeleteInmueblesButton, InmueblesTable } from "@/modules";
 import { generalService } from "@/service";
+import { Button } from "@nextui-org/react";
+import Link from "next/link";
 
 interface Props {
   searchParams: {
@@ -26,7 +28,15 @@ export default async function InmueblesPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="text-left">Inmuebles Spider</h1>
+       <div className="flex justify-between items-center">
+        <h1 className="text-left">Inmuebles Spider</h1>
+        <div className="flex gap-2">
+          <Button as={Link} href="/inmuebles/scraper" color="success">
+            Scrappear
+          </Button>
+          <DeleteInmueblesButton />
+        </div>
+      </div>
       <InmueblesTable
         inmuebles={docs}
         page={page ?? 1}
