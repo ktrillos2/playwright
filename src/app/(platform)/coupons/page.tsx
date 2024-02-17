@@ -35,8 +35,6 @@ export default async function CouponsPage({ searchParams }: Props) {
 
   const coupons = formatCalculatedCoupon(docs);
 
-
-
   return (
     <div>
       <div className="flex justify-between items-center">

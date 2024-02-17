@@ -9,7 +9,7 @@ export default async function CouponsScraperPage() {
     linkParams: links[0].value,
     page: "Exito",
   });
-  
+
   revalidatePath("/coupons");
   redirect("/coupons");
 }

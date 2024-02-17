@@ -17,7 +17,6 @@ import { generalService } from "../service";
 import { Columns, Coupon, CalculatedCoupon, Inmueble } from "../interfaces";
 import { CopyClipboardButton, CustomTable, ModalImage } from "../components";
 import { links } from "../constants";
-import { formatCalculatedCoupon, formatToMoney } from "@/helpers";
 import { clsx } from "clsx";
 import { redirect } from "next/navigation";
 
