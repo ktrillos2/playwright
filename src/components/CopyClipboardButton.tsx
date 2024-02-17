@@ -23,7 +23,7 @@ export const CopyClipboardButton: React.FC<Props> = ({ content }) => {
   };
 
   return (
-    <Button onClick={handleCopy} color="success">
+    <Button onClick={handleCopy} isIconOnly variant="faded">
       <FaRegCopy size={16} className="text-white" />
     </Button>
   );
