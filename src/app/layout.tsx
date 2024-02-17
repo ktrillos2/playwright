@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.className} dark bg-black`}>
-        <Toaster />
+        <Toaster position="top-right" />
         <Providers>{children}</Providers>
       </body>
     </html>
