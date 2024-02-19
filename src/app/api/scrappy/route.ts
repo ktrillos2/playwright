@@ -8,7 +8,7 @@ import {
   Variables,
 } from "../../../interfaces";
 import { generalService } from "../../../service";
-import { autoScroll } from "@/helpers";
+import { autoScroll, saveCoupons } from "@/helpers";
 import { dbConnect, inmuebleService, couponService } from "@/lib";
 import locateChrome from "locate-chrome";
 import { CouponPages } from "@/enums";
@@ -379,17 +379,6 @@ const saveInmobiliarias = async (data: Inmueble[]) => {
     await dbConnect();
     await inmuebleService.deleteAllInmuebles();
     await inmuebleService.saveInmuebles(data);
-    return true;
-  } catch (error: any) {
-    console.log(error);
-  }
-};
-
-const saveCoupons = async (data: Coupon[]) => {
-  try {
-    await dbConnect();
-    await couponService.deleteAllCoupons();
-    await couponService.saveCoupons(data);
     return true;
   } catch (error: any) {
     console.log(error);

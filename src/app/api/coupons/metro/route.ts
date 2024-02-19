@@ -1,5 +1,5 @@
 import { links } from "@/constants";
-import { autoScroll } from "@/helpers";
+import { autoScroll, saveCoupons } from "@/helpers";
 import { Coupon } from "@/interfaces";
 import locateChrome from "locate-chrome";
 import { NextResponse } from "next/server";
@@ -34,7 +34,7 @@ const getData = async (browser: Browser) => {
 	try {
 		const page = await browser.newPage();
 		await page.goto(links[2].value);
-		let divs: Coupon[] = [];
+		let products: Coupon[] = [];
 		// Obtén todos los botones
 		const buttons = await page.$$(
 			".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage"
@@ -84,14 +84,20 @@ const getData = async (browser: Browser) => {
 						};
 					})
 			);
-			divs.push(...newDivs);
+			products.push(...newDivs);
 			// Haz clic en el botón
 			await buttons[i].click();
 			// Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 		}
-		divs = Array.from(new Set(divs.map((div: Coupon) => JSON.stringify(div)))).map((div: string) => JSON.parse(div) as Coupon);
-		return NextResponse.json({ data: divs }, { status: 200 });
+
+		products = Array.from(
+			new Set(products.map((div: Coupon) => JSON.stringify(div)))
+		).map((div: string) => JSON.parse(div) as Coupon);
+
+		await saveCoupons(products);
+
+		return NextResponse.json({ data: products }, { status: 200 });
 	} catch (error: any) {
 		return NextResponse.json(
 			{ error: "Ha ocurrido un error", possibleError: error?.message },
