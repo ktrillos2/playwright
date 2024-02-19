@@ -1,6 +1,7 @@
 import { links } from "@/constants";
-import { autoScroll, saveCoupons } from "@/helpers";
+import { autoScroll } from "@/helpers";
 import { Coupon } from "@/interfaces";
+import { couponService, dbConnect } from "@/lib";
 import locateChrome from "locate-chrome";
 import { NextResponse } from "next/server";
 import puppeteer, { Browser } from "puppeteer";
@@ -108,4 +109,15 @@ const getData = async (browser: Browser) => {
 			await browser.close();
 		}
 	}
+};
+
+export const saveCoupons = async (data: Coupon[]) => {
+  try {
+    await dbConnect();
+    await couponService.deleteAllCoupons();
+    await couponService.saveCoupons(data);
+    return true;
+  } catch (error: any) {
+    throw error;
+  }
 };

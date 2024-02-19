@@ -8,7 +8,7 @@ import {
   Variables,
 } from "../../../interfaces";
 import { generalService } from "../../../service";
-import { autoScroll, saveCoupons } from "@/helpers";
+import { autoScroll } from "@/helpers";
 import { dbConnect, inmuebleService, couponService } from "@/lib";
 import locateChrome from "locate-chrome";
 import { CouponPages } from "@/enums";
@@ -394,4 +394,15 @@ const setUserAgentAndHeaders = async (page: Page) => {
 
   await page.setUserAgent(userAgent);
   await page.setExtraHTTPHeaders(headers);
+};
+
+export const saveCoupons = async (data: Coupon[]) => {
+  try {
+    await dbConnect();
+    await couponService.deleteAllCoupons();
+    await couponService.saveCoupons(data);
+    return true;
+  } catch (error: any) {
+    throw error;
+  }
 };
