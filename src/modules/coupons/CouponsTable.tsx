@@ -13,6 +13,10 @@ import { formatToMoney } from "@/helpers";
 
 const columns: Columns[] = [
   {
+    key: "page",
+    label: "Página",
+  },
+  {
     key: "name",
     label: "Nombre",
   },
@@ -129,7 +133,7 @@ export const CouponsTable: React.FC<Props> = ({
     },
     [onOpen]
   );
-  
+
   return (
     <>
       <ModalImage

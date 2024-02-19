@@ -10,8 +10,8 @@ const CouponSchema = new Schema<CouponDocument>({
   brandName: { type: String, default: null },
   images: { type: [String], default: [] },
   priceWithoutDiscount: { type: Number, required: true },
-  discountWithCard: { type: Number, default: null },
-  discountPercentage: { type: Number, required: true },
+  priceWithCard: { type: Number, default: null },
+  discountPercentage: { type: Number, default: null },
   url: { type: String, required: true },
   page: { type: String, required: true },
 });

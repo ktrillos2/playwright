@@ -3,8 +3,8 @@ export interface Coupon {
   brandName?: string | null;
   images: string[]|string;
   priceWithoutDiscount: number;
-  discountWithCard: number;
-  discountPercentage: number;
+  priceWithCard?: number | null;
+  discountPercentage?: number | null;
   url: string;
   page: string;
 }

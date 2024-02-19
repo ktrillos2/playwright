@@ -200,7 +200,7 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
               teasers,
             },
           } = sellers[i];
-          let discountWithCard = null;
+          let priceWithCard = null;
 
           teasers?.forEach((teaser) => {
             const {
@@ -209,20 +209,20 @@ const getDataFromExitoPage = async (browser: Browser, link: string) => {
             parameters.forEach((parameter) => {
               const { name, value } = parameter;
               if (name === "PromotionalPriceTableItemsDiscount") {
-                discountWithCard = +value;
+                priceWithCard = +value;
               }
             });
           });
 
-          if (discountWithCard !== null) {
-            // const priceWithCard = priceWithoutDiscount - discountWithCard;
+          if (priceWithCard !== null) {
+            // const priceWithCard = priceWithoutDiscount - priceWithCard;
             const discountPercentage = Math.round(
-              (discountWithCard / priceWithoutDiscount) * 100
+              (priceWithCard / priceWithoutDiscount) * 100
             );
             sellerData = {
               priceWithoutDiscount,
               discountPercentage,
-              discountWithCard,
+              priceWithCard,
             };
             // sellerData = {
             //   sellerName,
@@ -399,7 +399,7 @@ const setUserAgentAndHeaders = async (page: Page) => {
 export const saveCoupons = async (data: Coupon[]) => {
   try {
     await dbConnect();
-    await couponService.deleteAllCoupons();
+    await couponService.deleteCouponsFromPage("EXITO");
     await couponService.saveCoupons(data);
     return true;
   } catch (error: any) {

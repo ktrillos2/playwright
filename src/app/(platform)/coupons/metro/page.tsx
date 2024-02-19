@@ -5,6 +5,7 @@ import { generalService } from "@/service";
 import { links } from "@/constants";
 import { useEffect } from "react";
 import { LoadingScraper } from "@/components";
+import toast from "react-hot-toast";
 
 export default function CouponsScraperMetro() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function CouponsScraperMetro() {
     await generalService.scrapeMetro();
     router.refresh();
     router.push("/coupons");
+    toast.success("Scrapeo completado");
   };
 
   useEffect(() => {

@@ -11,6 +11,6 @@ export const links: Pages[] = [
 	},
 	{
 		label: "Metro",
-		value: "https://www.tiendasmetro.co/tecnologia",
+		value: "https://www.tiendasmetro.co/tecnologia/?order=OrderByBestDiscountDESC",
 	},
 ];
