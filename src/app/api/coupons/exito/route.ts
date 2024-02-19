@@ -161,7 +161,7 @@ const getData = async (browser: Browser, link: string) => {
     return NextResponse.json({ data: productsPromo }, { status: 200 });
   } catch (error: any) {
     console.log(error)
-    throw NextResponse.json(
+    return NextResponse.json(
       { error: "Ha ocurrido un error", possibleError: error?.message },
       { status: 500 }
     );
