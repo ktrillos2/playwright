@@ -6,7 +6,7 @@ import { BASE_API_URL } from "@/config";
 import { PaginationResponse } from "@/types";
 
 class GeneralService extends ServiceClass {
-  async scrappingData(body: any): Promise<any> {
+  async scrappingData(body: any): Promise<Inmueble[]> {
     return await super.postQuery<Inmueble[]>({
       URL: BASE_API_URL,
       path: "api/scrappy",
@@ -14,6 +14,14 @@ class GeneralService extends ServiceClass {
     });
   }
 
+  async scrapeMetro(body?: any):   Promise<any> {
+    return await super.postQuery<any>({
+      URL: BASE_API_URL,
+      path: "api/coupons/metro",
+      body,
+    });
+  }
+  
   async getInmuebles({
     page,
     limit,
