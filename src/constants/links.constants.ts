@@ -10,7 +10,7 @@ export const links: Pages[] = [
 		value: "https://pitaibizainmobiliaria.com.co/inmuebles/",
 	},
 	{
-		label: "Metro",
+		label: "Metro Tecnología",
 		value: "https://www.tiendasmetro.co/tecnologia/?order=OrderByBestDiscountDESC",
 	},
 ];

@@ -14,14 +14,20 @@ class GeneralService extends ServiceClass {
     });
   }
 
-  async scrapeMetro(body?: any):   Promise<any> {
+  async scrapeExito(): Promise<any> {
+    return await super.postQuery<any>({
+      URL: BASE_API_URL,
+      path: "api/coupons/exito",
+    });
+  }
+
+  async scrapeMetro(): Promise<any> {
     return await super.postQuery<any>({
       URL: BASE_API_URL,
       path: "api/coupons/metro",
-      body,
     });
   }
-  
+
   async getInmuebles({
     page,
     limit,
@@ -48,7 +54,7 @@ class GeneralService extends ServiceClass {
   async getCoupons({
     page,
     limit,
-    sort
+    sort,
   }: {
     page?: string | number;
     limit?: string | number;
@@ -91,7 +97,6 @@ class GeneralService extends ServiceClass {
       },
     });
   }
-  
 }
 
 export const generalService = new GeneralService();

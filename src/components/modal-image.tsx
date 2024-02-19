@@ -55,7 +55,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
       setIsLoading(true);
       try {
         const response = await removeBackground(info.images[0]);
-        setDisplayImage(response)
+        setDisplayImage(response);
       } catch (error) {
         console.log(error);
       } finally {
@@ -93,7 +93,7 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
                   >
                     <div className="absolute top-3 px-3 flex gap-3 items-center">
                       <NextImage
-                        src={"/exito-logo.png"}
+                        src={"/page-images/exito-logo.png"}
                         width={50}
                         height={50}
                         alt="logo exito"

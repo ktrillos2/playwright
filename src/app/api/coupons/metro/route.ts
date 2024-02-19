@@ -1,4 +1,5 @@
 import { links } from "@/constants";
+import { CouponPages } from "@/enums";
 import { autoScroll } from "@/helpers";
 import { Coupon } from "@/interfaces";
 import { couponService, dbConnect } from "@/lib";
@@ -79,7 +80,7 @@ const getData = async (browser: Browser) => {
               brandName,
               priceWithCard: stringToNumber(priceWithCard),
               url: link,
-              page: "METRO",
+              page: CouponPages.METRO,
             };
           })
       );
@@ -104,7 +105,7 @@ const getData = async (browser: Browser) => {
     return NextResponse.json({ data: products }, { status: 200 });
   } catch (error: any) {
     console.log(error);
-    throw NextResponse.json(
+    return NextResponse.json(
       { error: "Ha ocurrido un error", possibleError: error?.message },
       { status: 500 }
     );
@@ -118,7 +119,7 @@ const getData = async (browser: Browser) => {
 const saveCoupons = async (data: Coupon[]) => {
   try {
     await dbConnect();
-    await couponService.deleteCouponsFromPage("METRO");
+    await couponService.deleteCouponsFromPage(CouponPages.METRO);
     await couponService.saveCoupons(data);
     return true;
   } catch (error: any) {
