@@ -1,154 +1,57 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { generalService } from "@/service";
-import { useCallback, useEffect, useState } from "react";
-import {
-  Button,
-  Image,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@nextui-org/react";
-import toast from "react-hot-toast";
-import Lottie from "lottie-react";
+import { LoggerComponent } from "@/components";
+import { CouponsScraperTable } from "@/modules";
 
-import { Columns } from "@/interfaces";
-import { CouponPages } from "@/enums";
+enum LogType {
+  INFO = "INFO",
+  ERROR = "ERROR",
+  SUCCESS = "SUCCESS",
+  WARNING = "WARNING",
+}
 
-import loadingAnimation from "../../../../../public/lottie/loading.json";
+enum LogCategory {
+  COUPON = "COUPON",
+}
 
-const columns: Columns[] = [
-  {
-    key: "image",
-    label: "Imagen",
-  },
-  {
-    key: "label",
-    label: "Nombre",
-  },
-  {
-    key: "actions",
-    label: "Acciones",
-  },
-  {
-    key: "loading",
-    label: "Cargando",
-  },
-];
+// interface para messages 
+interface LogMessage {
+  type: LogType;
+  category: LogCategory;
+  message: string;
+  date: string;
+}
 
-const COUPON_PAGES = [
+const messages: LogMessage[]= [
   {
-    key: CouponPages.EXITO,
-    label: "Exito",
-    image: "/page-images/exito-logo.png",
+    type: LogType.INFO,
+    category: LogCategory.COUPON,
+    message: "This page is for scraping coupons from the web.",
+    date: "11:40:12"
   },
   {
-    key: CouponPages.METRO,
-    label: "Metro",
-    image: "/page-images/metro-logo.png",
+    type: LogType.SUCCESS,
+    category: LogCategory.COUPON,
+    message: "Scraping complete.",
+    date: "11:40:12"
+  },
+  {
+    type: LogType.ERROR,
+    category: LogCategory.COUPON,
+    message: "Scraping failed.",
+    date: "11:40:12"
+  },
+  {
+    type: LogType.WARNING,
+    category: LogCategory.COUPON,
+    message: "Scraping incomplete.",
+    date: "11:40:12"
   },
 ];
 
 export default function CouponsScraperPage() {
-  const router = useRouter();
-
-  const [loadingState, setLoadingState] = useState<
-    Record<CouponPages, boolean>
-  >({
-    [CouponPages.EXITO]: false,
-    [CouponPages.METRO]: false,
-  });
-
-  const [forceUpdate, setForceUpdate] = useState(false);
-
-  useEffect(() => {
-    setForceUpdate(!forceUpdate);
-  }, [loadingState]);
-
-  const handleScrape = async (page: CouponPages) => {
-    setLoadingState((prev) => ({
-      ...prev,
-      [page]: true,
-    }));
-    try {
-      if (page === CouponPages.EXITO) {
-        await generalService.scrapeExito();
-      }
-      if (page === CouponPages.METRO) await generalService.scrapeMetro();
-      toast.success(`Se ha scrapeado: ${page.toLowerCase()} correctamente`);
-      router.refresh();
-      // Revalida la data de la página /coupons
-    } catch (error) {
-      toast.error(
-        `Error al scrapear: ${page.toLowerCase()}, vuelve a intentarlo`
-      );
-    } finally {
-      setLoadingState((prev) => ({ ...prev, [page]: false }));
-    }
-  };
-
-  const renderCell = useCallback(
-    (data: any, columnKey: React.Key) => {
-      const cellValue = data[columnKey as keyof any];
-
-      const { image, key } = data;
-      switch (columnKey) {
-        case "image":
-          return <Image src={image} alt="image" className="!w-[90px]"></Image>;
-        case "actions":
-          return (
-            <Button
-              onClick={() => handleScrape(key as CouponPages)}
-              disabled={loadingState[key as CouponPages]}
-            >
-              {loadingState[key as CouponPages] ? "Scrapeando..." : "Scrapear"}
-            </Button>
-          );
-        case "loading":
-          return loadingState[key as CouponPages] ? (
-            <div className="max-w-48">
-              <Lottie
-                animationData={loadingAnimation}
-                loop={true}
-                className="max-w-1/2"
-              />
-            </div>
-          ) : (
-            "No se esta cargando"
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [loadingState]
-  );
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <Table
-        aria-label="Example table with dynamic content"
-        key={forceUpdate.toString()}
-      >
-        <TableHeader>
-          {columns.map((column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          ))}
-        </TableHeader>
-        <TableBody items={COUPON_PAGES}>
-          {(item) => (
-            <TableRow key={item.key}>
-              {(columnKey) => (
-                <TableCell className="max-w-[100px]">
-                  {renderCell(item, columnKey)}
-                </TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <CouponsScraperTable />
+      <LoggerComponent messages={messages} />
     </div>
   );
 }
