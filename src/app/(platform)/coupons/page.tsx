@@ -41,7 +41,10 @@ export default async function CouponsPage({ searchParams }: Props) {
         <h1 className="text-left">Cupones Spider</h1>
         <div className="flex gap-2">
           <Button as={Link} href="/coupons/scraper" color="success">
-            Scrappear
+            Scrappear Exito
+          </Button>
+          <Button as={Link} href="/coupons/metro" color="success">
+            Scrappear Metro
           </Button>
           <DeleteCouponsButton />
         </div>
