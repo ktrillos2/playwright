@@ -47,6 +47,7 @@ export const AsyncCustomTable: React.FC<Props> = ({
     router.replace(`?page=${page}&limit=${limit}`);
   };
 
+
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">

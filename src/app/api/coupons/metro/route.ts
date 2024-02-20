@@ -17,7 +17,12 @@ const getBrowser = async () => {
     const locateBrowser = await getLocateChrome();
 
     const browser = await puppeteer.launch({
-        headless: false,
+        args: [
+            "--disable-setuid-sandbox",
+            "--no-sandbox",
+            "--single-process",
+            "--no-zygote",
+          ],
         executablePath:
             process.env.NODE_ENV === "production"
                 ? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -54,7 +59,7 @@ const getData = async (browser: Browser) => {
                         };
                         const image = div.querySelector("img")?.src;
                         const name = div.querySelector("h2 span")?.textContent;
-                        const [priceWithDiscount, priceWithoutDiscount, priceWithCard] =
+                        const [priceWithDiscount, priceWithoutDiscount, discountWithCard] =
                             Array.from(
                                 div.querySelectorAll(
                                     ".tiendasjumboqaio-metro-minicart-2-x-price"
@@ -75,12 +80,13 @@ const getData = async (browser: Browser) => {
                         return {
                             images: image ? [image] : "",
                             name,
+                            priceWithDiscount: stringToNumber(priceWithDiscount),
                             priceWithoutDiscount: stringToNumber(priceWithoutDiscount),
                             discountPercentage: stringToNumber(discount),
                             brandName,
-                            priceWithCard: stringToNumber(priceWithCard),
+                            discountWithCard: stringToNumber(discountWithCard),
                             url: link,
-                            page: "Metro",
+                            page: "METRO",
                         };
                     })
             );
@@ -98,7 +104,6 @@ const getData = async (browser: Browser) => {
             .map((div: string) => JSON.parse(div) as Coupon)
             .filter(({ priceWithoutDiscount, discountPercentage }) => priceWithoutDiscount || discountPercentage);
 
-        console.log(products);
 
         await saveCoupons(products);
 
@@ -119,8 +124,7 @@ const getData = async (browser: Browser) => {
 const saveCoupons = async (data: Coupon[]) => {
     try {
         await dbConnect();
-        // await couponService.deleteCouponsFromPage(CouponPages.METRO);
-        await couponService.deleteAllCoupons();
+        await couponService.deleteCouponsFromPage(CouponPages.METRO);
         await couponService.saveCoupons(data);
         return true;
     } catch (error: any) {

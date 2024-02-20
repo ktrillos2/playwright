@@ -11,10 +11,7 @@ export default function CouponsScraperPage() {
 	const router = useRouter();
 
 	const scrapeData = async () => {
-		await generalService.scrappingData({
-			linkParams: links[0].value,
-			page: "Exito",
-		});
+		await generalService.scrapeExito();
 
 		router.refresh();
 		router.push("/coupons");

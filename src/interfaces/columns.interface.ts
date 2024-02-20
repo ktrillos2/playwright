@@ -1,4 +1,4 @@
 export interface Columns {
-    key: string;
-    label: string;
+	key: string;
+	label: string;
 }
