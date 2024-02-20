@@ -13,6 +13,7 @@
     "@nextui-org/react": "^2.2.9",
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.4.1",
     "framer-motion": "^11.0.3",
     "html-to-image": "^1.11.11",

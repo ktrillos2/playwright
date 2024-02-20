@@ -1,5 +1,6 @@
 export * from './CopyClipboardButton';
-export * from './LoggerComponent';
+export * from './logger/LogText';
+export * from './logger/LoggerComponent';
 export * from './modal-image';
 export * from './navbar/NavItem';
 export * from './navbar/Navbar';

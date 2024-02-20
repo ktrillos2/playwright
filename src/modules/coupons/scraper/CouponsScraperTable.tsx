@@ -15,7 +15,7 @@ import {
 import toast from "react-hot-toast";
 import Lottie from "lottie-react";
 
-import { Columns } from "@/interfaces";
+import { Columns, LogCategory, LogType } from "@/interfaces";
 import { CouponPages } from "@/enums";
 
 import loadingAnimation from "../../../../public/lottie/loading.json";
@@ -75,10 +75,24 @@ export const CouponsScraperTable = () => {
     }));
     try {
       if (page === CouponPages.EXITO) {
+        await generalService.createLogMessage({
+          category: LogCategory.COUPON,
+          type: LogType.LOADING,
+          message: "Scrapeando Exito",
+        });
+        router.refresh();
         await generalService.scrapeExito();
       }
-      if (page === CouponPages.METRO) await generalService.scrapeMetro();
-      toast.success(`Se ha scrapeado: ${page.toLowerCase()} correctamente`);
+      if (page === CouponPages.METRO) {
+        await generalService.createLogMessage({
+          category: LogCategory.COUPON,
+          type: LogType.LOADING,
+          message: "Scrapeando Metro",
+        });
+        router.refresh();
+        await generalService.scrapeMetro();
+      }
+      // toast.success(`Se ha scrapeado: ${page.toLowerCase()} correctamente`);
       router.refresh();
       // Revalida la data de la página /coupons
     } catch (error) {
@@ -127,26 +141,26 @@ export const CouponsScraperTable = () => {
   );
 
   return (
-      <Table
-        aria-label="Example table with dynamic content"
-        key={forceUpdate.toString()}
-      >
-        <TableHeader>
-          {columns.map((column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          ))}
-        </TableHeader>
-        <TableBody items={COUPON_PAGES}>
-          {(item) => (
-            <TableRow key={item.key}>
-              {(columnKey) => (
-                <TableCell className="max-w-[100px]">
-                  {renderCell(item, columnKey)}
-                </TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+    <Table
+      aria-label="Example table with dynamic content"
+      key={forceUpdate.toString()}
+    >
+      <TableHeader>
+        {columns.map((column) => (
+          <TableColumn key={column.key}>{column.label}</TableColumn>
+        ))}
+      </TableHeader>
+      <TableBody items={COUPON_PAGES}>
+        {(item) => (
+          <TableRow key={item.key}>
+            {(columnKey) => (
+              <TableCell className="max-w-[100px]">
+                {renderCell(item, columnKey)}
+              </TableCell>
+            )}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 };
