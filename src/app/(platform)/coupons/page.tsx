@@ -19,11 +19,6 @@ export const metadata: Metadata = {
   description: "Tabla de cupones",
 };
 
-const handleDeleteCoupons = async () => {
-  await generalService.deleteCoupons();
-  revalidatePath("/coupons");
-};
-
 export default async function CouponsPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
   const limit = +searchParams.limit || 5;

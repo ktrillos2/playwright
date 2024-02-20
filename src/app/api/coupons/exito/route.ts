@@ -152,6 +152,7 @@ const getData = async (browser: Browser, link: string) => {
 			limitUrl += 16;
 			link = updateUrlVariables(link, { after: limitUrl.toString() });
 		} while (limitUrl < totalCounts);
+		
 		await saveCoupons(productsPromo);
 
 		return NextResponse.json({ data: productsPromo }, { status: 200 });

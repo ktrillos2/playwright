@@ -31,7 +31,7 @@ export default async function InmueblesPage({ searchParams }: Props) {
        <div className="flex justify-between items-center">
         <h1 className="text-left">Inmuebles Spider</h1>
         <div className="flex gap-2">
-          <Button as={Link} href="/inmuebles/scraper" color="success">
+          <Button as={Link} href="/inmuebles/scraper"  color="success">
             Scrappear
           </Button>
           <DeleteInmueblesButton />
