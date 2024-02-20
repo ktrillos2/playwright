@@ -1,7 +1,7 @@
 import { LogText } from "..";
 import { consoleFont } from "@/config";
 
-import { LogMessage } from "@/interfaces";
+import { LogMessage, LogType } from "@/interfaces";
 
 interface Props {
   messages: LogMessage[];
@@ -21,8 +21,6 @@ export const LoggerComponent: React.FC<Props> = ({ messages }) => {
           <LogText key={index} isLast={0 === index} logMessage={message} />
         ))
       )}
-
-      {/* Esperando nuevos logs <span className="dot" /> */}
     </code>
   );
 };
