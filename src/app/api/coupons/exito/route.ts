@@ -116,7 +116,7 @@ const getData = async (browser: Browser, link: string) => {
 							const { name, value } = parameter;
 							if (name === "PromotionalPriceTableItemsDiscount") {
 								discountWithCard = +value;
-              }
+							}
 						});
 					});
 
@@ -128,7 +128,7 @@ const getData = async (browser: Browser, link: string) => {
 							priceWithoutDiscount,
 							discountPercentage,
 							discountWithCard,
-            };
+						};
 						break;
 					}
 				}
@@ -170,11 +170,10 @@ const getData = async (browser: Browser, link: string) => {
 	}
 };
 
-export const saveCoupons = async (data: Coupon[]) => {
+const saveCoupons = async (data: Coupon[]) => {
 	try {
 		await dbConnect();
-    await couponService.deleteCouponsFromPage(CouponPages.EXITO);
-    console.log(data)
+		await couponService.deleteCouponsFromPage(CouponPages.EXITO);
 		await couponService.saveCoupons(data);
 		return true;
 	} catch (error: any) {
