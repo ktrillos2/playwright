@@ -1,21 +1,22 @@
-previewsEnabled: trueservices:
+previewsEnabled: true
+services:
 - type: web
-    name: webdis
-    runtime: docker
-    plan: standard
-    branch: main # optional (defaults to master)
-    rootDir: webdis
-    healthCheckPath: /
-    envVars:
-      - key: NEXT_PUBLIC_BASE_API_URL
-        value: https://proyect-puppeter.onrender.com
-        previewValue: https://proyect-puppeter.onrender.com
-      - key: MONGODB_URI
-        value: mongodb+srv://crisvera1909:696RqHBDJyq35Biw@scraper.tmzw1cx.mongodb.net/
-        previewValue: mongodb+srv://crisvera1909:696RqHBDJyq35Biw@scraper.tmzw1cx.mongodb.net/
-      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
-        value: true
-        previewValue: true
-      - key: PUPPETEER_EXECUTABLE_PATH
-        value: /usr/bin/google-chrome-stable
-        previewValue: /usr/bin/google-chrome-stable
+  name: webdis
+  runtime: docker
+  plan: standard
+  branch: main # optional (defaults to master)
+  rootDir: webdis
+  healthCheckPath: /
+  envVars:
+    - key: NEXT_PUBLIC_BASE_API_URL
+      value: https://proyect-puppeter.onrender.com
+      previewValue: https://proyect-puppeter.onrender.com
+    - key: MONGODB_URI
+      value: mongodb+srv://crisvera1909:696RqHBDJyq35Biw@scraper.tmzw1cx.mongodb.net/
+      previewValue: mongodb+srv://crisvera1909:696RqHBDJyq35Biw@scraper.tmzw1cx.mongodb.net/
+    - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+      value: true
+      previewValue: true
+    - key: PUPPETEER_EXECUTABLE_PATH
+      value: /usr/bin/google-chrome-stable
+      previewValue: /usr/bin/google-chrome-stable
