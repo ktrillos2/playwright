@@ -96,9 +96,7 @@ export const CouponsScraperTable = () => {
       router.refresh();
       // Revalida la data de la página /coupons
     } catch (error) {
-      toast.error(
-        `Error al scrapear: ${page.toLowerCase()}, vuelve a intentarlo`
-      );
+      router.refresh();
     } finally {
       setLoadingState((prev) => ({ ...prev, [page]: false }));
     }

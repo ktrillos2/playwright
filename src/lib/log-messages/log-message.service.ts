@@ -36,7 +36,7 @@ class LogMessageDbService {
   }
 
   async getLogMessagesByCategory(category: LogCategory): Promise<LogMessage[]> {
-    return this.logMessageModel.find({ category });
+    return this.logMessageModel.find({ category }).sort({ createdAt: -1 });
   }
 
   async getAllLogMessages(): Promise<LogMessage[]> {
