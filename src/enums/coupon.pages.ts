@@ -1,3 +1,4 @@
 export enum CouponPages {
-  EXITO = "EXITO"
+  EXITO = "EXITO",
+  METRO = "METRO",
 }

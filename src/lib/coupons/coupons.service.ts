@@ -33,6 +33,10 @@ class CouponDbService {
     return this.couponModel.deleteMany({});
   }
 
+  async deleteCouponsFromPage(page: string) {
+    return this.couponModel.deleteMany({ page });
+  }
+
   async saveCoupons(coupons: Coupon[]) {
     return this.couponModel.insertMany(coupons);
   }

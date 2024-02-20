@@ -14,6 +14,20 @@ class GeneralService extends ServiceClass {
     });
   }
 
+  async scrapeExito(): Promise<any> {
+    return await super.postQuery<any>({
+      URL: BASE_API_URL,
+      path: "api/coupons/exito",
+    });
+  }
+
+  async scrapeMetro(): Promise<any> {
+    return await super.postQuery<any>({
+      URL: BASE_API_URL,
+      path: "api/coupons/metro",
+    });
+  }
+
   async getInmuebles({
     page,
     limit,
