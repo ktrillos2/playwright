@@ -63,9 +63,7 @@ export async function POST(request: Request) {
 const getData = async (browser: Browser, link: string) => {
 	try {
 		let productsPromo: any[] = [];
-		console.log("entro");
 		let limitUrl = extractAfterFromUrl(link);
-		console.log("salio");
 		let totalCounts;
 		let products;
 		do {
@@ -158,7 +156,6 @@ const getData = async (browser: Browser, link: string) => {
 
 		return NextResponse.json({ data: productsPromo }, { status: 200 });
 	} catch (error: any) {
-		console.log(error);
 		return NextResponse.json(
 			{ error: "Ha ocurrido un error", possibleError: error?.message },
 			{ status: 500 }
