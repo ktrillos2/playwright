@@ -16,21 +16,16 @@ interface Props {
 }
 
 export const LogText: React.FC<Props> = ({ logMessage, isLast = false }) => {
-  
   const { type, category, message, createdAt } = logMessage;
 
   const isLoading = type === LogType.LOADING;
   const date = dayjs(createdAt);
-  const formattedDate = date.format("HH:mm:ss - DD/MM/YYYY");
+  const formattedDate = date.format("DD/MM/YYYY HH:mm:ss");
   return (
     <div className={Colors[type]}>
-      <span>{formattedDate}</span>
-      {" | "}
-      <span>{category}</span>
-      {" | "}
-      <span>{type}</span>
-      {" : "}
-      <span>{message}</span>
+      <span>
+        [{formattedDate}] {category} | {type} : {message}
+      </span>
       {isLoading && isLast ? <span className="dot ml-0.5" /> : null}
     </div>
   );

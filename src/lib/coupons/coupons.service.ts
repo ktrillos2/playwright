@@ -1,3 +1,4 @@
+
 import { FilterQuery } from "mongoose";
 
 import { CouponModel } from "./coupons.model";
