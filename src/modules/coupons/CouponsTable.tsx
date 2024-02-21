@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { Button, Image, useDisclosure } from "@nextui-org/react";
 import { clsx } from "clsx";
 
-import { Columns, CalculatedCoupon } from "@/interfaces";
+import { Columns, CalculatedCoupon, Coupon } from "@/interfaces";
 import {
 	AsyncCustomTable,
 	CopyClipboardButton,
@@ -33,7 +33,7 @@ const columns: Columns[] = [
 		label: "Precio con descuento",
 	},
 	{
-		key: "priceWithCard",
+		key: "discountWithCard",
 		label: "Precio con tarjeta",
 	},
 	{
@@ -52,7 +52,7 @@ const columns: Columns[] = [
 ];
 
 interface Props {
-	coupons: CalculatedCoupon[];
+	coupons: Coupon[];
 	page: number;
 	totalPages: number;
 	totalInmuebles: number;
@@ -119,7 +119,7 @@ export const CouponsTable: React.FC<Props> = ({
 			}
 
 			if (
-				["lowPrice", "priceWithCard", "priceWithoutDiscount"].includes(
+				["lowPrice", "discountWithCard", "priceWithoutDiscount"].includes(
 					columnKey as string
 				)
 			) {

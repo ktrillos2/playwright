@@ -4,7 +4,6 @@ import { Button } from "@nextui-org/react";
 
 import { CouponsTable, DeleteCouponsButton } from "@/modules";
 import { generalService } from "@/service";
-import { formatCalculatedCoupon } from "@/helpers";
 import { revalidatePath } from "next/cache";
 
 interface Props {
@@ -28,7 +27,7 @@ export default async function CouponsPage({ searchParams }: Props) {
     limit,
   });
 
-  const coupons = formatCalculatedCoupon(docs);
+  const coupons = docs;
 
   return (
     <div>

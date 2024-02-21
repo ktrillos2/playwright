@@ -78,10 +78,14 @@ const getData = async (browser: Browser) => {
               ) as HTMLAnchorElement
             )?.href;
 
+            if (stringToNumber(discount) === 77) {
+              console.log(priceWithDiscount)
+            }
+
             return {
               images: image ? [image] : "",
               name,
-              priceWithDiscount: stringToNumber(priceWithDiscount),
+              lowPrice: stringToNumber(priceWithDiscount),
               priceWithoutDiscount: stringToNumber(priceWithoutDiscount),
               discountPercentage: stringToNumber(discount),
               brandName,
@@ -98,7 +102,7 @@ const getData = async (browser: Browser) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
-    // Elimina los duplicados
+    //Elimina los duplicados
     products = Array.from(
       new Set(products.map((div: Coupon) => JSON.stringify(div)))
     )
