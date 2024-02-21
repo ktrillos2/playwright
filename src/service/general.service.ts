@@ -113,6 +113,8 @@ class GeneralService extends ServiceClass {
       body,
     });
   }
+
+  
 }
 
 export const generalService = new GeneralService();

@@ -1,4 +1,3 @@
-
 import { FilterQuery } from "mongoose";
 
 import { CouponModel } from "./coupons.model";
@@ -19,6 +18,10 @@ class CouponDbService {
 
   async getCoupons(): Promise<Coupon[]> {
     return this.couponModel.find();
+  }
+
+  async getCouponById(id: string): Promise<Coupon | null> {
+    return this.couponModel.findById(id);
   }
 
   async getPaginateCoupons({
