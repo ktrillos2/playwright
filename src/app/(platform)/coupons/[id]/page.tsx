@@ -1,5 +1,14 @@
 import { couponActions } from "@/actions";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
+
+const CouponImageEditor = dynamic(
+  () => import("../../../../modules/coupons/coupon-editor/CouponImageEditor"),
+  {
+    loading: () => <p>Loading...</p>,
+    ssr: false,
+  }
+);
 
 interface Props {
   params: {
@@ -13,11 +22,11 @@ export default async function CouponByIdPage({ params }: Props) {
   const coupon = await couponActions.getCouponById(id);
 
   if (!coupon) notFound();
-
+  
   return (
     <div>
-      <h1>Hello Page</h1>
-      <code>{JSON.stringify(coupon, null, 2)}</code>
+      {/* <pre>{JSON.stringify(coupon, null, 2)}</pre> */}
+      <CouponImageEditor coupon={coupon} />
     </div>
   );
 }

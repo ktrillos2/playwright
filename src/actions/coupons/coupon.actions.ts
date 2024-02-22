@@ -2,7 +2,7 @@
 
 import { FilterQuery } from "mongoose";
 
-import { CouponModel } from "@/lib";
+import { CouponModel, dbConnect } from "@/lib";
 import { Coupon } from "@/interfaces";
 import { ObjectId } from "mongodb";
 
@@ -17,15 +17,16 @@ interface PaginatorProps<T = any> extends PaginateProps {
 }
 
 const couponModel = CouponModel;
+dbConnect();
 
 export const getCoupons = async (): Promise<Coupon[]> => {
   return couponModel.find();
 };
 
 export const getCouponById = async (id: string): Promise<Coupon | null> => {
-  //valida te the id is a valid ObjectId
-  if(!ObjectId.isValid(id)) return null;
-  return couponModel.findById(id);
+  if (!ObjectId.isValid(id)) return null;
+  const coupon = await couponModel.findById(id);
+  return coupon ? parseData(coupon) : null;
 };
 
 export const getPaginateCoupons = async ({
@@ -47,4 +48,10 @@ export const deleteCouponsFromPage = async (page: string) => {
 
 export const saveCoupons = async (coupons: Coupon[]) => {
   return couponModel.insertMany(coupons);
+};
+
+const parseData = (data: any) => {
+  const parsedData = data.toJSON();
+  parsedData._id = parsedData._id.toString();
+  return parsedData;
 };
