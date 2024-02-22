@@ -21,14 +21,8 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
     .slice(0, 5)
     .join("-")}`.toLowerCase();
 
-  const [isImgEditorShown, setIsImgEditorShown] = useState(true);
-  const [uploadedDesignState, setUploadedDesignState] = useState<any>(null);
 
   const { displayImage, isLoading } = useToTransparentImage(images[0]);
-
-  const closeImgEditor = () => {
-    setIsImgEditorShown(false);
-  };
 
   return (
     <div className={""}>
@@ -36,18 +30,14 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
         <FilerobotImageEditor
           theme={{}}
           language="es"
-          // onModify={(e) => setLayoutCoupon(e)}
           source={"default-coupon-bg.png"}
           onSave={(editedImageObject, designState) => {
-
-            // const blob = new Blob([designState.imgSrc], { type: 'image/png' });
-
             const link = document.createElement("a");
             link.download = `${name.toLowerCase().split(" ").join("-")}.png`;
             link.href = editedImageObject.imageBase64 as any
             link.click();
           }}
-          onClose={closeImgEditor}
+          // onClose={closeImgEditor}
           annotationsCommon={{
             fill: "#000000",
           }}
