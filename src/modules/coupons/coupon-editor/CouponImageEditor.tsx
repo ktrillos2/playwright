@@ -58,7 +58,7 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
         ) : null}
         {sizeIsLoading ? null : (
           <small className="md:hidden">
-            Para una mejor experiencia entre desde un computador
+           Recomendamos usar un computador para una mejor experiencia.
           </small>
         )}
       </div>
