@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { LoggerComponent } from "@/components";
-import { CouponsScraperTable } from "@/modules";
 import { generalService } from "@/service";
 import { LogMessage } from '@/interfaces';
+import { CouponsScraperTable } from '@/modules/coupons/scraper/CouponsScraperTable';
 
 export default function CouponsScraperPage() {
   const [messages, setMessages] = useState<LogMessage[]>([]);
