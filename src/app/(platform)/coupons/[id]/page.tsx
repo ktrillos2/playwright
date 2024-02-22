@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 const CouponImageEditor = dynamic(
   () => import("../../../../modules/coupons/coupon-editor/CouponImageEditor"),
   {
-    loading: () => <p>Loading...</p>,
+    loading: () => <p></p>,
     ssr: false,
   }
 );

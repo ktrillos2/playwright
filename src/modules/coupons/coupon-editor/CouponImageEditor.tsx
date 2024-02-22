@@ -4,11 +4,16 @@ import FilerobotImageEditor, {
   TABS,
   TOOLS,
 } from "react-filerobot-image-editor";
+import Lottie from "lottie-react";
 import clsx from "clsx";
 
 import { useToTransparentImage } from "@/hooks";
 import { couponLayout } from "@/helpers";
 import { Coupon } from "@/interfaces";
+
+import loadingImage from "../../../../public/lottie/loading-image.json";
+import loadingEditor from "../../../../public/lottie/loading-editor.json";
+
 interface Props {
   coupon: Coupon;
 }
@@ -22,24 +27,47 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
     .slice(0, 5)
     .join("-")}`.toLowerCase();
 
-  const { displayImage, isLoading } = useToTransparentImage(images[0]);
+  const { displayImage, isLoading: transparentIsLoading } =
+    useToTransparentImage(images[0]);
   const [size, setSize] = useState<{ width: string; height: string }>({
     width: "993px",
     height: "550px",
   });
 
+  const [sizeIsLoading, setSizeIsLoading] = useState<boolean>(true);
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSize({ width: "100%", height: "100vh" });
-    }, 3000);
+      setSize({ width: "100%", height: "calc(100vh - 120px)" });
+      setSizeIsLoading(false);
+    }, 3500);
 
     return () => clearTimeout(timer);
   }, []);
+
   return (
-    <div className={`!w-[${size.width}] !h-[${size.height}]`}>
+    <div className="relative w-full">
+      <div className="z-50">
+        {sizeIsLoading ? (
+          <div className="absolute w-full grid place-content-center h-full -mt-4">
+            <Lottie animationData={loadingEditor} loop={true} />
+            <span className="text-base md:text-lg text-center -mt-16">
+              Cargando el editor de cupones
+            </span>
+          </div>
+        ) : null}
+        {sizeIsLoading ? null : (
+          <small className="md:hidden">
+            Para una mejor experiencia entre desde un computador
+          </small>
+        )}
+      </div>
       <div
-        className={clsx("w-full h-full", {
-          "pointer-events-none opacity-50": isLoading,
+        style={size}
+        className={clsx("overflow-hidden z-0 relative", {
+          "opacity-0": sizeIsLoading,
+          "pointer-events-none opacity-50":
+            !sizeIsLoading && transparentIsLoading,
         })}
       >
         <FilerobotImageEditor
@@ -71,6 +99,20 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
           }}
         />
       </div>
+
+      {!sizeIsLoading && transparentIsLoading ? (
+        <div className="-top-5 absolute w-full grid place-content-center h-full">
+          <Lottie
+            animationData={loadingImage}
+            loop={true}
+            className="w-64 h-64"
+          />
+          <span className="text-base md:text-lg text-center -mt-16">
+            Eliminando el fondo de la imagen
+          </span>
+        </div>
+      ) : null}
+
       {/* <pre>{JSON.stringify(uploadedDesignState?.annotations, null, 3)}</pre> */}
     </div>
   );
