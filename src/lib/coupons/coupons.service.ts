@@ -20,6 +20,10 @@ class CouponDbService {
     return this.couponModel.find();
   }
 
+  async getCouponById(id: string): Promise<Coupon | null> {
+    return this.couponModel.findById(id);
+  }
+
   async getPaginateCoupons({
     limit = 5,
     page = 1,

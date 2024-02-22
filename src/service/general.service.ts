@@ -1,7 +1,7 @@
 import ServiceClass from "./ServiceClass";
 
 import { ApiKeys, Urls } from "../enums";
-import { Coupon, Inmueble } from "../interfaces";
+import { Coupon, Inmueble, LogMessage } from "../interfaces";
 import { BASE_API_URL } from "@/config";
 import { PaginationResponse } from "@/types";
 
@@ -54,7 +54,7 @@ class GeneralService extends ServiceClass {
   async getCoupons({
     page,
     limit,
-    sort
+    sort,
   }: {
     page?: string | number;
     limit?: string | number;
@@ -97,6 +97,23 @@ class GeneralService extends ServiceClass {
       },
     });
   }
+
+  async getLogMessagesByCategory(category: string): Promise<LogMessage[]> {
+    return await super.getQuery({
+      URL: BASE_API_URL,
+      path: "api/log-messages",
+      params: { category },
+    });
+  }
+
+  async createLogMessage(body: LogMessage): Promise<LogMessage> {
+    return await super.postQuery({
+      URL: BASE_API_URL,
+      path: "api/log-messages",
+      body,
+    });
+  }
+
   
 }
 

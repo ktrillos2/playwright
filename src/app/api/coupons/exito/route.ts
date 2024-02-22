@@ -1,8 +1,15 @@
 import { links } from "@/constants";
 import { CouponPages } from "@/enums";
-import { Coupon, PromosTecnologyExitoData, Variables } from "@/interfaces";
-import { couponService, dbConnect } from "@/lib";
+import {
+	Coupon,
+	LogCategory,
+	LogType,
+	PromosTecnologyExitoData,
+	Variables,
+} from "@/interfaces";
+import { couponService, dbConnect, logMessageService } from "@/lib";
 import locateChrome from "locate-chrome";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import puppeteer, { Browser, Page } from "puppeteer";
 
@@ -66,6 +73,7 @@ const getData = async (browser: Browser, link: string) => {
 		let limitUrl = extractAfterFromUrl(link);
 		let totalCounts;
 		let products;
+
 		do {
 			const page = await browser.newPage();
 			await page.goto(link, { waitUntil: "networkidle0" });
@@ -88,48 +96,85 @@ const getData = async (browser: Browser, link: string) => {
 						name,
 						brand: { brandName },
 						image,
-						offers: { lowPrice },
 						sellers,
 						breadcrumbList: { itemListElement },
 					},
 				} = product;
 
 				let sellerData = null;
+				let lowPrice = null;
+				const {
+					sellerName,
+					commertialOffer: {
+						Price,
+						PriceWithoutDiscount: priceWithoutDiscount,
+						teasers,
+					},
+				} = sellers[0];
 
-				for (let i = 0; i < sellers.length; i++) {
+
+				lowPrice = Price;
+				let discountWithCard = 0;
+
+				teasers?.forEach((teaser) => {
 					const {
-						sellerName,
-						commertialOffer: {
-							PriceWithoutDiscount: priceWithoutDiscount,
-							teasers,
-						},
-					} = sellers[i];
-					let discountWithCard = null;
-
-					teasers?.forEach((teaser) => {
-						const {
-							effects: { parameters },
-						} = teaser;
-						parameters.forEach((parameter) => {
-							const { name, value } = parameter;
-							if (name === "PromotionalPriceTableItemsDiscount") {
-								discountWithCard = +value;
-							}
-						});
+						effects: { parameters },
+					} = teaser;
+					parameters.forEach((parameter) => {
+						const { name, value } = parameter;
+						if (name === "PromotionalPriceTableItemsDiscount") {
+							discountWithCard = (priceWithoutDiscount - Number(value));
+						}
 					});
+				});
 
-					if (discountWithCard !== null) {
-						const discountPercentage = Math.round(
-							(discountWithCard / priceWithoutDiscount) * 100
-						);
-						sellerData = {
-							priceWithoutDiscount,
-							discountPercentage,
-							discountWithCard,
-						};
-						break;
-					}
+				if (discountWithCard !== 0) {
+					const discountPercentage = Math.round(
+						(discountWithCard / priceWithoutDiscount) * 100
+					);
+					sellerData = {
+						priceWithoutDiscount,
+						discountPercentage,
+						discountWithCard,
+					};
 				}
+
+				// for (let i = 0; i < sellers.length; i++) {
+				// 	const {
+				// 		sellerName,
+				// 		commertialOffer: {
+				// 			Price: price,
+				// 			PriceWithoutDiscount: priceWithoutDiscount,
+				// 			teasers,
+				// 		},
+				// 	} = sellers[i];
+				// 	lowPrice = price;
+				// 	let discountWithCard = null;
+
+				// 	teasers?.forEach((teaser) => {
+				// 		const {
+				// 			effects: { parameters },
+				// 		} = teaser;
+				// 		parameters.forEach((parameter) => {
+				// 			const { name, value } = parameter;
+				// 			if (name === "PromotionalPriceTableItemsDiscount") {
+				// 				discountWithCard = +value;
+				// 			}
+				// 		});
+				// 	});
+
+				// 	if (discountWithCard !== null) {
+				// 		const discountPercentage = Math.round(
+				// 			(discountWithCard / priceWithoutDiscount) * 100
+				// 		);
+				// 		sellerData = {
+				// 			priceWithoutDiscount,
+				// 			discountPercentage,
+				// 			discountWithCard,
+				// 		};
+				// 		break;
+				// 	}
+				// }
 
 				const images = image?.map(({ url }: any) => url);
 				let data: any;
@@ -146,16 +191,30 @@ const getData = async (browser: Browser, link: string) => {
 						page: "EXITO",
 					};
 				}
+				if (product.node.id === "3406235") {
+
+					console.log(lowPrice, "rpecio")
+					console.log(data, "producto")
+				}
 				if (data) productsPromo.push(data);
 			});
 			// Actualiza la URL para la próxima iteración
 			limitUrl += 16;
 			link = updateUrlVariables(link, { after: limitUrl.toString() });
 		} while (limitUrl < totalCounts);
+
 		await saveCoupons(productsPromo);
+
+		await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
 
 		return NextResponse.json({ data: productsPromo }, { status: 200 });
 	} catch (error: any) {
+		await logger(
+			LogType.ERROR,
+			error?.message ?? "No se pudo scrapear Exito",
+			error
+		);
+
 		return NextResponse.json(
 			{ error: "Ha ocurrido un error", possibleError: error?.message },
 			{ status: 500 }
@@ -176,4 +235,18 @@ const saveCoupons = async (data: Coupon[]) => {
 	} catch (error: any) {
 		throw error;
 	}
+};
+
+const logger = async (type: LogType, message: string, error?: any) => {
+	await dbConnect();
+	const response = await logMessageService.createLogMessage({
+		category: LogCategory.COUPON,
+		type,
+		message,
+		error,
+	});
+
+	revalidatePath("/coupons/scraper");
+
+	return response;
 };
