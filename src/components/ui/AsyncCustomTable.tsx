@@ -1,6 +1,13 @@
 "use client";
 import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Pagination,
+  Select,
+  SelectItem,
   Table,
   TableBody,
   TableCell,
@@ -12,9 +19,16 @@ import {
 import { useRouter } from "next/navigation";
 
 import { Columns } from "../../interfaces";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { FaChevronDown } from "react-icons/fa";
 
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 100];
+
+const ROWS_PER_PAGE_OPTIONS_SELECT = ROWS_PER_PAGE_OPTIONS.map((option) => ({
+  label: "" + option,
+  value: "" + option,
+}));
+
 interface Props {
   items: any[];
   columns: Columns[];
@@ -47,6 +61,7 @@ export const AsyncCustomTable: React.FC<Props> = ({
     router.replace(`?page=${page}&limit=${limit}`);
   };
 
+  const selectedKeys = new Set(["" + limit]);
 
   const topContent = useMemo(() => {
     return (
@@ -58,24 +73,20 @@ export const AsyncCustomTable: React.FC<Props> = ({
           <span className="text-default-400 text-small">
             Total: {totalItems} {itemsName}
           </span>
-          <label
-            className="flex items-center text-default-400 text-small"
-            htmlFor="rows-per-page"
+
+          <Select
+            onChange={onRowsPerPageChange}
+            label="# Filas"
+            items={ROWS_PER_PAGE_OPTIONS_SELECT}
+            defaultSelectedKeys={selectedKeys}
+            className="w-24"
           >
-            Filas por página:
-            <select
-              id="rows-per-page"
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-              value={limit}
-            >
-              {ROWS_PER_PAGE_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
+            {(option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            )}
+          </Select>
         </div>
       </div>
     );
