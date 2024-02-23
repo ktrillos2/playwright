@@ -1,3 +1,4 @@
+export * from './auth.interface';
 export * from './columns.interface';
 export * from './coupon.interface';
 export * from './exito.interface';

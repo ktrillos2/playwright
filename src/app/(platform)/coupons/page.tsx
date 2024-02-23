@@ -5,6 +5,8 @@ import { Button } from "@nextui-org/react";
 import { CouponsTable, DeleteCouponsButton } from "@/modules";
 import { generalService } from "@/service";
 import { revalidatePath } from "next/cache";
+import { getServerAuthSession } from "@/config";
+import { getServerSession } from "next-auth";
 
 interface Props {
   searchParams: {
@@ -22,6 +24,8 @@ export default async function CouponsPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
   const limit = +searchParams.limit || 5;
 
+  const authSession = await getServerAuthSession(); //(1) 
+
   const { docs, totalPages, totalDocs } = await generalService.getCoupons({
     page,
     limit,
@@ -31,6 +35,9 @@ export default async function CouponsPage({ searchParams }: Props) {
 
   return (
     <div>
+      {
+        JSON.stringify(authSession, null, 3)
+      }
       <div className="flex justify-between items-center">
         <h1 className="text-left">Cupones Spider</h1>
         <div className="flex gap-2">
