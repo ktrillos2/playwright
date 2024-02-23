@@ -92,7 +92,6 @@ export const CouponsScraperTable = () => {
         router.refresh();
         await generalService.scrapeMetro();
       }
-      // toast.success(`Se ha scrapeado: ${page.toLowerCase()} correctamente`);
       router.refresh();
       // Revalida la data de la página /coupons
     } catch (error) {

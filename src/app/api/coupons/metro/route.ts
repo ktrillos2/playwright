@@ -24,6 +24,8 @@ const getBrowser = async () => {
       "--single-process",
       "--no-zygote",
     ],
+    //! Descomentar para ver la página siendo scrapeada
+    // headless: false,
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -43,16 +45,17 @@ const getData = async (browser: Browser) => {
     const page = await browser.newPage();
     await page.goto(links[2].value);
     let products: Coupon[] = [];
+
     // Obtén todos los botones
     const buttons = await page.$$(
-      ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage"
+      ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
     );
 
     // Itera sobre cada botón
-    for (let i = 1; i < 2; i++) {
+    for (let i = 1; i < 3; i++) {
       await autoScroll(page);
       const newDivs: any = await page.$$eval(
-        ".vtex-product-summary-2-x-container",
+        ".vtex-product-summary-2-x-container", // Selector que tiene cada card de producto
         (divs) =>
           divs.map((div: Element) => {
             const stringToNumber = (text: string = "") => {
@@ -78,10 +81,6 @@ const getData = async (browser: Browser) => {
               ) as HTMLAnchorElement
             )?.href;
 
-            if (stringToNumber(discount) === 77) {
-              console.log(priceWithDiscount)
-            }
-
             return {
               images: image ? [image] : "",
               name,
@@ -99,6 +98,8 @@ const getData = async (browser: Browser) => {
       // Haz clic en el botón
       await buttons[i].click();
       // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
+      
+      
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
@@ -141,7 +142,6 @@ const saveCoupons = async (data: Coupon[]) => {
     await couponService.saveCoupons(data);
     return true;
   } catch (error: any) {
-    console.log(error);
   }
 };
 
