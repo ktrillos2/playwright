@@ -24,13 +24,13 @@ const getBrowser = async () => {
 	const locateBrowser = await getLocateChrome();
 
 	const browser = await puppeteer.launch({
-		// args: [
-		// 	"--disable-setuid-sandbox",
-		// 	"--no-sandbox",
-		// 	"--single-process",
-		// 	"--no-zygote",
-		// ],
-		headless: false,
+		args: [
+			"--disable-setuid-sandbox",
+			"--no-sandbox",
+			"--single-process",
+			"--no-zygote",
+		],
+		// headless: false,
 		executablePath:
 			process.env.NODE_ENV === "production"
 				? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -90,11 +90,16 @@ const getData = async (browser: Browser, link: string) => {
 					const brandName = article.querySelector(
 						".BrandName_BrandNameTitle__9LquF"
 					);
-
+					const imgURL = img ? new URL(img.src) : null;
+					const decodedPath = imgURL
+						? decodeURIComponent(
+								imgURL.searchParams.get("url") || ""
+						  )
+						: null;
 					const body: Coupon = {
 						name: linkElement[1].title,
 						url: linkElement[1].href,
-						images: [img?.src],
+						images: decodedPath ? [decodedPath] : [],
 						lowPrice: convertToNumber(
 							priceWithDiscount?.textContent
 						),
@@ -128,14 +133,14 @@ const getData = async (browser: Browser, link: string) => {
 		}
 		products = Array.from(
 			new Set(products.map((div: Coupon) => JSON.stringify(div)))
-		  )
+		)
 			.map((div: string) => JSON.parse(div) as Coupon)
 			.filter(
-			  ({ priceWithoutDiscount, discountPercentage }) =>
-				priceWithoutDiscount || discountPercentage
+				({ priceWithoutDiscount, discountPercentage }) =>
+					priceWithoutDiscount || discountPercentage
 			);
-	  
-		  await saveCoupons(products);
+
+		await saveCoupons(products);
 		await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
 
 		return NextResponse.json({ data: products }, { status: 200 });
