@@ -1,7 +1,9 @@
-import { Errors } from "@/enums";
-import { authService } from "@/service";
 import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+
+import { authService } from "@/service";
+import { IUser } from "../../nextauth";
+import { redirect } from "next/navigation";
 
 export const authConfig: NextAuthOptions = {
   providers: [
@@ -19,12 +21,11 @@ export const authConfig: NextAuthOptions = {
           placeholder: "password",
         },
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<any> {
         if (!credentials) return null;
         const { user, password } = credentials;
         try {
           const response = await authService.login(user, password);
-
           const { payload, token } = response;
           return { ...payload, token };
         } catch (error: any) {
@@ -33,20 +34,28 @@ export const authConfig: NextAuthOptions = {
       },
     }),
   ],
-  // callbacks: {
-  //   async jwt({ token, user }) {
-  //     if (user) return { ...token, ...user };
-  //     console.log({token, user})
-  //     return token;
-  //   },
-
-  //   async session(a: any) {
-      
-  //     const { token, session } = a
-  //     console.log(session.user)
-  //     return session;
-  //   },
-  // },
+  callbacks: {
+    async signIn() {
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user && (user as IUser)._id) {
+        token = { ...token, ...user };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session && session.user && token._id) {
+        const { token: accessToken, iat, exp, jti, ...user }: any = token;
+        session = {
+          ...session,
+          user: { ...session.user, ...user },
+          accessToken,
+        };
+      }
+      return session;
+    },
+  },
 };
 
 export const handler = NextAuth(authConfig);
@@ -54,3 +63,10 @@ export const handler = NextAuth(authConfig);
 export const { signIn, signOut, auth } = handler;
 
 export const getServerAuthSession = () => getServerSession(authConfig);
+
+export const adminAuthMiddleware = async () => {
+  const authSession = await getServerAuthSession()
+  if (!authSession?.user._id) {
+    redirect("/api/auth/signin")
+  }
+};

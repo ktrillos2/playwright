@@ -1,12 +1,12 @@
 import { AUTH_URL } from "@/config";
 
 import ServiceClass from "./ServiceClass";
+import { IUser } from "../../nextauth";
 
-import { User } from "@/interfaces";
 
 interface LoginResponse {
   token: string;
-  payload: User;
+  payload: IUser;
 }
 
 class AuthService extends ServiceClass {
