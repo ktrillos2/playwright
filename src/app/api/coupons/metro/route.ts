@@ -18,14 +18,14 @@ const getBrowser = async () => {
   const locateBrowser = await getLocateChrome();
 
   const browser = await puppeteer.launch({
-    args: [
-      "--disable-setuid-sandbox",
-      "--no-sandbox",
-      "--single-process",
-      "--no-zygote",
-    ],
+    // args: [
+    //   "--disable-setuid-sandbox",
+    //   "--no-sandbox",
+    //   "--single-process",
+    //   "--no-zygote",
+    // ],
     //! Descomentar para ver la página siendo scrapeada
-    // headless: false,
+    headless: false,
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -52,7 +52,7 @@ const getData = async (browser: Browser) => {
     );
 
     // Itera sobre cada botón
-    for (let i = 1; i < 3; i++) {
+    for (let i = 1; i < buttons.length; i++) {
       await autoScroll(page);
       const newDivs: any = await page.$$eval(
         ".vtex-product-summary-2-x-container", // Selector que tiene cada card de producto
@@ -98,8 +98,8 @@ const getData = async (browser: Browser) => {
       // Haz clic en el botón
       await buttons[i].click();
       // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
-      
-      
+
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 

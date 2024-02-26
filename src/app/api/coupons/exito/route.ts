@@ -1,5 +1,6 @@
 import { links } from "@/constants";
 import { CouponPages } from "@/enums";
+import { autoScroll } from "@/helpers";
 import {
 	Coupon,
 	LogCategory,
@@ -23,12 +24,13 @@ const getBrowser = async () => {
 	const locateBrowser = await getLocateChrome();
 
 	const browser = await puppeteer.launch({
-		args: [
-			"--disable-setuid-sandbox",
-			"--no-sandbox",
-			"--single-process",
-			"--no-zygote",
-		],
+		// args: [
+		// 	"--disable-setuid-sandbox",
+		// 	"--no-sandbox",
+		// 	"--single-process",
+		// 	"--no-zygote",
+		// ],
+		headless: false,
 		executablePath:
 			process.env.NODE_ENV === "production"
 				? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -36,29 +38,6 @@ const getBrowser = async () => {
 	});
 
 	return browser;
-};
-
-const updateUrlVariables = (url: string, { after }: Variables) => {
-	const regex = /("after"%3A")(\d+?)("%2C)/;
-
-	// Reemplaza el valor actual de 'after' con el nuevo valor
-	const updatedUrl = url.replace(regex, `$1${after}$3`);
-
-	return updatedUrl;
-};
-
-const extractAfterFromUrl = (url: string) => {
-	// Parsea la URL y sus parámetros
-	const urlObj = new URL(url);
-	const params = new URLSearchParams(urlObj.search);
-
-	// Obtiene las variables actuales
-	const currentVariables = JSON.parse(
-		decodeURIComponent(params.get("variables") ?? "")
-	);
-
-	// Devuelve el valor de 'after'
-	return Number(currentVariables.after);
 };
 
 export async function POST(request: Request) {
@@ -69,145 +48,97 @@ export async function POST(request: Request) {
 
 const getData = async (browser: Browser, link: string) => {
 	try {
-		let productsPromo: any[] = [];
-		let limitUrl = extractAfterFromUrl(link);
-		let totalCounts;
-		let products;
+		let products: Coupon[] = [];
 
-		do {
-			const page = await browser.newPage();
-			await page.goto(link, { waitUntil: "networkidle0" });
-			const preContent = await page.$eval(
-				"body pre",
-				(element) => element.textContent
-			);
+		const page = await browser.newPage();
+		await page.goto(link, { waitUntil: "networkidle0" });
 
-			if (!preContent) throw new Error("No se encontró el contenido");
-
-			const preContentOb: PromosTecnologyExitoData = JSON.parse(
-				preContent ?? "{}"
-			);
-
-			products = preContentOb.data.search.products.edges;
-			totalCounts = preContentOb.data.search.products.pageInfo.totalCount;
-			products.forEach((product) => {
-				const {
-					node: {
-						name,
-						brand: { brandName },
-						image,
-						sellers,
-						breadcrumbList: { itemListElement },
-					},
-				} = product;
-
-				let sellerData = null;
-				let lowPrice = null;
-				const {
-					sellerName,
-					commertialOffer: {
-						Price,
-						PriceWithoutDiscount: priceWithoutDiscount,
-						teasers,
-					},
-				} = sellers[0];
-
-
-				lowPrice = Price;
-				let discountWithCard = 0;
-
-				teasers?.forEach((teaser) => {
-					const {
-						effects: { parameters },
-					} = teaser;
-					parameters.forEach((parameter) => {
-						const { name, value } = parameter;
-						if (name === "PromotionalPriceTableItemsDiscount") {
-							discountWithCard = (priceWithoutDiscount - Number(value));
+		for (let i = 0; i < 2; i++) {
+			// await autoScroll(page);
+			const data = await page.$$eval("article", (articles) =>
+				articles.map((article: Element) => {
+					const convertToNumber = (
+						item: string | null | undefined
+					) => {
+						if (item) {
+							const numericValue = item.replace(/[^\d]/g, "");
+							return parseInt(numericValue, 10);
+						} else {
+							return 0;
 						}
-					});
-				});
-
-				if (discountWithCard !== 0) {
-					const discountPercentage = Math.round(
-						(discountWithCard / priceWithoutDiscount) * 100
-					);
-					sellerData = {
-						priceWithoutDiscount,
-						discountPercentage,
-						discountWithCard,
 					};
-				}
 
-				// for (let i = 0; i < sellers.length; i++) {
-				// 	const {
-				// 		sellerName,
-				// 		commertialOffer: {
-				// 			Price: price,
-				// 			PriceWithoutDiscount: priceWithoutDiscount,
-				// 			teasers,
-				// 		},
-				// 	} = sellers[i];
-				// 	lowPrice = price;
-				// 	let discountWithCard = null;
+					const linkElement = article.querySelectorAll(
+						".link_fs-link__6oAwa"
+					) as NodeListOf<HTMLAnchorElement>;
 
-				// 	teasers?.forEach((teaser) => {
-				// 		const {
-				// 			effects: { parameters },
-				// 		} = teaser;
-				// 		parameters.forEach((parameter) => {
-				// 			const { name, value } = parameter;
-				// 			if (name === "PromotionalPriceTableItemsDiscount") {
-				// 				discountWithCard = +value;
-				// 			}
-				// 		});
-				// 	});
+					const img = article.querySelector(
+						'img[decoding="async"]'
+					) as HTMLImageElement;
+					const priceWithDiscount = article.querySelector(
+						".ProductPrice_container__price__LS1Td"
+					);
+					const priceWithoutDiscount = article.querySelector(
+						".priceSection_container-promotion_price-dashed__Pzc_z"
+					);
+					const priceWithCard = article.querySelector(
+						".price_fs-price__7Y_0s"
+					);
+					const discount = article.querySelector(
+						'span[data-percentage="true"]'
+					);
+					const brandName = article.querySelector(
+						".BrandName_BrandNameTitle__9LquF"
+					);
 
-				// 	if (discountWithCard !== null) {
-				// 		const discountPercentage = Math.round(
-				// 			(discountWithCard / priceWithoutDiscount) * 100
-				// 		);
-				// 		sellerData = {
-				// 			priceWithoutDiscount,
-				// 			discountPercentage,
-				// 			discountWithCard,
-				// 		};
-				// 		break;
-				// 	}
-				// }
-
-				const images = image?.map(({ url }: any) => url);
-				let data: any;
-				if (sellerData !== null) {
-					data = {
-						name,
-						brandName,
-						images,
-						lowPrice,
-						url:
-							"https://www.exito.com" +
-							itemListElement[itemListElement.length - 1].item,
-						...sellerData,
+					const body: Coupon = {
+						name: linkElement[1].title,
+						url: linkElement[1].href,
+						images: [img?.src],
+						lowPrice: convertToNumber(
+							priceWithDiscount?.textContent
+						),
+						discountWithCard: convertToNumber(
+							priceWithCard?.textContent
+						),
+						discountPercentage: convertToNumber(
+							discount?.textContent
+						),
+						brandName: brandName?.textContent,
+						priceWithoutDiscount: convertToNumber(
+							priceWithoutDiscount?.textContent
+						),
 						page: "EXITO",
 					};
-				}
-				if (product.node.id === "3406235") {
+					return body;
+				})
+			);
 
-					console.log(lowPrice, "rpecio")
-					console.log(data, "producto")
-				}
-				if (data) productsPromo.push(data);
-			});
-			// Actualiza la URL para la próxima iteración
-			limitUrl += 16;
-			link = updateUrlVariables(link, { after: limitUrl.toString() });
-		} while (limitUrl < totalCounts);
+			products = products.concat(data);
 
-		await saveCoupons(productsPromo);
-
+			const nextButton = await page.$(
+				".Pagination_nextPreviousLink__UYeAp"
+			);
+			if (nextButton) {
+				await nextButton.click();
+				await page.waitForNavigation({ waitUntil: "networkidle0" });
+			} else {
+				break;
+			}
+		}
+		products = Array.from(
+			new Set(products.map((div: Coupon) => JSON.stringify(div)))
+		  )
+			.map((div: string) => JSON.parse(div) as Coupon)
+			.filter(
+			  ({ priceWithoutDiscount, discountPercentage }) =>
+				priceWithoutDiscount || discountPercentage
+			);
+	  
+		  await saveCoupons(products);
 		await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
 
-		return NextResponse.json({ data: productsPromo }, { status: 200 });
+		return NextResponse.json({ data: products }, { status: 200 });
 	} catch (error: any) {
 		await logger(
 			LogType.ERROR,
