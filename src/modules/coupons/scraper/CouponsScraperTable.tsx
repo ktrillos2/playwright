@@ -40,11 +40,11 @@ const columns: Columns[] = [
 ];
 
 const COUPON_PAGES = [
-  // {
-  //   key: CouponPages.EXITO,
-  //   label: "Exito",
-  //   image: "/page-images/exito-logo.png",
-  // },
+  {
+    key: CouponPages.EXITO,
+    label: "Exito",
+    image: "/page-images/exito-logo.png",
+  },
   {
     key: CouponPages.METRO,
     label: "Metro",
