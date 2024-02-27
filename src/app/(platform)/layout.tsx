@@ -1,10 +1,12 @@
-import { Navbar } from "@/components";
+import { Navbar } from "@/components/ui/buttons";
+import { adminAuthMiddleware } from "@/config";
 
-export default function PlatformLayout({
+export default async function PlatformLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await adminAuthMiddleware()
   return (
     <div className="min-h-screen">
       <Navbar />

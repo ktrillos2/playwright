@@ -1,3 +1,4 @@
+export * from './auth/LoginForm';
 export * from './coupons/CouponsTable';
 export * from './coupons/DeleteCouponsButton';
 export * from './coupons/scraper/CouponsScraperTable';

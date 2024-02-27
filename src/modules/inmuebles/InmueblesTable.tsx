@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { Button, Image } from "@nextui-org/react";
 
 import { Columns, Inmueble } from "@/interfaces";
-import { AsyncCustomTable } from "@/components";
+import { AsyncCustomTable } from "@/components/ui/buttons";
 
 const columns: Columns[] = [
   {

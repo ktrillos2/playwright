@@ -55,3 +55,8 @@ body {
 	content: "...";
 	animation: dotPulse 2s infinite;
 }
+
+.bg-auth {
+  background-color: #130f40;
+background-image: linear-gradient(315deg, #130f40 0%, #000000 74%);
+}

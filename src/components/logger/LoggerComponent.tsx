@@ -1,4 +1,4 @@
-import { LogText } from "..";
+import { LogText } from "../ui/buttons";
 import { consoleFont } from "@/config";
 
 import { LogMessage, LogType } from "@/interfaces";

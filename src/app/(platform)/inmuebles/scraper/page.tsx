@@ -5,7 +5,7 @@ import { generalService } from "@/service";
 import { links } from "@/constants";
 import { revalidatePath } from "next/cache";
 import { useEffect } from "react";
-import { LoadingScraper } from "@/components";
+import { LoadingScraper } from "@/components/ui/buttons";
 
 export default function CouponsScraperPage() {
 	const router = useRouter();
