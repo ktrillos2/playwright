@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 
 export async function authenticate(user?: string, password?: string) {
   try {
@@ -27,10 +27,22 @@ export const login = async (user: string, password: string) => {
     });
     return { ok: true };
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return {
       ok: false,
       message: "No se pudo iniciar sesión",
+    };
+  }
+};
+
+export const logout = async () => {
+  try {
+    await signOut();
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: "No se pudo cerrar sesión",
     };
   }
 };

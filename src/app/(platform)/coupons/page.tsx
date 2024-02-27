@@ -25,7 +25,7 @@ export default async function CouponsPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
   const limit = +searchParams.limit || 5;
 
-  const authSession = await getServerAuthSession(); 
+  const authSession = await getServerAuthSession();
 
   const { docs, totalPages, totalDocs } = await generalService.getCoupons({
     page,
