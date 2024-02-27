@@ -8,7 +8,7 @@ import {
   AsyncCustomTable,
   CopyClipboardButton,
   ModalImage,
-} from "@/components";
+} from "@/components/ui/buttons";
 import { formatToMoney } from "@/helpers";
 import Link from "next/link";
 
