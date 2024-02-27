@@ -1,49 +1,36 @@
-'use server';
+"use server";
 
-import { signIn } from '@/config';
- 
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData,
-) {
+import { signIn } from "next-auth/react";
+
+export async function authenticate(user?: string, password?: string) {
   try {
-
     // await sleep(2);
-    
-    await signIn('credentials', {
-      ...Object.fromEntries(formData),
+    await signIn("credentials", {
+      user,
+      password,
       redirect: false,
     });
 
-    return 'Success';
-
-
-  } catch (error) {
-    console.log(error);
-
-    return 'CredentialsSignin'
-
-
+    return true;
+  } catch (error: any) {
+    throw new Error(error?.message);
   }
 }
 
-
-export const login = async(email:string, password: string) => {
-
+export const login = async (user: string, password: string) => {
   try {
-
-    await signIn('credentials',{ email, password })
-
-    return {ok: true};
-    
+    await signIn("credentials", {
+      user,
+      password,
+      redirect: false,
+      callbackUrl: "/",
+    });
+    return { ok: true };
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return {
       ok: false,
-      message: 'No se pudo iniciar sesión'
-    }
-    
+      message: "No se pudo iniciar sesión",
+    };
   }
-
-
-}
+};

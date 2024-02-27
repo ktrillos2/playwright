@@ -6,6 +6,9 @@ import { IUser } from "../../nextauth";
 import { redirect } from "next/navigation";
 
 export const authConfig: NextAuthOptions = {
+  pages: {
+    signIn: '/auth/login',
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",

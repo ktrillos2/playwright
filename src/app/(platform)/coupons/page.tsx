@@ -36,9 +36,9 @@ export default async function CouponsPage({ searchParams }: Props) {
 
   return (
     <div>
-      {
+      {/* {
         JSON.stringify(authSession, null, 3)
-      }
+      } */}
       <div className="flex justify-between items-center">
         <h1 className="text-left">Cupones Spider</h1>
         <div className="flex gap-2">
