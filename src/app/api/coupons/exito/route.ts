@@ -40,7 +40,7 @@ const getBrowser = async () => {
 	return browser;
 };
 
-export async function POST(request: Request) {
+export async function POST(request: Request,response:Response) {
 	const browser = await getBrowser();
 	const link = links[0].value;
 	return getData(browser, link);

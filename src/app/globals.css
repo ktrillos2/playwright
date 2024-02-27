@@ -27,7 +27,7 @@ body {
 }
 
 *:focus-visible {
-	outline-color: white !important;
+	outline-color: transparent !important;
 }
 
 @layer utilities {
