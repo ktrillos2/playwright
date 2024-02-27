@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react';
-import { LoggerComponent } from "@/components";
+import { LoggerComponent } from "@/components/ui/buttons";
 import { generalService } from "@/service";
 import { LogMessage } from '@/interfaces';
 import { CouponsScraperTable } from '@/modules/coupons/scraper/CouponsScraperTable';

@@ -6,4 +6,7 @@ export * from './navbar/NavItem';
 export * from './navbar/Navbar';
 export * from './ui/AsyncCustomTable';
 export * from './ui/LoadingScraper';
+export * from './ui/StartsBackground';
+export * from './ui/buttons';
 export * from './ui/custom-table';
+export * from './ui/inputs/PasswordInput';

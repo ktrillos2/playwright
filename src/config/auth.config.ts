@@ -66,7 +66,7 @@ export const getServerAuthSession = () => getServerSession(authConfig);
 
 export const adminAuthMiddleware = async () => {
   const authSession = await getServerAuthSession()
-  if (!authSession?.user._id) {
+  if (!authSession?.accessToken) {
     redirect("/api/auth/signin")
   }
 };

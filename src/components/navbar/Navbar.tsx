@@ -1,14 +1,16 @@
+import Link from "next/link";
 import {
   Navbar as NavbarNextUI,
   NavbarBrand,
   NavbarContent,
+  NavbarItem,
+  Button,
 } from "@nextui-org/react";
 
 import { FaSpider } from "react-icons/fa";
 
 import { NavItem } from "./NavItem";
 import { Info, PagePaths } from "@/enums";
-import Link from "next/link";
 
 const PAGES = [
   {
@@ -37,6 +39,18 @@ export const Navbar = () => {
         {PAGES.map((page) => (
           <NavItem key={page.name} {...page} />
         ))}
+      </NavbarContent>
+      <NavbarContent justify="end">
+        <NavbarItem>
+          <Button
+            as={Link}
+            color="danger"
+            href="/api/auth/signout"
+            variant="flat"
+          >
+            Cerrar sesión
+          </Button>
+        </NavbarItem>
       </NavbarContent>
     </NavbarNextUI>
   );
