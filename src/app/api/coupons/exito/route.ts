@@ -40,7 +40,7 @@ const getBrowser = async () => {
 	return browser;
 };
 
-export async function POST(request: Request,response:Response) {
+export async function POST(request: Request, response: Response) {
 	const browser = await getBrowser();
 	const link = links[0].value;
 	return getData(browser, link);
@@ -93,8 +93,8 @@ const getData = async (browser: Browser, link: string) => {
 					const imgURL = img ? new URL(img.src) : null;
 					const decodedPath = imgURL
 						? decodeURIComponent(
-								imgURL.searchParams.get("url") || ""
-						  )
+							imgURL.searchParams.get("url") || ""
+						)
 						: null;
 					const body: Coupon = {
 						name: linkElement[1].title,
@@ -118,6 +118,8 @@ const getData = async (browser: Browser, link: string) => {
 					return body;
 				})
 			);
+
+			// const dataparsed = data.map((e) => ({...e, commerceId, categoryId}))
 
 			products = products.concat(data);
 
