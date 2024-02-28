@@ -11,11 +11,11 @@ export const CouponsScraperMultiSelect = () => {
   const platforms = [
     {
       name: "Exito",
-      image: "/page-images/exito-logo.png",
+      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Almacenes_exito_logo.svg/1024px-Almacenes_exito_logo.svg.png",
     },
     {
       name: "Metro",
-      image: "/page-images/metro-logo.png",
+      image: "https://metrocolombiaio.vtexassets.com/arquivos/logo-metro-2023.svg",
     },
   ];
 
