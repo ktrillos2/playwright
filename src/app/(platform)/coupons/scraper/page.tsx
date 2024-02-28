@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { LoggerComponent } from "@/components/ui/buttons";
 import { generalService } from "@/service";
 import { LogMessage } from '@/interfaces';
-import { CouponsScraperTable } from '@/modules/coupons/scraper/CouponsScraperTable';
-import { CouponsScraperMultiSelect } from '@/modules/coupons/scraper/CouponsScraperMultiSelect';
+import { CouponsScraperMultiSelect } from '@/modules/coupons/scraper';
 
 export default function CouponsScraperPage() {
   const [messages, setMessages] = useState<LogMessage[]>([]);
