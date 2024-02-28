@@ -10,18 +10,18 @@ interface LogMessageDocument extends Document {
   error?: any;
 }
 
-const LogMessageSchema = new Schema<LogMessageDocument>({
+const logMessageSchema = new Schema<LogMessageDocument>({
   type: { type: String, enum: Object.values(LogType), required: true },
   category: { type: String, enum: Object.values(LogCategory), required: true },
   message: { type: String, required: true },
   error: { type: Schema.Types.Mixed, default: null },
 }, { timestamps: true });
 
-LogMessageSchema.plugin(mongoosePaginate);
+logMessageSchema.plugin(mongoosePaginate);
 
 export const LogMessageModel: PaginateModel<LogMessageDocument> =
   (mongoose.models.LogMessage as PaginateModel<LogMessageDocument>) ||
   mongoose.model<LogMessageDocument, PaginateModel<LogMessageDocument>>(
     "LogMessage",
-    LogMessageSchema
+    logMessageSchema
   );

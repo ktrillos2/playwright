@@ -5,7 +5,7 @@ import { Coupon } from "@/interfaces";
 
 interface CouponDocument extends Document, Coupon {}
 
-const CouponSchema = new Schema<CouponDocument>({
+const couponSchema = new Schema<CouponDocument>({
   name: { type: String, required: true },
   brandName: { type: String, default: null },
   images: { type: [String], default: [] },
@@ -17,11 +17,11 @@ const CouponSchema = new Schema<CouponDocument>({
   page: { type: String, required: true },
 });
 
-CouponSchema.plugin(mongoosePaginate);
+couponSchema.plugin(mongoosePaginate);
 
 export const CouponModel: PaginateModel<CouponDocument> =
   (mongoose.models.Coupon as PaginateModel<CouponDocument>) ||
   mongoose.model<CouponDocument, PaginateModel<CouponDocument>>(
     "Coupon",
-    CouponSchema
+    couponSchema
   );
