@@ -30,7 +30,7 @@ export const CouponsScraperMultiSelect = () => {
     if(category.size===0){
       return toast.error("La categoría es obligatoria")
     }
-    await generalService.createLogMessage({
+    await generalService.createLogMessage({ 
       category: LogCategory.COUPON,
       type: LogType.LOADING,
       message: "Scrapeando Exito",
