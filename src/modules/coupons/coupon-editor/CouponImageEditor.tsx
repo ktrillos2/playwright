@@ -1,8 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FilerobotImageEditor, {
   TABS,
   TOOLS,
+  getCurrentImgDataFunction,
 } from "react-filerobot-image-editor";
 import Lottie from "lottie-react";
 import clsx from "clsx";
@@ -13,12 +14,15 @@ import { Coupon } from "@/interfaces";
 
 import loadingImage from "../../../../public/lottie/loading-image.json";
 import loadingEditor from "../../../../public/lottie/loading-editor.json";
+import { Button } from "@nextui-org/react";
 
 interface Props {
   coupon: Coupon;
 }
 
 const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
+  const editedImage = useRef<getCurrentImgDataFunction>();
+
   const { images, name, page } = coupon;
 
   const imageName = `${page}-${name
@@ -45,6 +49,21 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  const getLayoutImage = () => {
+    const annotations = editedImage.current?.({})?.designState?.annotations;
+
+    const jsonBlob = new Blob([JSON.stringify(annotations)], {
+      type: "application/json",
+    });
+
+    const link = document.createElement("a");
+    link.download = "plantilla";
+    link.href = URL.createObjectURL(jsonBlob);
+    link.click();
+
+    URL.revokeObjectURL(link.href);
+  };
+
   return (
     <div className="relative w-full">
       <div className="z-50">
@@ -56,11 +75,23 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
             </span>
           </div>
         ) : null}
-        {sizeIsLoading ? null : (
-          <small className="md:hidden">
-           Recomendamos usar un computador para una mejor experiencia.
-          </small>
-        )}
+        <div className="flex justify-between items-center mb-2">
+          {sizeIsLoading ? (
+            <span />
+          ) : (
+            <small className="md:hidden">
+              Recomendamos usar un computador para una mejor experiencia.
+            </small>
+          )}
+          <Button
+            isDisabled={sizeIsLoading}
+            onClick={getLayoutImage}
+            size="sm"
+            variant="flat"
+          >
+            Guardar Plantilla
+          </Button>
+        </div>
       </div>
       <div
         style={size}
@@ -83,6 +114,7 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
           annotationsCommon={{
             fill: "#000000",
           }}
+          getCurrentImgDataFnRef={editedImage}
           Text={{ text: "Escribe aquí tu contenido..." }}
           tabsIds={[TABS.ANNOTATE, TABS.FILTERS, TABS.FINETUNE]}
           defaultTabId={TABS.ANNOTATE}
