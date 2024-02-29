@@ -1,3 +1,4 @@
+import { CommerceSlugs } from "@/enums";
 import { Category } from ".";
 
 interface DBCategoryCommerce {
@@ -7,14 +8,15 @@ interface DBCategoryCommerce {
 
 export interface DBCommerce {
   name: string;
-  slug: string;
+  slug: CommerceSlugs;
   url: string;
   queries?: string | null;
   image: string;
   categories: DBCategoryCommerce[];
 }
 
-interface CategoryCommerce extends Category {
+interface CategoryCommerce {
+  category: Category
   path: string;
 }
 

@@ -3,7 +3,6 @@ export interface DBCategory {
   slug: string;
 }
 
-export interface Category  {
-  category: DBCategory;
+export interface Category extends DBCategory {
   _id: string;
 }

@@ -15,6 +15,7 @@ const couponSchema = new Schema<CouponDocument>({
   discountPercentage: { type: Number, required: true },
   url: { type: String, required: true },
   page: { type: String, required: true },
+  // commerce: { type: mongoose.Types.ObjectId, ref: "Category", required: true }
 });
 
 couponSchema.plugin(mongoosePaginate);

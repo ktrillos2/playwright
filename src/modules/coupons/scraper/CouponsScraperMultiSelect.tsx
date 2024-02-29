@@ -1,5 +1,5 @@
 "use client";
-import { categoryActions, commerceActions } from "@/actions";
+import { categoryActions, commerceActions, scrapeActions } from "@/actions";
 import { Category, Commerce, LogCategory, LogType } from "@/interfaces";
 import { generalService } from "@/service";
 import { Avatar, Button, Image, Select, SelectItem } from "@nextui-org/react";
@@ -8,13 +8,14 @@ import toast from "react-hot-toast";
 
 export const CouponsScraperMultiSelect = () => {
   const [platform, setPlatform] = useState<any>(new Set([]));
-  const [category, setCategory] = useState<any>(new Set([]));
+  const [selectedCategories, setSelectedCategory] = useState<any>(new Set([]));
 
   const [loading, setLoading] = useState(false);
 
   const [commerces, setCommerces] = useState<Commerce[]>([]);
 
-  const selectedCategories = useMemo(() => {
+  const categoriesBySelectedCommerce = useMemo(() => {
+    setSelectedCategory(new Set([]));
     const [parsedPlatform] = platform;
     if (!parsedPlatform) return [];
     const selectedPlatform = commerces.find((e) => e._id === parsedPlatform);
@@ -24,9 +25,10 @@ export const CouponsScraperMultiSelect = () => {
   const getPlatformsAndCategories = async () => {
     setLoading(true);
     try {
-      const platforms = await commerceActions.getCommerces();
-      setCommerces(platforms);
+      const commerces = await commerceActions.getCommerces();
+      setCommerces(commerces);
     } catch (error) {
+      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -37,19 +39,41 @@ export const CouponsScraperMultiSelect = () => {
   }, []);
 
   const scrape = async () => {
-    console.log(category);
-    if (category.size === 0) {
-      return toast.error("La categoría es obligatoria");
+    const [selectedPlatform] = platform;
+    const categories = [...selectedCategories];
+
+    const responses = [];
+
+    const commerce = commerces.find((e) => e._id === selectedPlatform);
+
+    if (!commerce) return;
+
+    for (const category of categories) {
+      const categoryName = commerce.categories.find(
+        (e) => e.category._id === category
+      )?.category.name;
+      try {
+        const response = await scrapeActions.scrapeCommerceByCategory(
+          selectedPlatform,
+          category
+        );
+        responses.push(response);
+
+        toast.success(`Se ha scrapeado la categoria: ${categoryName}`);
+
+      } catch (error) {
+        toast.error(`Error en la categoría ${categoryName}:`);
+      }
     }
-    await generalService.createLogMessage({
-      category: LogCategory.COUPON,
-      type: LogType.LOADING,
-      message: "Scrapeando Exito",
-    });
-    const params = {
-      category: category,
-    };
-    await generalService.scrapeExito(params);
+    // await generalService.createLogMessage({
+    //   category: LogCategory.COUPON,
+    //   type: LogType.LOADING,
+    //   message: "Scrapeando Exito",
+    // });
+    // const params = {
+    //   category: category,
+    // };
+    // await generalService.scrapeExito(params);
   };
 
   return (
@@ -94,21 +118,21 @@ export const CouponsScraperMultiSelect = () => {
           {platform.size > 0 && (
             <>
               <Select
-                items={selectedCategories}
+                items={categoriesBySelectedCommerce}
                 selectionMode="multiple"
                 label="Selecciona la categoría"
                 className="w-1/6"
                 variant="underlined"
-                selectedKeys={category}
-                onSelectionChange={setCategory}
+                selectedKeys={selectedCategories}
+                onSelectionChange={setSelectedCategory}
                 classNames={{
                   trigger: "min-h-unit-18",
                 }}
               >
                 {(category) => (
                   <SelectItem
-                    key={category.category.slug}
-                    textValue={category.path}
+                    key={category.category._id}
+                    textValue={category.category.name}
                   >
                     <div className="flex gap-2 items-center">
                       <div className="flex flex-col">
@@ -120,7 +144,14 @@ export const CouponsScraperMultiSelect = () => {
                   </SelectItem>
                 )}
               </Select>
-              <Button onClick={scrape}>Scrapear</Button>
+              <Button
+                onClick={scrape}
+                variant="flat"
+                color={selectedCategories.size ? "success" : "default"}
+                isDisabled={!selectedCategories.size}
+              >
+                Scrapear
+              </Button>
             </>
           )}
         </>
