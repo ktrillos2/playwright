@@ -16,8 +16,8 @@ interface PaginatorProps<T = any> extends PaginateProps {
   query?: FilterQuery<T>;
 }
 
-const couponModel = CouponModel;
 dbConnect();
+const couponModel = CouponModel;
 
 export const getCoupons = async (): Promise<Coupon[]> => {
   return couponModel.find();

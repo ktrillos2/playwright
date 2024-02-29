@@ -1,12 +1,12 @@
 "use server";
 
 import { CategoryModel, dbConnect } from "@/lib";
-import { Coupon, DBCategory } from "@/interfaces";
+import { Category, DBCategory } from "@/interfaces";
 
-const categoryModel = CategoryModel;
 dbConnect();
+const categoryModel = CategoryModel;
 
-export const getCategories = async (): Promise<Coupon[]> => {
+export const getCategories = async (): Promise<Category[]> => {
   return categoryModel.find();
 };
 

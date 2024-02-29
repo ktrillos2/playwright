@@ -15,6 +15,6 @@ categorySchema.plugin(mongoosePaginate);
 export const CategoryModel: PaginateModel<CategoryDocument> =
   (mongoose.models.Category as PaginateModel<CategoryDocument>) ||
   mongoose.model<CategoryDocument, PaginateModel<CategoryDocument>>(
-    "Coupon",
+    "Category",
     categorySchema
   );

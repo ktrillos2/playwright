@@ -11,11 +11,11 @@ const commerceSchema = new Schema<CommerceDocument>({
   url: { type: String, required: true },
   queries: { type: String, default: null },
   image: { type: String, required: true },
-  categories: {
-    categoryId: { type: mongoose.Types.ObjectId, ref: "Category" },
+  categories: [{
+    category: { type: mongoose.Types.ObjectId, ref: "Category" },
     path: { type: String, required: true },
     default: []
-  },
+  }],
 });
 
 commerceSchema.plugin(mongoosePaginate);

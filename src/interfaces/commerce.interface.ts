@@ -1,7 +1,7 @@
 import { Category } from ".";
 
 interface DBCategoryCommerce {
-  categoryId: string;
+  category: string;
   path: string;
 }
 
@@ -14,8 +14,7 @@ export interface DBCommerce {
   categories: DBCategoryCommerce[];
 }
 
-interface CategoryCommerce {
-  category: Category;
+interface CategoryCommerce extends Category {
   path: string;
 }
 

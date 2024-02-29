@@ -119,7 +119,7 @@ const getData = async (browser: Browser, link: string) => {
 				})
 			);
 
-			// const dataparsed = data.map((e) => ({...e, commerceId, categoryId}))
+			// const dataparsed = data.map((e) => ({...e, commerceId, categoryId})
 
 			products = products.concat(data);
 
