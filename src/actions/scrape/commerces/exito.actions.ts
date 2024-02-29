@@ -1,5 +1,5 @@
 import { CouponPages } from "@/enums";
-import { Coupon, LogCategory, LogType } from "@/interfaces";
+import { DBCoupon, LogCategory, LogType } from "@/interfaces";
 import { couponService, dbConnect, logMessageService } from "@/lib";
 import { revalidatePath } from "next/cache";
 import { Browser } from "puppeteer";
@@ -11,6 +11,8 @@ interface ScrapePageProps {
   categoryId: string;
 }
 
+type CouponScraped = Omit<DBCoupon, "commerce" | "category">;
+
 export const scrapeExito = async ({
   browser,
   url,
@@ -18,7 +20,7 @@ export const scrapeExito = async ({
   commerceId,
 }: ScrapePageProps) => {
   try {
-    let products: Coupon[] = [];
+    let products: CouponScraped[] = [];
 
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle0" });
@@ -60,7 +62,8 @@ export const scrapeExito = async ({
           const decodedPath = imgURL
             ? decodeURIComponent(imgURL.searchParams.get("url") || "")
             : null;
-          const body: Coupon = {
+
+          const body: CouponScraped = {
             name: linkElement[1].title,
             url: linkElement[1].href,
             images: decodedPath ? [decodedPath] : [],
@@ -71,13 +74,10 @@ export const scrapeExito = async ({
             priceWithoutDiscount: convertToNumber(
               priceWithoutDiscount?.textContent
             ),
-            page: "EXITO",
           };
           return body;
         })
       );
-
-      // const dataparsed = data.map((e) => ({...e, commerceId, categoryId})
 
       products = products.concat(data);
 
@@ -89,21 +89,31 @@ export const scrapeExito = async ({
         break;
       }
     }
-    products = Array.from(
-      new Set(products.map((div: Coupon) => JSON.stringify(div)))
+
+    const parsedProducts: DBCoupon[] = products.map((e) => ({
+      ...e,
+      commerce: commerceId,
+      category: categoryId,
+    }));
+
+    const filteredProducts = Array.from(
+      new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
     )
-      .map((div: string) => JSON.parse(div) as Coupon)
+      .map((div: string) => JSON.parse(div) as DBCoupon)
       .filter(
         ({ priceWithoutDiscount, discountPercentage }) =>
           priceWithoutDiscount || discountPercentage
       );
 
-    await saveCoupons(products);
+    await saveCoupons({
+      categoryId,
+      commerceId,
+      data: filteredProducts,
+    });
+
     await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
-    console.log("bien");
     return true;
   } catch (error: any) {
-    console.log(error);
     await logger(
       LogType.ERROR,
       error?.message ?? "No se pudo scrapear Exito",
@@ -118,10 +128,19 @@ export const scrapeExito = async ({
   }
 };
 
-const saveCoupons = async (data: Coupon[]) => {
+interface SaveCoupon {
+  data: DBCoupon[];
+  categoryId: string;
+  commerceId: string;
+}
+
+const saveCoupons = async ({ categoryId, commerceId, data }: SaveCoupon) => {
   try {
     await dbConnect();
-    await couponService.deleteCouponsFromPage(CouponPages.EXITO);
+    await couponService.deleteCouponsByCommerceAndCategory(
+      commerceId,
+      categoryId
+    );
     await couponService.saveCoupons(data);
     return true;
   } catch (error: any) {

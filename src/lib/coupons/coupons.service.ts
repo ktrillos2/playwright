@@ -1,7 +1,7 @@
 import { FilterQuery } from "mongoose";
 
 import { CouponModel } from "./coupons.model";
-import { Coupon } from "@/interfaces";
+import { Coupon, DBCoupon } from "@/interfaces";
 
 interface PaginateProps {
   page?: number;
@@ -30,7 +30,12 @@ class CouponDbService {
     sort = "-discountPercentage",
     query = {},
   }: PaginatorProps<Coupon> = {}) {
-    return this.couponModel.paginate(query, { limit, page, sort });
+    return this.couponModel.paginate(query, {
+      limit,
+      page,
+      sort,
+      populate: ["category", "commerce"],
+    });
   }
 
   async deleteAllCoupons() {
@@ -41,7 +46,17 @@ class CouponDbService {
     return this.couponModel.deleteMany({ page });
   }
 
-  async saveCoupons(coupons: Coupon[]) {
+  async deleteCouponsByCommerceAndCategory(
+    commerceId: string,
+    categoryId: string
+  ) {
+    return this.couponModel.deleteMany({
+      commerce: commerceId,
+      category: categoryId,
+    });
+  }
+
+  async saveCoupons(coupons: DBCoupon[]) {
     return this.couponModel.insertMany(coupons);
   }
 }

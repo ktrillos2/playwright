@@ -1,5 +1,7 @@
 import mongoose, { Document, PaginateModel, Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+var aggregatePaginate = require('mongoose-aggregate-paginate-v2');
+
 
 import { Coupon } from "@/interfaces";
 
@@ -14,8 +16,8 @@ const couponSchema = new Schema<CouponDocument>({
   discountWithCard: { type: Number, default: null},
   discountPercentage: { type: Number, required: true },
   url: { type: String, required: true },
-  page: { type: String, required: true },
-  // commerce: { type: mongoose.Types.ObjectId, ref: "Category", required: true }
+  commerce: { type: mongoose.Types.ObjectId, ref: "Commerce", required: true },
+  category:  { type: mongoose.Types.ObjectId, ref: "Category", required: true }
 });
 
 couponSchema.plugin(mongoosePaginate);

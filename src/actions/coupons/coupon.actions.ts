@@ -5,6 +5,7 @@ import { FilterQuery } from "mongoose";
 import { CouponModel, dbConnect } from "@/lib";
 import { Coupon } from "@/interfaces";
 import { ObjectId } from "mongodb";
+import { transformData } from "@/helpers";
 
 interface PaginateProps {
   page?: number;
@@ -20,7 +21,7 @@ dbConnect();
 const couponModel = CouponModel;
 
 export const getCoupons = async (): Promise<Coupon[]> => {
-  return couponModel.find();
+  return couponModel.find().populate("category").populate("commerce").exec();
 };
 
 export const getCouponById = async (id: string): Promise<Coupon | null> => {
@@ -35,7 +36,8 @@ export const getPaginateCoupons = async ({
   sort = "-discountPercentage",
   query = {},
 }: PaginatorProps<Coupon> = {}) => {
-  return couponModel.paginate(query, { limit, page, sort });
+  const coupons = couponModel.paginate(query, { limit, page, sort });
+  return coupons
 };
 
 export const deleteAllCoupons = async () => {
