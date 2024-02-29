@@ -3,40 +3,38 @@ import { categoryActions, commerceActions } from "@/actions";
 import { Category, Commerce, LogCategory, LogType } from "@/interfaces";
 import { generalService } from "@/service";
 import { Avatar, Button, Image, Select, SelectItem } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 export const CouponsScraperMultiSelect = () => {
-  const [platform, setPlatform] = useState<any>([]);
+  const [platform, setPlatform] = useState<any>(new Set([]));
   const [category, setCategory] = useState<any>(new Set([]));
 
   const [loading, setLoading] = useState(false);
 
-  const [platforms, setPlatforms] = useState<Commerce[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [commerces, setCommerces] = useState<Commerce[]>([]);
+
+  const selectedCategories = useMemo(() => {
+    const [parsedPlatform] = platform;
+    if (!parsedPlatform) return [];
+    const selectedPlatform = commerces.find((e) => e._id === parsedPlatform);
+    return selectedPlatform?.categories || [];
+  }, [platform]);
 
   const getPlatformsAndCategories = async () => {
+    setLoading(true);
     try {
-      const [platforms] =  await Promise.all ([
-        commerceActions.getCommerces(),
-        // categoryActions.getCategories()
-      ]) 
-      setPlatforms(platforms);
-
-
-      // setCategories(categories);
-    } catch (error) {}
+      const platforms = await commerceActions.getCommerces();
+      setCommerces(platforms);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     getPlatformsAndCategories();
   }, []);
-
-  // const categories = [
-  //   { name: "Tecnologia", value: "/tecnologia" },
-  //   { name: "Celulares", value: "/tecnologia/celulares" },
-  //   { name: "Vinos y licores", value: "/vinos-y-licores" },
-  // ];
 
   const scrape = async () => {
     console.log(category);
@@ -61,7 +59,7 @@ export const CouponsScraperMultiSelect = () => {
       ) : (
         <>
           <Select
-            items={platforms}
+            items={commerces}
             label="Plataforma"
             className="w-1/6"
             variant="underlined"
@@ -82,12 +80,12 @@ export const CouponsScraperMultiSelect = () => {
               ));
             }}
           >
-            {(platform) => (
-              <SelectItem key={platform.name} textValue={platform.name}>
+            {(commerce) => (
+              <SelectItem key={commerce._id} textValue={commerce.name}>
                 <div className="flex gap-2 items-center">
-                  <Avatar src={platform.image} alt="image" size="md" />
+                  <Avatar src={commerce.image} alt="image" size="md" />
                   <div className="flex flex-col">
-                    <span className="text-small">{platform.name}</span>
+                    <span className="text-small">{commerce.name}</span>
                   </div>
                 </div>
               </SelectItem>
@@ -96,7 +94,7 @@ export const CouponsScraperMultiSelect = () => {
           {platform.size > 0 && (
             <>
               <Select
-                items={categories}
+                items={selectedCategories}
                 selectionMode="multiple"
                 label="Selecciona la categoría"
                 className="w-1/6"
@@ -108,10 +106,15 @@ export const CouponsScraperMultiSelect = () => {
                 }}
               >
                 {(category) => (
-                  <SelectItem key={category._id} textValue={category._id}>
+                  <SelectItem
+                    key={category.category.slug}
+                    textValue={category.path}
+                  >
                     <div className="flex gap-2 items-center">
                       <div className="flex flex-col">
-                        <span className="text-small">{category._id}</span>
+                        <span className="text-small">
+                          {category.category.name}
+                        </span>
                       </div>
                     </div>
                   </SelectItem>
