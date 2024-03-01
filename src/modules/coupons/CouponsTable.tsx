@@ -1,7 +1,8 @@
 "use client";
-import { useCallback, useMemo, useState } from "react";
-import { Button, Image, useDisclosure } from "@nextui-org/react";
+import { useCallback, useState } from "react";
+import { Button, Image, Selection, useDisclosure } from "@nextui-org/react";
 import { clsx } from "clsx";
+import { useDebounceCallback } from "usehooks-ts";
 
 import {
   Columns,
@@ -15,9 +16,10 @@ import {
   CopyClipboardButton,
   ModalImage,
 } from "@/components/ui/buttons";
-import { formatToMoney } from "@/helpers";
+import { createSearchParams, formatToMoney } from "@/helpers";
 import Link from "next/link";
 import { SelectCategory, SelectCommerce } from ".";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const columns: Columns[] = [
   {
@@ -78,6 +80,12 @@ export const CouponsTable: React.FC<Props> = ({
   commerces,
   categories,
 }) => {
+  
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const router = useRouter();
+
   const [selectedInfo, setSelectedInfo] = useState<CalculatedCoupon | null>(
     null
   );
@@ -147,6 +155,22 @@ export const CouponsTable: React.FC<Props> = ({
     [onOpen]
   );
 
+  const onSelectChange = (key: string, value: Selection) => {
+    console.log(searchParams.toString());
+    router.replace(
+      pathname +
+        createSearchParams(searchParams, {
+          [key]: Array.from(value).join(","),
+        })
+    );
+  };
+
+  const onSelectCommerce = (commerces: Selection) =>
+    onSelectChange("commerces", commerces);
+
+  const onSelectCategory = (categories: Selection) =>
+    onSelectChange("categories", categories);
+
   const extraTopContent = (
     // useMemo(  () => (
     <div className="flex w-full gap-4 pr-4">
@@ -154,7 +178,7 @@ export const CouponsTable: React.FC<Props> = ({
         <SelectCommerce
           commerces={commerces}
           defaultSelectedKeys={selectedCommerces}
-          onChange={setSelectedCommerces}
+          onSelectionChange={onSelectCommerce}
           valueKey="slug"
           className=""
           selectionMode="multiple"
@@ -168,7 +192,8 @@ export const CouponsTable: React.FC<Props> = ({
           categories={categories}
           label={"Categorías"}
           defaultSelectedKeys={selectedCategories}
-          onChange={setSelectedCategory}
+          onSelectionChange={onSelectCategory}
+          valueKey="slug"
           selectionMode="multiple"
           className=""
           variant="flat"

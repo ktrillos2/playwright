@@ -53,8 +53,8 @@ export const AsyncCustomTable: React.FC<Props> = ({
   limit,
   extraTopContent,
 }) => {
+  
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const router = useRouter();
 
   const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

@@ -5,5 +5,6 @@ export const createSearchParams = (searchParams: ReadonlyURLSearchParams, querie
   Object.entries(queries).forEach(([key, value]) => {
     params.set(key, value.toString());
   })
+  console.log(params.toString())
   return '?' + params.toString()
 }
