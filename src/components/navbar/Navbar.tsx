@@ -22,7 +22,6 @@ import { FaSpider } from "react-icons/fa";
 
 import { NavItem } from "./NavItem";
 import { Info, PagePaths } from "@/enums";
-import { logout } from "@/actions";
 import { useSession } from "next-auth/react";
 import { IUser } from "../../../nextauth";
 

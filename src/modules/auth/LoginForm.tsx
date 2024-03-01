@@ -9,7 +9,6 @@ import { useForm, SubmitHandler, RegisterOptions } from "react-hook-form";
 import { PasswordInput } from "@/components";
 import { slideInFromTop } from "@/utils";
 import { regex } from "@/constants";
-import { login } from "@/actions";
 import { signIn } from "next-auth/react";
 
 enum FormKeys {
