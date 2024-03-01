@@ -3,7 +3,7 @@ import { Pages } from "../interfaces";
 export const links: Pages[] = [
 	{
 		label: "Éxito Tecnología",
-		value: 'https://www.exito.com/tecnologia',
+		value: 'https://www.exito.com/tecnologia/',
 	},
 	{
 		label: "Inmobiliaria pita Ibiza",

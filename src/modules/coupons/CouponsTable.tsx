@@ -14,8 +14,8 @@ import Link from "next/link";
 
 const columns: Columns[] = [
   {
-    key: "page",
-    label: "Pagina",
+    key: "commerce",
+    label: "Comercio",
   },
   {
     key: "name",
@@ -42,8 +42,8 @@ const columns: Columns[] = [
     label: "Precio sin descuento",
   },
   {
-    key: "brandName",
-    label: "Marca",
+    key: "category",
+    label: "Categoría",
   },
   { key: "url", label: "Link" },
   {
@@ -109,6 +109,8 @@ export const CouponsTable: React.FC<Props> = ({
         );
       }
 
+      if (["commerce", "category"].includes(columnKey as any)) return cellValue.name;
+
       if (
         ["lowPrice", "discountWithCard", "priceWithoutDiscount"].includes(
           columnKey as string
@@ -119,14 +121,6 @@ export const CouponsTable: React.FC<Props> = ({
 
       if (columnKey === "options") {
         return (
-          // <Button
-          // 	onClick={() => {
-          // 		onOpen();
-          // 		setSelectedInfo(data);
-          // 	}}
-          // >
-          // 	Ver cupón
-          // </Button>
           <Button as={Link} href={`/coupons/${_id}`}>
             Ver cupón
           </Button>

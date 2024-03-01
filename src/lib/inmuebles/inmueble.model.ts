@@ -6,7 +6,7 @@ import { PaginateModel } from "mongoose";
 
 interface InmuebleDocument extends Document, Inmueble {}
 
-const InmuebleSchema = new Schema<InmuebleDocument>({
+const inmuebleSchema = new Schema<InmuebleDocument>({
   image: { type: String },
   location: { type: String, required: true },
   name: { type: String, required: true },
@@ -15,12 +15,12 @@ const InmuebleSchema = new Schema<InmuebleDocument>({
   url: { type: String, required: true },
 });
 
-InmuebleSchema.plugin(paginate);
+inmuebleSchema.plugin(paginate);
 
 export const InmuebleModel: PaginateModel<InmuebleDocument> =
   (mongoose.models.Inmuebles as PaginateModel<InmuebleDocument>) ||
   mongoose.model<InmuebleDocument, PaginateModel<InmuebleDocument>>(
     "Inmuebles",
-    InmuebleSchema,
+    inmuebleSchema,
     "inmuebles"
   );

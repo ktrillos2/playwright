@@ -86,7 +86,7 @@ export const LoginForm: React.FC<Props> = ({ error }) => {
       animate="visible"
       className="w-full max-w-[500px]"
     >
-      <Card className="px-5 py-5">
+      <Card className="px-5 py-5 opacity-80">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           <h1 className="text-2xl font-bold text-center">Iniciar sesión</h1>
           <Input
