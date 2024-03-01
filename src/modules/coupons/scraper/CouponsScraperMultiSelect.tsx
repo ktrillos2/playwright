@@ -81,6 +81,11 @@ export const CouponsScraperMultiSelect = () => {
               commerces={commerces}
               selectedKeys={platform}
               onSelectionChange={setPlatform}
+              className="w-1/6"
+              classNames={{
+                label: "group-data-[filled=true]:-translate-y-5",
+                trigger: "min-h-unit-18",
+              }}
             />
             {platform.size > 0 && (
               <>
@@ -89,6 +94,11 @@ export const CouponsScraperMultiSelect = () => {
                   selectedKeys={selectedCategories}
                   onSelectionChange={setSelectedCategory}
                   selectionMode="multiple"
+                  isCategoryByCommerce
+                  className="w-1/6"
+                  classNames={{
+                    trigger: "min-h-unit-18",
+                  }}
                 />
                 <Button
                   onClick={scrape}

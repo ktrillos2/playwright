@@ -4,7 +4,7 @@ import { Button } from "@nextui-org/react";
 
 import { CouponsTable, DeleteCouponsButton } from "@/modules";
 import { generalService } from "@/service";
-import { couponActions } from "@/actions";
+import { categoryActions, commerceActions, couponActions } from "@/actions";
 
 interface Props {
   searchParams: {
@@ -22,14 +22,16 @@ export default async function CouponsPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
   const limit = +searchParams.limit || 5;
 
-  const {
-    docs: coupons,
-    totalPages,
-    totalDocs,
-  } = await couponActions.getPaginateCoupons({
-    page,
-    limit,
-  });
+  const [paginatedCoupons, commerces, categories] = await Promise.all([
+    couponActions.getPaginateCoupons({
+      page,
+      limit,
+    }),
+    commerceActions.getCommerces(),
+    categoryActions.getCategories(),
+  ]);
+
+  const { docs: coupons, totalPages, totalDocs } = paginatedCoupons;
 
   return (
     <div>
@@ -48,6 +50,8 @@ export default async function CouponsPage({ searchParams }: Props) {
         totalPages={totalPages}
         totalInmuebles={totalDocs}
         limit={limit}
+        commerces={commerces}
+        categories={categories}
       />
     </div>
   );

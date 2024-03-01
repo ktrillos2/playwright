@@ -16,11 +16,12 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Columns } from "../../interfaces";
 import { useMemo, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import { createSearchParams } from "@/helpers";
 
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 100];
 
@@ -38,6 +39,7 @@ interface Props {
   totalItems: number;
   itemsName?: string;
   limit: number;
+  extraTopContent?: JSX.Element;
 }
 
 export const AsyncCustomTable: React.FC<Props> = ({
@@ -49,30 +51,34 @@ export const AsyncCustomTable: React.FC<Props> = ({
   totalItems,
   itemsName = "items",
   limit,
+  extraTopContent,
 }) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
 
   const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLimit = e.target.value;
-    router.replace(`?page=1&limit=${newLimit}`);
+    router.replace(
+      createSearchParams(searchParams, { page: 1, limit: newLimit })
+    );
   };
 
   const onPageChange = (page: number) => {
-    router.replace(`?page=${page}&limit=${limit}`);
+    router.replace(createSearchParams(searchParams, { page }));
   };
 
   const selectedKeys = new Set(["" + limit]);
 
   const topContent = useMemo(() => {
     return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
-          <div className="flex gap-3"></div>
-        </div>
+      <div className="flex flex-col gap-4 pt-3">
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total: {totalItems} {itemsName}
-          </span>
+          {extraTopContent ?? (
+            <span className="text-default-400 text-small">
+              Total: {totalItems} {itemsName}
+            </span>
+          )}
 
           <Select
             onChange={onRowsPerPageChange}

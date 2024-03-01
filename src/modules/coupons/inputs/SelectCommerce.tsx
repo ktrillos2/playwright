@@ -5,11 +5,13 @@ import clsx from "clsx";
 
 interface Props extends Omit<SelectProps, "children"> {
   commerces: Commerce[];
+  valueKey?: keyof Commerce
 }
 
 export const SelectCommerce: React.FC<Props> = ({
   commerces,
   selectionMode,
+  valueKey = "_id",
   ...rest
 }) => {
   const isMultiple = selectionMode === "multiple";
@@ -19,12 +21,8 @@ export const SelectCommerce: React.FC<Props> = ({
       items={commerces}
       selectionMode={selectionMode}
       label="Comercio"
-      className="w-1/6"
       variant="underlined"
-      classNames={{
-        label: "group-data-[filled=true]:-translate-y-5",
-        trigger: "min-h-unit-18",
-      }}
+
       renderValue={(items: any) => {
         return (
           <div className={clsx({ "flex gap-1.5": isMultiple })}>
@@ -44,7 +42,7 @@ export const SelectCommerce: React.FC<Props> = ({
       {...rest}
     >
       {(commerce: any) => (
-        <SelectItem key={commerce._id} textValue={commerce.name}>
+        <SelectItem key={commerce[valueKey]} textValue={commerce.name}>
           <div className="flex gap-2 items-center">
             <Avatar src={commerce.image} alt="image" size="md" />
             <div className="flex flex-col">

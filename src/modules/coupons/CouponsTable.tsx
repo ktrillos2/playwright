@@ -1,9 +1,15 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button, Image, useDisclosure } from "@nextui-org/react";
 import { clsx } from "clsx";
 
-import { Columns, CalculatedCoupon, Coupon } from "@/interfaces";
+import {
+  Columns,
+  CalculatedCoupon,
+  Coupon,
+  Commerce,
+  Category,
+} from "@/interfaces";
 import {
   AsyncCustomTable,
   CopyClipboardButton,
@@ -11,6 +17,7 @@ import {
 } from "@/components/ui/buttons";
 import { formatToMoney } from "@/helpers";
 import Link from "next/link";
+import { SelectCategory, SelectCommerce } from ".";
 
 const columns: Columns[] = [
   {
@@ -58,6 +65,8 @@ interface Props {
   totalPages: number;
   totalInmuebles: number;
   limit: number;
+  commerces?: Commerce[];
+  categories?: Category[];
 }
 
 export const CouponsTable: React.FC<Props> = ({
@@ -66,10 +75,15 @@ export const CouponsTable: React.FC<Props> = ({
   totalPages,
   totalInmuebles,
   limit,
+  commerces,
+  categories,
 }) => {
   const [selectedInfo, setSelectedInfo] = useState<CalculatedCoupon | null>(
     null
   );
+
+  const [selectedCommerces, setSelectedCommerces] = useState<any>(new Set([]));
+  const [selectedCategories, setSelectedCategory] = useState<any>(new Set([]));
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -109,7 +123,8 @@ export const CouponsTable: React.FC<Props> = ({
         );
       }
 
-      if (["commerce", "category"].includes(columnKey as any)) return cellValue.name;
+      if (["commerce", "category"].includes(columnKey as any))
+        return cellValue.name;
 
       if (
         ["lowPrice", "discountWithCard", "priceWithoutDiscount"].includes(
@@ -132,6 +147,39 @@ export const CouponsTable: React.FC<Props> = ({
     [onOpen]
   );
 
+  const extraTopContent = (
+    // useMemo(  () => (
+    <div className="flex w-full gap-4 pr-4">
+      {commerces ? (
+        <SelectCommerce
+          commerces={commerces}
+          defaultSelectedKeys={selectedCommerces}
+          onChange={setSelectedCommerces}
+          valueKey="slug"
+          className=""
+          selectionMode="multiple"
+          variant="flat"
+          label={""}
+          placeholder="Comercios"
+        />
+      ) : null}
+      {categories ? (
+        <SelectCategory
+          categories={categories}
+          label={"Categorías"}
+          defaultSelectedKeys={selectedCategories}
+          onChange={setSelectedCategory}
+          selectionMode="multiple"
+          className=""
+          variant="flat"
+        />
+      ) : null}
+    </div>
+  );
+  //   ),
+  //   [selectedCommerces, selectedCategories]
+  // );
+
   return (
     <>
       <ModalImage
@@ -148,6 +196,7 @@ export const CouponsTable: React.FC<Props> = ({
         totalItems={totalInmuebles}
         limit={limit}
         itemsName="cupones"
+        extraTopContent={extraTopContent}
       />
     </>
   );
