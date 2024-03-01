@@ -4,15 +4,6 @@ import { CommerceSlugs } from "@/enums";
 import { getBrowser } from "./helpers";
 import { exitoActions, metroActions } from "./commerces";
 
-const sleep = function (ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
-const funcion = async (text: string) => {
-  await sleep(3000);
-  return text;
-};
-
 export const scrapeCommerceByCategory = async (
   commerceId: string,
   categoryId: string

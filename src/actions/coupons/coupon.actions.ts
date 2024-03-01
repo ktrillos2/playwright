@@ -1,10 +1,10 @@
 "use server";
 
 import { FilterQuery } from "mongoose";
+import { ObjectId } from "mongodb";
 
 import { CouponModel, dbConnect } from "@/lib";
 import { Coupon } from "@/interfaces";
-import { ObjectId } from "mongodb";
 import { transformData } from "@/helpers";
 
 interface PaginateProps {
