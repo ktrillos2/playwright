@@ -52,31 +52,6 @@ class GeneralService extends ServiceClass {
     });
   }
 
-  // async getCoupons({
-  //   page,
-  //   limit,
-  //   sort,
-  // }: {
-  //   page?: string | number;
-  //   limit?: string | number;
-  //   sort?: string | string;
-  // }): Promise<PaginationResponse<Coupon>> {
-  //   const params = { page, limit };
-
-  //   return await super.getQuery<PaginationResponse<Coupon>>({
-  //     URL: BASE_API_URL,
-  //     path: "api/coupons",
-  //     params,
-  //   });
-  // }
-
-  // async deleteCoupons(): Promise<void> {
-  //   return await super.deleteQuery({
-  //     URL: BASE_API_URL,
-  //     path: "api/coupons",
-  //   });
-  // }
-
   async getUserAgents(): Promise<any> {
     return await super.getQuery({
       URL: Urls.SCRAPE_OPS,
