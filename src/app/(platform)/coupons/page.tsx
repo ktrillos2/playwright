@@ -36,9 +36,9 @@ export default async function CouponsPage({ searchParams }: Props) {
       <div className="flex justify-between items-center">
         <h1 className="text-left">Cupones Spider</h1>
         <div className="flex gap-2">
-          {/* <Button as={Link} href="/coupons/scraper" color="success">
+          <Button as={Link} href="/coupons/scraper" color="success">
             Scrappear
-          </Button> */}
+          </Button>
           <DeleteCouponsButton />
         </div>
       </div>
