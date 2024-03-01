@@ -4,10 +4,6 @@ import { Button } from "@nextui-org/react";
 
 import { CouponsTable, DeleteCouponsButton } from "@/modules";
 import { generalService } from "@/service";
-import { revalidatePath } from "next/cache";
-import { getServerAuthSession } from "@/config";
-import { getServerSession } from "next-auth";
-import { getToken } from "next-auth/jwt";
 import { couponActions } from "@/actions";
 
 interface Props {
@@ -26,25 +22,23 @@ export default async function CouponsPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
   const limit = +searchParams.limit || 5;
 
-  const { docs, totalPages, totalDocs } =
-    await generalService.getCoupons({
-      page,
-      limit,
-    });
-
-  const coupons = docs;
+  const {
+    docs: coupons,
+    totalPages,
+    totalDocs,
+  } = await couponActions.getPaginateCoupons({
+    page,
+    limit,
+  });
 
   return (
     <div>
-      {/* {
-        JSON.stringify(authSession, null, 3)
-      } */}
       <div className="flex justify-between items-center">
         <h1 className="text-left">Cupones Spider</h1>
         <div className="flex gap-2">
-          <Button as={Link} href="/coupons/scraper" color="success">
+          {/* <Button as={Link} href="/coupons/scraper" color="success">
             Scrappear
-          </Button>
+          </Button> */}
           <DeleteCouponsButton />
         </div>
       </div>

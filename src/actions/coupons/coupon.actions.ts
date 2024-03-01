@@ -5,6 +5,7 @@ import { FilterQuery } from "mongoose";
 import { CouponModel, dbConnect } from "@/lib";
 import { Coupon } from "@/interfaces";
 import { ObjectId } from "mongodb";
+import { transformData } from "@/helpers";
 
 interface PaginateProps {
   page?: number;
@@ -37,8 +38,13 @@ export const getPaginateCoupons = async ({
   sort = "-discountPercentage",
   query = {},
 }: PaginatorProps<Coupon> = {}) => {
-  const coupons = couponModel.paginate(query, { limit, page, sort });
-  return coupons;
+  const response = await couponModel.paginate(query, {
+    limit,
+    page,
+    sort,
+    populate: ["category", "commerce"],
+  });
+  return { ...response, docs: transformData(response.docs) };
 };
 
 export const deleteAllCoupons = async () => {
