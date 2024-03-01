@@ -21,7 +21,7 @@ export const couponLayout = ({ coupon, displayImage }: Props) => {
   } = coupon;
 
   const couponImage = displayImage || originalImage;
-  
+
   return {
     "Rect-164932513053": {
       fill: "rgb(103, 86, 190)",
