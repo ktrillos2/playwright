@@ -1,6 +1,6 @@
 "use client";
 
-import { generalService } from "@/service";
+import { couponActions } from "@/actions";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
@@ -8,7 +8,7 @@ export const DeleteCouponsButton = () => {
   const router = useRouter();
 
   const handleDeleteCoupons = async () => {
-    await generalService.deleteCoupons();
+    await couponActions.deleteAllCoupons();
     router.refresh();
   };
   
