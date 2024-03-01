@@ -23,9 +23,9 @@ interface Props {
 const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
   const editedImage = useRef<getCurrentImgDataFunction>();
 
-  const { images, name, page } = coupon;
+  const { images, name, commerce } = coupon;
 
-  const imageName = `${page}-${name
+  const imageName = `${commerce.name}-${name
     .replaceAll(`"`, "")
     .split(" ")
     .slice(0, 5)

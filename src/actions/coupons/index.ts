@@ -1,1 +1,1 @@
-export *  as couponActions from './coupon.actions';
+export * as couponActions from './coupon.actions';

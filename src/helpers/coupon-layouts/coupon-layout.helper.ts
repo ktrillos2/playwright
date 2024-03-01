@@ -8,16 +8,12 @@ interface Props {
 
 const KUMONERA_LOGO = "/kumonera-logo.png";
 
-const COMMERCE_LOGOS: Record<string, string> = {
-  EXITO: "/page-images/exito-logo.png",
-  METRO: "/page-images/metro-logo.png",
-};
 
 export const couponLayout = ({ coupon, displayImage }: Props) => {
   const {
     name,
     discountPercentage,
-    page,
+    commerce,
     lowPrice,
     priceWithoutDiscount,
     url,
@@ -25,7 +21,7 @@ export const couponLayout = ({ coupon, displayImage }: Props) => {
   } = coupon;
 
   const couponImage = displayImage || originalImage;
-  
+
   return {
     "Rect-164932513053": {
       fill: "rgb(103, 86, 190)",
@@ -244,7 +240,7 @@ export const couponLayout = ({ coupon, displayImage }: Props) => {
       disableUpload: false,
       gallery: [],
       name: "Image",
-      image: COMMERCE_LOGOS[page],
+      image: commerce.image,
       x: 161.77475597508334,
       y: 8.335150575972243,
       width: 262.78156521739135,
@@ -264,7 +260,7 @@ export const couponLayout = ({ coupon, displayImage }: Props) => {
       shadowColor: "#000000",
       shadowOpacity: 1,
       opacity: 1,
-      text: page,
+      text: commerce.name,
       fontFamily: "Sans-serif",
       fontSize: 20,
       letterSpacing: 0,

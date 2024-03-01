@@ -18,16 +18,17 @@
 
 body {
 	color: rgb(var(--foreground-rgb));
-	background: linear-gradient(
-			to bottom,
+	background: linear-gradient(to bottom,
 			transparent,
-			rgb(var(--background-end-rgb))
-		)
-		rgb(var(--background-start-rgb));
+			rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
-*:focus-visible {
-	outline-color: white !important;
+:focus-visible {
+	outline-color: transparent !important;
+}
+
+.focus-visible {
+	outline-color: transparent !important;
 }
 
 @layer utilities {
@@ -40,12 +41,15 @@ body {
 	0% {
 		content: "";
 	}
+
 	33% {
 		content: ".";
 	}
+
 	66% {
 		content: "..";
 	}
+
 	100% {
 		content: "...";
 	}
@@ -57,6 +61,29 @@ body {
 }
 
 .bg-auth {
-  background-color: #130f40;
-background-image: linear-gradient(315deg, #130f40 0%, #000000 74%);
+	background-color: #130f40;
+	background-image: linear-gradient(315deg, #130f40 0%, #000000 74%);
+}
+
+/* Oculta los botones de subir y bajar */
+::-webkit-scrollbar-button {
+	display: none;
+}
+
+/* Hace que el scrollbar sea redondo y más pequeño */
+::-webkit-scrollbar {
+	width: 4px;
+	border-radius: 50px;
+	background: #333;
+}
+
+/* Hace que el thumb del scrollbar sea redondo */
+::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 50px;
+}
+
+/* Cambia el color del thumb del scrollbar al pasar el mouse */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
 }

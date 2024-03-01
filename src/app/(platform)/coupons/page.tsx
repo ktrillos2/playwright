@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { getServerAuthSession } from "@/config";
 import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
+import { couponActions } from "@/actions";
 
 interface Props {
   searchParams: {
@@ -25,12 +26,11 @@ export default async function CouponsPage({ searchParams }: Props) {
   const page = +searchParams.page || 1;
   const limit = +searchParams.limit || 5;
 
-  const authSession = await getServerAuthSession();
-
-  const { docs, totalPages, totalDocs } = await generalService.getCoupons({
-    page,
-    limit,
-  });
+  const { docs, totalPages, totalDocs } =
+    await generalService.getCoupons({
+      page,
+      limit,
+    });
 
   const coupons = docs;
 

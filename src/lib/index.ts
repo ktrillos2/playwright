@@ -1,3 +1,5 @@
+export * from './categories/category.model';
+export * from './commerces/commerce.model';
 export * from './coupons/coupons.model';
 export * from './coupons/coupons.service';
 export * from './dbConect';

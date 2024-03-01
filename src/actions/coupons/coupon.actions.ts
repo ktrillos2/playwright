@@ -16,16 +16,18 @@ interface PaginatorProps<T = any> extends PaginateProps {
   query?: FilterQuery<T>;
 }
 
-const couponModel = CouponModel;
 dbConnect();
+const couponModel = CouponModel;
 
 export const getCoupons = async (): Promise<Coupon[]> => {
-  return couponModel.find();
+  return couponModel.find().populate("category").populate("commerce").exec();
 };
 
 export const getCouponById = async (id: string): Promise<Coupon | null> => {
   if (!ObjectId.isValid(id)) return null;
-  const coupon = await couponModel.findById(id);
+  const coupon = await couponModel
+    .findById(id)
+    .populate(["commerce", "category"]);
   return coupon ? parseData(coupon) : null;
 };
 
@@ -35,7 +37,8 @@ export const getPaginateCoupons = async ({
   sort = "-discountPercentage",
   query = {},
 }: PaginatorProps<Coupon> = {}) => {
-  return couponModel.paginate(query, { limit, page, sort });
+  const coupons = couponModel.paginate(query, { limit, page, sort });
+  return coupons;
 };
 
 export const deleteAllCoupons = async () => {
@@ -44,10 +47,6 @@ export const deleteAllCoupons = async () => {
 
 export const deleteCouponsFromPage = async (page: string) => {
   return couponModel.deleteMany({ page });
-};
-
-export const saveCoupons = async (coupons: Coupon[]) => {
-  return couponModel.insertMany(coupons);
 };
 
 const parseData = (data: any) => {

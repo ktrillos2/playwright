@@ -4,7 +4,6 @@ import { signIn, signOut } from "next-auth/react";
 
 export async function authenticate(user?: string, password?: string) {
   try {
-    // await sleep(2);
     await signIn("credentials", {
       user,
       password,

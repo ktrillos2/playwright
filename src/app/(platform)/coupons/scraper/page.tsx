@@ -4,6 +4,7 @@ import { LoggerComponent } from "@/components/ui/buttons";
 import { generalService } from "@/service";
 import { LogMessage } from '@/interfaces';
 import { CouponsScraperTable } from '@/modules/coupons/scraper/CouponsScraperTable';
+import { CouponsScraperMultiSelect } from '@/modules/coupons/scraper';
 
 export default function CouponsScraperPage() {
   const [messages, setMessages] = useState<LogMessage[]>([]);
@@ -18,9 +19,9 @@ export default function CouponsScraperPage() {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <CouponsScraperTable />
-      <LoggerComponent messages={messages} />
+    <div className="flex gap-4">
+      <CouponsScraperMultiSelect />
+      {/* <LoggerComponent messages={messages} /> */}
     </div>
   );
 }
