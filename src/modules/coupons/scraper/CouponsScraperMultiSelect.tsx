@@ -5,6 +5,7 @@ import { generalService } from "@/service";
 import { Avatar, Button, Image, Select, SelectItem } from "@nextui-org/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { SelectCommerce } from "../inputs/SelectCommerce";
 
 export const CouponsScraperMultiSelect = () => {
   const [platform, setPlatform] = useState<any>(new Set([]));
@@ -76,39 +77,11 @@ export const CouponsScraperMultiSelect = () => {
           <span>Cargando...</span>
         ) : (
           <>
-            <Select
-              items={commerces}
-              label="Plataforma"
-              className="w-1/6"
-              variant="underlined"
+            <SelectCommerce
+              commerces={commerces}
               selectedKeys={platform}
               onSelectionChange={setPlatform}
-              classNames={{
-                label: "group-data-[filled=true]:-translate-y-5",
-                trigger: "min-h-unit-18",
-              }}
-              renderValue={(items) => {
-                return items.map((platform) => (
-                  <div className="flex gap-2 items-center" key={platform.key}>
-                    <Avatar src={platform.data?.image} alt="image" size="sm" />
-                    <div className="flex flex-col">
-                      <span className="text-small">{platform.data?.name}</span>
-                    </div>
-                  </div>
-                ));
-              }}
-            >
-              {(commerce) => (
-                <SelectItem key={commerce._id} textValue={commerce.name}>
-                  <div className="flex gap-2 items-center">
-                    <Avatar src={commerce.image} alt="image" size="md" />
-                    <div className="flex flex-col">
-                      <span className="text-small">{commerce.name}</span>
-                    </div>
-                  </div>
-                </SelectItem>
-              )}
-            </Select>
+            />
             {platform.size > 0 && (
               <>
                 <Select
