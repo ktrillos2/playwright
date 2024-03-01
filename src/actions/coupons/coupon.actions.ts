@@ -26,7 +26,9 @@ export const getCoupons = async (): Promise<Coupon[]> => {
 
 export const getCouponById = async (id: string): Promise<Coupon | null> => {
   if (!ObjectId.isValid(id)) return null;
-  const coupon = await couponModel.findById(id);
+  const coupon = await couponModel
+    .findById(id)
+    .populate(["commerce", "category"]);
   return coupon ? parseData(coupon) : null;
 };
 
@@ -37,7 +39,7 @@ export const getPaginateCoupons = async ({
   query = {},
 }: PaginatorProps<Coupon> = {}) => {
   const coupons = couponModel.paginate(query, { limit, page, sort });
-  return coupons
+  return coupons;
 };
 
 export const deleteAllCoupons = async () => {
