@@ -61,7 +61,7 @@ export const CouponsScraperMultiSelect = () => {
         );
         responses.push(response);
 
-        toast.success(`Se ha scrapeado la categoria: ${categoryName}`);
+        toast.success(`Se ha scrapeado la categoría: ${categoryName}`);
       } catch (error) {
         toast.error(`Error en la categoría ${categoryName}:`);
       }

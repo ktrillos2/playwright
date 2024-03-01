@@ -11,13 +11,13 @@ export const getBrowser = async () => {
 	const locateBrowser = await getLocateChrome();
 
 	const browser = await puppeteer.launch({
-		args: [
-			"--disable-setuid-sandbox",
-			"--no-sandbox",
-			"--single-process",
-			"--no-zygote",
-		],
-		// headless: false,
+		// args: [
+		// 	"--disable-setuid-sandbox",
+		// 	"--no-sandbox",
+		// 	"--single-process",
+		// 	"--no-zygote",
+		// ],
+		headless: false,
 		executablePath:
 			process.env.NODE_ENV === "production"
 				? process.env.PUPPETEER_EXECUTABLE_PATH

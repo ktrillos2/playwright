@@ -5,7 +5,6 @@ import { FilterQuery } from "mongoose";
 import { CouponModel, dbConnect } from "@/lib";
 import { Coupon } from "@/interfaces";
 import { ObjectId } from "mongodb";
-import { transformData } from "@/helpers";
 
 interface PaginateProps {
   page?: number;
@@ -48,10 +47,6 @@ export const deleteAllCoupons = async () => {
 
 export const deleteCouponsFromPage = async (page: string) => {
   return couponModel.deleteMany({ page });
-};
-
-export const saveCoupons = async (coupons: Coupon[]) => {
-  return couponModel.insertMany(coupons);
 };
 
 const parseData = (data: any) => {

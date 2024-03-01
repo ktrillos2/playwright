@@ -3,15 +3,16 @@ import { DBCoupon, LogCategory, LogType } from "@/interfaces";
 import { couponService, dbConnect, logMessageService } from "@/lib";
 import { revalidatePath } from "next/cache";
 import { Browser } from "puppeteer";
+import { logger, saveCoupons } from "../helpers";
 
-interface ScrapePageProps {
+export interface ScrapePageProps {
   browser: Browser;
   url: string;
   commerceId: string;
   categoryId: string;
 }
 
-type CouponScraped = Omit<DBCoupon, "commerce" | "category">;
+export type CouponScraped = Omit<DBCoupon, "commerce" | "category">;
 
 export const scrapeExito = async ({
   browser,
@@ -120,7 +121,7 @@ export const scrapeExito = async ({
       error
     );
 
-    throw new error();
+    throw new Error(error.message);
   } finally {
     if (browser) {
       await browser.close();
@@ -128,36 +129,3 @@ export const scrapeExito = async ({
   }
 };
 
-interface SaveCoupon {
-  data: DBCoupon[];
-  categoryId: string;
-  commerceId: string;
-}
-
-const saveCoupons = async ({ categoryId, commerceId, data }: SaveCoupon) => {
-  try {
-    await dbConnect();
-    await couponService.deleteCouponsByCommerceAndCategory(
-      commerceId,
-      categoryId
-    );
-    await couponService.saveCoupons(data);
-    return true;
-  } catch (error: any) {
-    throw error;
-  }
-};
-
-const logger = async (type: LogType, message: string, error?: any) => {
-  await dbConnect();
-  const response = await logMessageService.createLogMessage({
-    category: LogCategory.COUPON,
-    type,
-    message,
-    error,
-  });
-
-  revalidatePath("/coupons/scraper");
-
-  return response;
-};

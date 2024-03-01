@@ -2,7 +2,7 @@
 import { commerceActions } from "@/actions";
 import { CommerceSlugs } from "@/enums";
 import { getBrowser } from "./helpers";
-import { exitoActions } from "./commerces";
+import { exitoActions, metroActions } from "./commerces";
 
 const sleep = function (ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -18,7 +18,6 @@ export const scrapeCommerceByCategory = async (
   categoryId: string
 ) => {
   const commerce = await commerceActions.getCommerceById(commerceId);
-
   if (!commerce) throw new Error("El comercio seleccionado no existe");
 
   const { url, queries, slug } = commerce;
@@ -43,6 +42,7 @@ export const scrapeCommerceByCategory = async (
       await exitoActions.scrapeExito(scraperProps);
       break;
     case CommerceSlugs.METRO:
+      await metroActions.scrapeMetro(scraperProps);
       break;
     default:
       throw new Error("No hay acciones para este comercio");
