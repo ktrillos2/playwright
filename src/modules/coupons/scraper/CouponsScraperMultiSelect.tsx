@@ -5,7 +5,7 @@ import { generalService } from "@/service";
 import { Avatar, Button, Image, Select, SelectItem } from "@nextui-org/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { SelectCommerce } from "../inputs/SelectCommerce";
+import { SelectCategory, SelectCommerce } from "..";
 
 export const CouponsScraperMultiSelect = () => {
   const [platform, setPlatform] = useState<any>(new Set([]));
@@ -84,33 +84,12 @@ export const CouponsScraperMultiSelect = () => {
             />
             {platform.size > 0 && (
               <>
-                <Select
-                  items={categoriesBySelectedCommerce}
-                  selectionMode="multiple"
-                  label="Selecciona la categoría"
-                  className="w-1/6"
-                  variant="underlined"
+                <SelectCategory
+                  categories={categoriesBySelectedCommerce}
                   selectedKeys={selectedCategories}
                   onSelectionChange={setSelectedCategory}
-                  classNames={{
-                    trigger: "min-h-unit-18",
-                  }}
-                >
-                  {(category) => (
-                    <SelectItem
-                      key={category.category._id}
-                      textValue={category.category.name}
-                    >
-                      <div className="flex gap-2 items-center">
-                        <div className="flex flex-col">
-                          <span className="text-small">
-                            {category.category.name}
-                          </span>
-                        </div>
-                      </div>
-                    </SelectItem>
-                  )}
-                </Select>
+                  selectionMode="multiple"
+                />
                 <Button
                   onClick={scrape}
                   variant="flat"
