@@ -1,10 +1,11 @@
-import { ReadonlyURLSearchParams } from "next/navigation";
-
-export const createSearchParams = (searchParams: ReadonlyURLSearchParams, queries: Record<string, string | number>) => {
-  const params = new URLSearchParams(searchParams);
+export const createSearchParams = (
+  searchParams: URLSearchParams,
+  queries: Record<string, string | number>
+) => {
+  const params = new URLSearchParams(Array.from(searchParams.entries()));
   Object.entries(queries).forEach(([key, value]) => {
+    if (!value) return params.delete(key);
     params.set(key, value.toString());
-  })
-  console.log(params.toString())
-  return '?' + params.toString()
-}
+  });
+  return params;
+};

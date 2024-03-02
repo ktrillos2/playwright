@@ -53,19 +53,22 @@ export const AsyncCustomTable: React.FC<Props> = ({
   limit,
   extraTopContent,
 }) => {
-  
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLimit = e.target.value;
     router.replace(
-      createSearchParams(searchParams, { page: 1, limit: newLimit })
+      "?" +
+        createSearchParams(searchParams, {
+          page: 1,
+          limit: newLimit,
+        })
     );
   };
 
   const onPageChange = (page: number) => {
-    router.replace(createSearchParams(searchParams, { page }));
+    router.replace("?" + createSearchParams(searchParams, { page }));
   };
 
   const selectedKeys = new Set(["" + limit]);

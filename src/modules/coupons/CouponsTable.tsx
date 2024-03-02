@@ -1,5 +1,11 @@
 "use client";
-import { useCallback, useState } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { Button, Image, Selection, useDisclosure } from "@nextui-org/react";
 import { clsx } from "clsx";
 import { useDebounceCallback } from "usehooks-ts";
@@ -20,6 +26,7 @@ import { createSearchParams, formatToMoney } from "@/helpers";
 import Link from "next/link";
 import { SelectCategory, SelectCommerce } from ".";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { IoNuclearOutline } from "react-icons/io5";
 
 const columns: Columns[] = [
   {
@@ -80,18 +87,18 @@ export const CouponsTable: React.FC<Props> = ({
   commerces,
   categories,
 }) => {
-  
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const router = useRouter();
 
-  const [selectedInfo, setSelectedInfo] = useState<CalculatedCoupon | null>(
-    null
-  );
-
   const [selectedCommerces, setSelectedCommerces] = useState<any>(new Set([]));
   const [selectedCategories, setSelectedCategory] = useState<any>(new Set([]));
+
+  // const debouncedNavigate = useDebounceCallback(
+  //   (newUrl) => router.replace(newUrl),
+  //   1000
+  // );
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -155,30 +162,24 @@ export const CouponsTable: React.FC<Props> = ({
     [onOpen]
   );
 
-  const onSelectChange = (key: string, value: Selection) => {
-    console.log(searchParams.toString());
-    router.replace(
-      pathname +
-        createSearchParams(searchParams, {
-          [key]: Array.from(value).join(","),
-        })
-    );
+  const onSelectChange = (key: string, value: string) => {
+    const newSearchParams = createSearchParams(searchParams, {
+      [key]: value,
+    });
+    router.replace(pathname + "?" + newSearchParams);
   };
-
-  const onSelectCommerce = (commerces: Selection) =>
-    onSelectChange("commerces", commerces);
-
-  const onSelectCategory = (categories: Selection) =>
-    onSelectChange("categories", categories);
 
   const extraTopContent = (
     // useMemo(  () => (
     <div className="flex w-full gap-4 pr-4">
       {commerces ? (
         <SelectCommerce
+          aria-label="SelectCommerce"
           commerces={commerces}
+          onChange={({ target: { value } }) =>
+            onSelectChange("commerces", value)
+          }
           defaultSelectedKeys={selectedCommerces}
-          onSelectionChange={onSelectCommerce}
           valueKey="slug"
           className=""
           selectionMode="multiple"
@@ -189,10 +190,13 @@ export const CouponsTable: React.FC<Props> = ({
       ) : null}
       {categories ? (
         <SelectCategory
+          aria-label="SelectCategory"
           categories={categories}
           label={"Categorías"}
           defaultSelectedKeys={selectedCategories}
-          onSelectionChange={onSelectCategory}
+          onChange={({ target: { value } }) =>
+            onSelectChange("categories", value)
+          }
           valueKey="slug"
           selectionMode="multiple"
           className=""
@@ -206,23 +210,16 @@ export const CouponsTable: React.FC<Props> = ({
   // );
 
   return (
-    <>
-      <ModalImage
-        isOpen={isOpen}
-        info={selectedInfo!}
-        onOpenChange={onOpenChange}
-      />
-      <AsyncCustomTable
-        items={coupons ?? []}
-        columns={columns}
-        renderCell={renderCell}
-        page={page}
-        totalPages={totalPages}
-        totalItems={totalInmuebles}
-        limit={limit}
-        itemsName="cupones"
-        extraTopContent={extraTopContent}
-      />
-    </>
+    <AsyncCustomTable
+      items={coupons ?? []}
+      columns={columns}
+      renderCell={renderCell}
+      page={page}
+      totalPages={totalPages}
+      totalItems={totalInmuebles}
+      limit={limit}
+      itemsName="cupones"
+      extraTopContent={extraTopContent}
+    />
   );
 };
