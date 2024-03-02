@@ -11,15 +11,21 @@ export const scrapeMetro = async ({
 }: ScrapePageProps) => {
     try {
         let products: CouponScraped[] = [];
-
+        console.log("entro")
+        console.log({url,browser,products,time:1})
+        
         const page = await browser.newPage();
+        console.log({url,browser,products,page,time:2})
         await page.goto(url);
+        console.log({url,browser,products,page,time:3})
         await new Promise((resolve) => setTimeout(resolve, 1000));
+        console.log({url,browser,products,page,time:4})
         console.log("entro")
         // Obtén todos los botones
         const buttons = await page.$$(
             ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
-        );
+            );
+            console.log({url,browser,products,page,time:5})
         console.log("botones")
 
         // Itera sobre cada botón
