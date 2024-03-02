@@ -22,15 +22,11 @@ export const scrapeExito = async ({
 }: ScrapePageProps) => {
 	try {
 		let products: CouponScraped[] = [];
-		console.log({ url, browser, products, time: 1 });
 
 		const page = await browser.newPage();
-		console.log({ url, browser, products, page, time: 2 });
-		await page.goto(url,{ waitUntil: 'domcontentloaded', timeout: 25000 });
-		console.log({ url, browser, products, page, time: 3 });
+		await page.goto(url,{waitUntil:'networkidle0'});
 
 		for (let i = 0; i < 2; i++) {
-		console.log({ url, browser, products, page, time: 4 });
     // await autoScroll(page);
 			const data = await page.$$eval("article", (articles) =>
 				articles.map((article: Element) => {

@@ -11,27 +11,16 @@ export const scrapeMetro = async ({
 }: ScrapePageProps) => {
     try {
         let products: CouponScraped[] = [];
-        console.log("entro")
-        console.log({url,browser,products,time:1})
         
         const page = await browser.newPage();
-        console.log({url,browser,products,page,time:2})
         await page.goto(url,{ waitUntil: 'domcontentloaded', timeout: 30000 });
-        console.log({url,browser,products,page,time:3})
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log({url,browser,products,page,time:4})
-        console.log("entro")
         // Obtén todos los botones
         const buttons = await page.$$(
             ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
             );
-            console.log({url,browser,products,page,time:5})
-        console.log("botones")
 
         // Itera sobre cada botón
-        console.log("for");
         for (let i = 1; i < (buttons.length>5?5:buttons.length); i++) {
-            console.log({url,browser,products,page,time:i,for:"si"})
 
             await autoScroll(page);
             const newDivs: any = await page.$$eval(
@@ -82,24 +71,19 @@ export const scrapeMetro = async ({
                         };
                     })
             );
-            console.log({url,browser,products,page,time:7,newDivs})
             products.push(...newDivs);
             // Haz clic en el botón
             await buttons[i].click();
-            console.log({url,browser,products,page,time:8})
             // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
             
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            console.log({url,browser,products,page,time:9})
         }
-        console.log({url,browser,products,page,time:10})
         
         const parsedProducts: DBCoupon[] = products.map((e) => ({
             ...e,
             commerce: commerceId,
             category: categoryId,
         }));
-        console.log({url,browser,products,page,time:11,parsedProducts})
 
         const filteredProducts = Array.from(
             new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
@@ -109,17 +93,14 @@ export const scrapeMetro = async ({
                 ({ priceWithoutDiscount, discountPercentage }) =>
                     priceWithoutDiscount || discountPercentage
             );
-            console.log({url,browser,products,page,time:12,filteredProducts})
 
         await saveCoupons({
             categoryId,
             commerceId,
             data: filteredProducts,
         });
-        console.log({url,browser,products,page,time:13})
 
         await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
-        console.log({url,browser,products,page,time:14})
 
         return true;
     } catch (error: any) {
