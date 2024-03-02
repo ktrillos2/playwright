@@ -1,10 +1,7 @@
 "use client";
+import { useMemo } from "react";
+
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
   Pagination,
   Select,
   SelectItem,
@@ -16,12 +13,9 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Columns } from "../../interfaces";
-import { useMemo, useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
-import { createSearchParams } from "@/helpers";
+import { useCustomSearchParams } from "@/hooks";
 
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 100];
 
@@ -53,22 +47,15 @@ export const AsyncCustomTable: React.FC<Props> = ({
   limit,
   extraTopContent,
 }) => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const { setQueries } = useCustomSearchParams();
 
   const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLimit = e.target.value;
-    router.replace(
-      "?" +
-        createSearchParams(searchParams, {
-          page: 1,
-          limit: newLimit,
-        })
-    );
+    setQueries({ page: 1, limit: newLimit });
   };
 
   const onPageChange = (page: number) => {
-    router.replace("?" + createSearchParams(searchParams, { page }));
+    setQueries({ page });
   };
 
   const selectedKeys = new Set(["" + limit]);

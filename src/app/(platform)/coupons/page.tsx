@@ -8,8 +8,10 @@ import { categoryActions, commerceActions, couponActions } from "@/actions";
 
 interface Props {
   searchParams: {
-    page: string;
-    limit: string;
+    page?: string;
+    limit?: string;
+    commerces?: string;
+    categories?: string;
   };
 }
 
@@ -19,17 +21,26 @@ export const metadata: Metadata = {
 };
 
 export default async function CouponsPage({ searchParams }: Props) {
-  const page = +searchParams.page || 1;
-  const limit = +searchParams.limit || 5;
+  const page = +searchParams.page! || 1;
+  const limit = +searchParams.limit! || 5;
+  const commerces = searchParams.commerces?.split(",");
+  const categories = searchParams.categories?.split(",");
 
-  const [paginatedCoupons, commerces, categories] = await Promise.all([
-    couponActions.getPaginateCoupons({
-      page,
-      limit,
-    }),
-    commerceActions.getCommerces(),
-    categoryActions.getCategories(),
-  ]);
+  const [paginatedCoupons, commercesResponse, categoriesResponse] =
+    await Promise.all([
+      couponActions.getPaginateCoupons({
+        page,
+        limit,
+        query: {
+          $and: [
+            categories ? { category: categories } : {},
+            commerces ? { commerce: commerces } : {},
+          ],
+        },
+      }),
+      commerceActions.getCommerces(),
+      categoryActions.getCategories(),
+    ]);
 
   const { docs: coupons, totalPages, totalDocs } = paginatedCoupons;
 
@@ -50,8 +61,8 @@ export default async function CouponsPage({ searchParams }: Props) {
         totalPages={totalPages}
         totalInmuebles={totalDocs}
         limit={limit}
-        commerces={commerces}
-        categories={categories}
+        commerces={commercesResponse}
+        categories={categoriesResponse}
       />
     </div>
   );

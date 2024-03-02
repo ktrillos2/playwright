@@ -1,8 +1,14 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { createSearchParams } from "@/helpers";
+import { transformData } from "../helpers/actions.helpers";
+
+interface QueryOptions {
+  transformNumber?: boolean;
+  transformToArray?: boolean;
+}
 
 export const useCustomSearchParams = () => {
   const pathname = usePathname();
@@ -20,22 +26,42 @@ export const useCustomSearchParams = () => {
     router.replace(pathname + "?" + newSearchParams);
   }, [queries]);
 
-  const getQueries = <T = Object>(): T => {
-    const params = new URLSearchParams(searchParams);
-    return Object.entries(params).reduce(
-      (acc, [key, value]) => ({ ...acc, [key]: value }),
-      {}
-    ) as T;
+  const queryTransform = (value: string, options: QueryOptions) => {
+    const { transformNumber = false, transformToArray = false } = options;
+    if (transformToArray && value.includes(",")) {
+      const array = value.split(",");
+      if (transformNumber) {
+        return array.map((e) => (isNaN(+e) ? e : +e));
+      }
+      return array;
+    }
+    if (transformNumber && !isNaN(+value)) {
+      return +value;
+    }
+    return value;
   };
 
-  const getQuery = (key: string) => {
+  const getQueries = <T = Object>(options: QueryOptions = {}) => {
     const params = new URLSearchParams(searchParams);
-    return params.get(key);
+
+    const queries: any = {};
+
+    params.forEach((value, key) => {
+      queries[key] = queryTransform(value, options);
+    });
+
+    return queries as T;
+  };
+
+  const getQuery = (key: string, options: QueryOptions = {}) => {
+    const params = new URLSearchParams(searchParams);
+    const value = params.get(key);
+    return value ? queryTransform(value, options) : null;
   };
 
   return {
     setQueries,
     getQueries,
-    getQuery
+    getQuery,
   };
 };

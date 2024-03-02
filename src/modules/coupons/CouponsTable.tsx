@@ -10,23 +10,11 @@ import { Button, Image, Selection, useDisclosure } from "@nextui-org/react";
 import { clsx } from "clsx";
 import { useDebounceCallback } from "usehooks-ts";
 
-import {
-  Columns,
-  CalculatedCoupon,
-  Coupon,
-  Commerce,
-  Category,
-} from "@/interfaces";
-import {
-  AsyncCustomTable,
-  CopyClipboardButton,
-  ModalImage,
-} from "@/components/ui/buttons";
-import { createSearchParams, formatToMoney } from "@/helpers";
+import { Columns, Coupon, Commerce, Category } from "@/interfaces";
+import { AsyncCustomTable, CopyClipboardButton } from "@/components/ui/buttons";
+import { formatToMoney } from "@/helpers";
 import Link from "next/link";
 import { SelectCategory, SelectCommerce } from ".";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { IoNuclearOutline } from "react-icons/io5";
 import { useCustomSearchParams } from "@/hooks";
 
 const columns: Columns[] = [
@@ -79,6 +67,13 @@ interface Props {
   categories?: Category[];
 }
 
+interface Queries {
+  limit: number;
+  page: number;
+  commerces: string[];
+  categories: string[];
+}
+
 export const CouponsTable: React.FC<Props> = ({
   coupons,
   page,
@@ -88,10 +83,10 @@ export const CouponsTable: React.FC<Props> = ({
   commerces,
   categories,
 }) => {
-  const { setQueries } = useCustomSearchParams();
+  const { setQueries, getQueries } = useCustomSearchParams();
 
-  const [selectedCommerces, setSelectedCommerces] = useState<any>(new Set([]));
-  const [selectedCategories, setSelectedCategory] = useState<any>(new Set([]));
+  const { categories: selectedCategories, commerces: selectedCommerces } =
+    getQueries<Queries>({ transformNumber: true, transformToArray: true });
 
   const renderCell = useCallback((data: any, columnKey: React.Key) => {
     const cellValue = data[columnKey as keyof any];
@@ -160,8 +155,7 @@ export const CouponsTable: React.FC<Props> = ({
           onChange={({ target: { value: commerces } }) =>
             setQueries({ commerces })
           }
-          defaultSelectedKeys={selectedCommerces}
-          valueKey="slug"
+          defaultSelectedKeys={new Set(selectedCommerces)}
           className=""
           selectionMode="multiple"
           variant="flat"
@@ -174,11 +168,10 @@ export const CouponsTable: React.FC<Props> = ({
           aria-label="SelectCategory"
           categories={categories}
           label={"Categorías"}
-          defaultSelectedKeys={selectedCategories}
+          defaultSelectedKeys={new Set(selectedCategories)}
           onChange={({ target: { value: categories } }) =>
             setQueries({ categories })
           }
-          valueKey="slug"
           selectionMode="multiple"
           className=""
           variant="flat"
