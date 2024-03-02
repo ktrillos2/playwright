@@ -31,6 +31,7 @@ export const scrapeMetro = async ({
         // Itera sobre cada botón
         console.log("for");
         for (let i = 1; i < (buttons.length>5?5:buttons.length); i++) {
+            console.log({url,browser,products,page,time:i,for:"si"})
 
             await autoScroll(page);
             const newDivs: any = await page.$$eval(
@@ -81,18 +82,24 @@ export const scrapeMetro = async ({
                         };
                     })
             );
+            console.log({url,browser,products,page,time:7,newDivs})
             products.push(...newDivs);
             // Haz clic en el botón
             await buttons[i].click();
+            console.log({url,browser,products,page,time:8})
             // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
-
+            
             await new Promise((resolve) => setTimeout(resolve, 1000));
+            console.log({url,browser,products,page,time:9})
         }
+        console.log({url,browser,products,page,time:10})
+        
         const parsedProducts: DBCoupon[] = products.map((e) => ({
             ...e,
             commerce: commerceId,
             category: categoryId,
         }));
+        console.log({url,browser,products,page,time:11,parsedProducts})
 
         const filteredProducts = Array.from(
             new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
@@ -102,14 +109,18 @@ export const scrapeMetro = async ({
                 ({ priceWithoutDiscount, discountPercentage }) =>
                     priceWithoutDiscount || discountPercentage
             );
+            console.log({url,browser,products,page,time:12,filteredProducts})
 
         await saveCoupons({
             categoryId,
             commerceId,
             data: filteredProducts,
         });
+        console.log({url,browser,products,page,time:13})
 
         await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
+        console.log({url,browser,products,page,time:14})
+
         return true;
     } catch (error: any) {
         await logger(
