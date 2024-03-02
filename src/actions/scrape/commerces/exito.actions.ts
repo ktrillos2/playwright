@@ -26,7 +26,7 @@ export const scrapeExito = async ({
 
 		const page = await browser.newPage();
 		console.log({ url, browser, products, page, time: 2 });
-		await page.goto(url);
+		await page.goto(url,{ waitUntil: 'domcontentloaded', timeout: 25000 });
 		console.log({ url, browser, products, page, time: 3 });
 
 		for (let i = 0; i < 2; i++) {

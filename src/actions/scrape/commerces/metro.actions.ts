@@ -16,7 +16,7 @@ export const scrapeMetro = async ({
         
         const page = await browser.newPage();
         console.log({url,browser,products,page,time:2})
-        await page.goto(url);
+        await page.goto(url,{ waitUntil: 'domcontentloaded', timeout: 30000 });
         console.log({url,browser,products,page,time:3})
         await new Promise((resolve) => setTimeout(resolve, 1000));
         console.log({url,browser,products,page,time:4})
