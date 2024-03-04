@@ -13,14 +13,18 @@ export const scrapeMetro = async ({
         let products: CouponScraped[] = [];
         
         const page = await browser.newPage();
-        await page.goto(url,{ waitUntil: 'domcontentloaded', timeout: 30000 });
+        console.log("entro")
+        await page.goto("https://www.tiendasmetro.co/tecnologia",{ waitUntil: 'domcontentloaded', timeout: 30000 });
         // Obtén todos los botones
+        console.log("entro2")
         const buttons = await page.$$(
             ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
             );
-
-        // Itera sobre cada botón
-        for (let i = 1; i < (buttons.length>5?5:buttons.length); i++) {
+            console.log("entro3")
+            
+            // Itera sobre cada botón
+            for (let i = 1; i < (buttons.length>5?5:buttons.length); i++) {
+            console.log("entro4")
 
             await autoScroll(page);
             const newDivs: any = await page.$$eval(
