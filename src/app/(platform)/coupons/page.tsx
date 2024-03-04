@@ -31,21 +31,14 @@ export default async function CouponsPage({ searchParams }: Props) {
       couponActions.getPaginateCouponByCategoryAndCommerce({
         page,
         limit,
-        // query: {
-        //   $and: [
-        //     categories ? { category: categories } : {},
-        //     commerces ? { commerce: commerces } : {},
-        //   ],
-        // },
+        categories,
+        commerces,
       }),
       commerceActions.getCommerces(),
       categoryActions.getCategories(),
     ]);
 
   const { docs: coupons, totalPages, totalDocs } = paginatedCoupons;
-
-
-  console.log(coupons)
 
   return (
     <div>

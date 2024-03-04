@@ -86,7 +86,10 @@ export const CouponsTable: React.FC<Props> = ({
   const { setQueries, getQueries } = useCustomSearchParams();
 
   const { categories: selectedCategories, commerces: selectedCommerces } =
-    getQueries<Queries>({ transformNumber: true, transformToArray: true });
+    getQueries<Queries>({
+      select: ["categories", "commerces"],
+      transformToArray: ["categories", "commerces"],
+    });
 
   const renderCell = useCallback((data: any, columnKey: React.Key) => {
     const cellValue = data[columnKey as keyof any];
@@ -153,12 +156,12 @@ export const CouponsTable: React.FC<Props> = ({
           aria-label="SelectCommerce"
           commerces={commerces}
           onChange={({ target: { value: commerces } }) =>
-            setQueries({ commerces })
+            setQueries({ commerces, page: 1 })
           }
           defaultSelectedKeys={new Set(selectedCommerces)}
-          className=""
           selectionMode="multiple"
           variant="flat"
+          valueKey="slug"
           label={""}
           placeholder="Comercios"
         />
@@ -170,10 +173,10 @@ export const CouponsTable: React.FC<Props> = ({
           label={"Categorías"}
           defaultSelectedKeys={new Set(selectedCategories)}
           onChange={({ target: { value: categories } }) =>
-            setQueries({ categories })
+            setQueries({ categories, page: 1 })
           }
           selectionMode="multiple"
-          className=""
+          valueKey="slug"
           variant="flat"
         />
       ) : null}

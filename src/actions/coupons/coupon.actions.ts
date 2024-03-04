@@ -1,6 +1,11 @@
 "use server";
 
-import { Aggregate, FilterQuery, PaginateOptions } from "mongoose";
+import {
+  Aggregate,
+  FilterQuery,
+  PaginateOptions,
+  PipelineStage,
+} from "mongoose";
 import { ObjectId } from "mongodb";
 
 import { CouponModel, categoryLookup, commerceLookup, dbConnect } from "@/lib";
@@ -15,6 +20,11 @@ interface PaginateProps {
 
 interface PaginatorProps<T = any> extends PaginateProps {
   query?: FilterQuery<T>;
+}
+
+interface CommercesAndCategoriesProps extends PaginateProps {
+  commerces?: string[];
+  categories?: string[];
 }
 
 dbConnect();
@@ -51,17 +61,24 @@ export const getPaginateCouponByCategoryAndCommerce = async ({
   limit = 5,
   page = 1,
   sort = "-discountPercentage",
-  query = {},
-}: PaginatorProps<Coupon> = {}) => {
+  categories,
+  commerces,
+}: CommercesAndCategoriesProps) => {
   const options: PaginateOptions = {
     limit,
     page,
     sort,
   };
 
+  const marchQuery: FilterQuery<Coupon> = {};
+
+  if (categories) marchQuery["category.slug"] = { $in: categories };
+  if (commerces) marchQuery["commerce.slug"] = { $in: commerces };
+
   const aggregate = couponModel.aggregate([
     ...commerceLookup({ unwindData: true }),
     ...categoryLookup({ unwindData: true }),
+    { $match: marchQuery },
   ]);
 
   const response = await couponModel.aggregatePaginate(aggregate, options);
