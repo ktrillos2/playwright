@@ -20,6 +20,7 @@ export const scrapeExito = async ({
 	categoryId,
 	commerceId,
 }: ScrapePageProps) => {
+	console.log("mamaguev")
 	try {
 		let products: CouponScraped[] = [];
 
@@ -99,7 +100,7 @@ export const scrapeExito = async ({
 			);
 			if (nextButton) {
 				await nextButton.click();
-				await page.waitForNavigation({ waitUntil: "networkidle0" });
+				await page.waitForNavigation();
 			} else {
 				break;
 			}
@@ -119,7 +120,7 @@ export const scrapeExito = async ({
 				({ priceWithoutDiscount, discountPercentage }) =>
 					priceWithoutDiscount || discountPercentage
 			);
-
+		console.log(filteredProducts)
 		await saveCoupons({
 			categoryId,
 			commerceId,
