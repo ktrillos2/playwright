@@ -17,11 +17,7 @@ RUN npm ci
 COPY . .
 
 # Construir la aplicación
-USER root
 RUN npm run build
-
-# Cambiar de nuevo al usuario no root (puppeteer)
-USER pptruser
 
 # Exponer el puerto en el que se ejecutará la aplicación
 EXPOSE 3000
