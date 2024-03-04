@@ -30,7 +30,6 @@ export const categoryLookup = ({
   pipeline = [],
   unwindData = false,
 }: LookupProps = {}) => {
-
   const stages: PipelineStage[] = [];
 
   stages.push({
