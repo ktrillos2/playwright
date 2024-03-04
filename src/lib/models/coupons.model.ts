@@ -1,11 +1,14 @@
-import mongoose, { Document, PaginateModel, Schema } from "mongoose";
+import mongoose, { AggregatePaginateModel, Document, PaginateModel, Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
-var aggregatePaginate = require('mongoose-aggregate-paginate-v2');
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
+
 
 
 import { Coupon } from "@/interfaces";
 
 interface CouponDocument extends Document, Coupon {}
+
+interface CouponModel extends AggregatePaginateModel<CouponDocument>, PaginateModel<CouponDocument> {}
 
 const couponSchema = new Schema<CouponDocument>({
   name: { type: String, required: true },
@@ -21,10 +24,11 @@ const couponSchema = new Schema<CouponDocument>({
 });
 
 couponSchema.plugin(mongoosePaginate);
+couponSchema.plugin(aggregatePaginate);
 
-export const CouponModel: PaginateModel<CouponDocument> =
-  (mongoose.models.Coupon as PaginateModel<CouponDocument>) ||
-  mongoose.model<CouponDocument, PaginateModel<CouponDocument>>(
+export const CouponModel: CouponModel =
+  (mongoose.models.Coupon as CouponModel) ||
+  mongoose.model<CouponDocument, CouponModel>(
     "Coupon",
     couponSchema
   );

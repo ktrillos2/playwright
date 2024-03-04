@@ -1,5 +1,6 @@
+import { couponActions } from "@/actions";
 import { DBCoupon } from "@/interfaces";
-import { couponService, dbConnect } from "@/lib";
+import { dbConnect } from "@/lib";
 
 interface SaveCoupon {
 	data: DBCoupon[];
@@ -14,11 +15,11 @@ export const saveCoupons = async ({
 }: SaveCoupon) => {
 	try {
 		await dbConnect();
-		await couponService.deleteCouponsByCommerceAndCategory(
+		await couponActions.deleteCouponsByCommerceAndCategory(
 			commerceId,
 			categoryId
 		);
-		await couponService.saveCoupons(data);
+		await couponActions.saveCoupons(data);
 		return true;
 	} catch (error: any) {
 		throw error;
