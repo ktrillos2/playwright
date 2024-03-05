@@ -1,6 +1,5 @@
 import locateChrome from "locate-chrome";
-import * as pup from "puppeteer";
-import puppeteer from "puppeteer-core";
+import Chromium from "chrome-aws-lambda";
 import chrome from "chrome-aws-lambda";
 
 const getLocateChrome = async () => {
@@ -10,27 +9,22 @@ const getLocateChrome = async () => {
 };
 
 export const getBrowser = async () => {
-	const locateBrowser = await getLocateChrome();
-	let puppeteerMode;
-	if (process.env.NODE_ENV === "production") {
-		puppeteerMode = puppeteer;
-	} else {
-		puppeteerMode = pup;
-	}
-	const browser = await puppeteerMode.launch({
-		// args: [
-		// 	"--disable-setuid-sandbox",
-		// 	// "--no-sandbox",
-		// 	"--single-process",
-		// 	"--no-zygote",
-		// ],
-		// headless: false,
-		args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
-		defaultViewport: chrome.defaultViewport,
+	// const locateBrowser = await getLocateChrome();
+	// let puppeteerMode;
+	// if (process.env.NODE_ENV === "production") {
+	// 	puppeteerMode = puppeteer;
+	// } else {
+	// 	puppeteerMode = pup;
+	// }
+	console.log("holi")
+	const browser = await Chromium.puppeteer.launch({
+		args: Chromium.args,
+		defaultViewport: Chromium.defaultViewport,
 		executablePath: await chrome.executablePath,
-		headless: true,
+		headless: Chromium.headless,
 		ignoreHTTPSErrors: true,
 	});
 
+	console.log("uwu")
 	return browser;
 };
