@@ -1,5 +1,7 @@
 import locateChrome from "locate-chrome";
-import puppeteer from "puppeteer";
+import * as pup from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chrome from "chrome-aws-lambda";
 
 const getLocateChrome = async () => {
 	let localeChrome: string | null = await locateChrome();
@@ -9,8 +11,13 @@ const getLocateChrome = async () => {
 
 export const getBrowser = async () => {
 	const locateBrowser = await getLocateChrome();
-
-	const browser = await puppeteer.launch({
+	let puppeteerMode;
+	if (process.env.NODE_ENV === "production") {
+		puppeteerMode = puppeteer;
+	} else {
+		puppeteerMode = pup;
+	}
+	const browser = await puppeteerMode.launch({
 		// args: [
 		// 	"--disable-setuid-sandbox",
 		// 	// "--no-sandbox",
@@ -18,10 +25,11 @@ export const getBrowser = async () => {
 		// 	"--no-zygote",
 		// ],
 		// headless: false,
-		executablePath:
-			process.env.NODE_ENV === "production"
-				? process.env.PUPPETEER_EXECUTABLE_PATH
-				: locateBrowser,
+		args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
+		defaultViewport: chrome.defaultViewport,
+		executablePath: await chrome.executablePath,
+		headless: true,
+		ignoreHTTPSErrors: true,
 	});
 
 	return browser;

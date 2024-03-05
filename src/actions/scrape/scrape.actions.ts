@@ -3,6 +3,7 @@ import { commerceActions } from "@/actions";
 import { CommerceSlugs } from "@/enums";
 import { getBrowser } from "./helpers";
 import { exitoActions, metroActions } from "./commerces";
+import { Browser } from "puppeteer";
 
 export const scrapeCommerceByCategory = async (
   commerceId: string,
@@ -22,7 +23,7 @@ export const scrapeCommerceByCategory = async (
   const browser = await getBrowser();
 
   const scraperProps = {
-    browser,
+    browser:browser as Browser,
     url: scrapUrl,
     commerceId,
     categoryId,
