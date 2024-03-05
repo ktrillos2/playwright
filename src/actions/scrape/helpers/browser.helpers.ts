@@ -1,5 +1,7 @@
 import locateChrome from "locate-chrome";
 import Chromium from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
+import { PUPPETEER_EXECUTABLE_PATH } from "@/config";
 
 const getLocateChrome = async () => {
 	let localeChrome: string | null = await locateChrome();
@@ -16,11 +18,11 @@ export const getBrowser = async () => {
 	// 	puppeteerMode = pup;
 	// }
 	console.log("holi")
-	const browser = await Chromium.puppeteer.launch({
+	const browser = await puppeteer.launch({
 		ignoreDefaultArgs: ['--disable-extensions'],
 		args: Chromium.args,
 		defaultViewport: Chromium.defaultViewport,
-		executablePath: await Chromium.executablePath,
+		executablePath: PUPPETEER_EXECUTABLE_PATH||await Chromium.executablePath,
 		ignoreHTTPSErrors: true,
 	});
 

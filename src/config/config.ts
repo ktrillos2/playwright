@@ -1,4 +1,5 @@
-export const { BASE_API_URL, AUTH_URL } = {
+export const { BASE_API_URL, AUTH_URL, PUPPETEER_EXECUTABLE_PATH } = {
   BASE_API_URL: process.env.NEXT_PUBLIC_BASE_API_URL as string,
   AUTH_URL: process.env.NEXT_PUBLIC_AUTH_URL as string,
+  PUPPETEER_EXECUTABLE_PATH: process.env.PUPPETEER_EXECUTABLE_PATH as string,
 };
