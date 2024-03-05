@@ -23,7 +23,7 @@ export const scrapeCommerceByCategory = async (
   const browser = await getBrowser();
 
   const scraperProps = {
-    browser:browser,
+    browser,
     url: scrapUrl,
     commerceId,
     categoryId,
