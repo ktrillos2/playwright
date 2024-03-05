@@ -37,13 +37,11 @@ export const useCustomSearchParams = () => {
       if (transformNumber) {
         return array.map((e) => (isNaN(+e) ? e : +e));
       }
-      console.log({ array });
       return array;
     }
     if (transformNumber && !isNaN(+value)) {
       return +value;
     }
-    console.log({ value });
     return value;
   };
 
