@@ -28,15 +28,11 @@ export default async function CouponsPage({ searchParams }: Props) {
 
   const [paginatedCoupons, commercesResponse, categoriesResponse] =
     await Promise.all([
-      couponActions.getPaginateCoupons({
+      couponActions.getPaginateCouponByCategoryAndCommerce({
         page,
         limit,
-        query: {
-          $and: [
-            categories ? { category: categories } : {},
-            commerces ? { commerce: commerces } : {},
-          ],
-        },
+        categories,
+        commerces,
       }),
       commerceActions.getCommerces(),
       categoryActions.getCategories(),

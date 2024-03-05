@@ -1,10 +1,13 @@
 "use server";
 
-import { FilterQuery } from "mongoose";
+import {
+  FilterQuery,
+  PaginateOptions,
+} from "mongoose";
 import { ObjectId } from "mongodb";
 
-import { CouponModel, dbConnect } from "@/lib";
-import { Coupon } from "@/interfaces";
+import { CouponModel, categoryLookup, commerceLookup, dbConnect } from "@/lib";
+import { Coupon, DBCoupon } from "@/interfaces";
 import { transformData } from "@/helpers";
 
 interface PaginateProps {
@@ -15,6 +18,11 @@ interface PaginateProps {
 
 interface PaginatorProps<T = any> extends PaginateProps {
   query?: FilterQuery<T>;
+}
+
+interface CommercesAndCategoriesProps extends PaginateProps {
+  commerces?: string[];
+  categories?: string[];
 }
 
 dbConnect();
@@ -29,7 +37,7 @@ export const getCouponById = async (id: string): Promise<Coupon | null> => {
   const coupon = await couponModel
     .findById(id)
     .populate(["commerce", "category"]);
-  return coupon ? parseData(coupon) : null;
+  return coupon ? transformData(coupon) : null;
 };
 
 export const getPaginateCoupons = async ({
@@ -47,6 +55,38 @@ export const getPaginateCoupons = async ({
   return { ...response, docs: transformData(response.docs) };
 };
 
+export const getPaginateCouponByCategoryAndCommerce = async ({
+  limit = 5,
+  page = 1,
+  sort = "-discountPercentage",
+  categories,
+  commerces,
+}: CommercesAndCategoriesProps) => {
+  const options: PaginateOptions = {
+    limit,
+    page,
+    sort,
+  };
+
+  const marchQuery: FilterQuery<Coupon> = {};
+
+  if (categories) marchQuery["category.slug"] = { $in: categories };
+  if (commerces) marchQuery["commerce.slug"] = { $in: commerces };
+
+  const aggregate = couponModel.aggregate([
+    ...commerceLookup({ unwindData: true }),
+    ...categoryLookup({ unwindData: true }),
+    { $match: marchQuery },
+  ]);
+
+  const response = await couponModel.aggregatePaginate(aggregate, options);
+  return { ...response, docs: transformData(response.docs) };
+};
+
+export const saveCoupons = async (coupons: DBCoupon[]) => {
+  return await couponModel.insertMany(coupons);
+};
+
 export const deleteAllCoupons = async () => {
   return couponModel.deleteMany({});
 };
@@ -55,8 +95,12 @@ export const deleteCouponsFromPage = async (page: string) => {
   return couponModel.deleteMany({ page });
 };
 
-const parseData = (data: any) => {
-  const parsedData = data.toJSON();
-  parsedData._id = parsedData._id.toString();
-  return parsedData;
+export const deleteCouponsByCommerceAndCategory = async (
+  commerceId: string,
+  categoryId: string
+) => {
+  return couponModel.deleteMany({
+    commerce: commerceId,
+    category: categoryId,
+  });
 };

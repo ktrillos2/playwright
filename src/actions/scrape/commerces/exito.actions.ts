@@ -1,7 +1,4 @@
-import { CouponPages } from "@/enums";
-import { DBCoupon, LogCategory, LogType } from "@/interfaces";
-import { couponService, dbConnect, logMessageService } from "@/lib";
-import { revalidatePath } from "next/cache";
+import { DBCoupon, LogType } from "@/interfaces";
 import { Browser } from "puppeteer";
 import { logger, saveCoupons } from "../helpers";
 

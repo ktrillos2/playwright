@@ -1,6 +1,6 @@
 import { FilterQuery } from "mongoose";
 import { InmuebleModel } from "..";
-import { type Inmueble } from "../../interfaces/inmueble.interface";
+import { type Inmueble } from "@/interfaces";
 
 interface PaginateProps {
   page?: number;
