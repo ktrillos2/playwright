@@ -5,17 +5,12 @@ import {
   Pagination,
   Select,
   SelectItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
   getKeyValue,
 } from "@nextui-org/react";
 
 import { Columns } from "../../interfaces";
 import { useCustomSearchParams } from "@/hooks";
+import { CustomTable } from "..";
 
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 100];
 
@@ -89,11 +84,12 @@ export const AsyncCustomTable: React.FC<Props> = ({
   }, [totalItems, itemsName, limit]);
 
   return (
-    <Table
-      className="h-full"
-      aria-label={`Una tabla de ${itemsName}`}
+    <CustomTable
+      items={items}
+      itemsName={itemsName}
+      columns={columns}
       topContent={topContent}
-      topContentPlacement="outside"
+      renderCell={renderCell}
       bottomContent={
         <div className="flex w-full justify-center">
           <Pagination
@@ -107,26 +103,6 @@ export const AsyncCustomTable: React.FC<Props> = ({
           />
         </div>
       }
-    >
-      <TableHeader columns={columns}>
-        {(column) => (
-          <TableColumn className="text-center" key={column.key}>
-            {column.label}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody
-        emptyContent={`No hay ${itemsName} para mostrar`}
-        items={items}
-      >
-        {(item: any) => (
-          <TableRow className="text-center" key={item._id ?? item.name}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    />
   );
 };

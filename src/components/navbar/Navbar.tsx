@@ -34,6 +34,10 @@ const PAGES = [
     path: PagePaths.COUPONS,
     name: "Cupones",
   },
+  {
+    path: PagePaths.COMMERCES,
+    name: "Comercios",
+  },
 ];
 
 export const Navbar = () => {
@@ -48,10 +52,7 @@ export const Navbar = () => {
         <p className="font-bold text-inherit">{Info.TITLE}</p>
       </NavbarBrand>
 
-      <NavbarContent
-        className="gap-4"
-        justify="center"
-      >
+      <NavbarContent className="gap-4" justify="center">
         {PAGES.map((page) => (
           <NavItem key={page.name} {...page} />
         ))}
@@ -72,7 +73,13 @@ export const Navbar = () => {
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="User Actions" variant="flat">
-              <DropdownItem as={Link} key="logout" color="danger" href="/api/auth/signout" className="text-danger">
+              <DropdownItem
+                as={Link}
+                key="logout"
+                color="danger"
+                href="/api/auth/signout"
+                className="text-danger"
+              >
                 Cerrar sesión
               </DropdownItem>
             </DropdownMenu>
