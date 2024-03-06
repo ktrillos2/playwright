@@ -12,7 +12,9 @@ import {
   PopoverTrigger,
 } from "@nextui-org/react";
 
+import { TbWorldShare } from "react-icons/tb";
 import { MdArrowOutward } from "react-icons/md";
+import { LuPencil } from "react-icons/lu";
 
 import { CustomTable } from "@/components";
 import { Columns, Commerce } from "@/interfaces";
@@ -57,15 +59,22 @@ export const CommercesTable: React.FC<Props> = ({ commerces }) => {
       if (columnKey === "url") {
         return (
           <div className="flex justify-center gap-2">
-            <Button as={Link} href={url} target="_blank">
-              Ver comercio
-            </Button>
             <Button
               as={Link}
               href={`/commerces/edit/${slug}`}
               color="primary"
+              isIconOnly
             >
-              Editar comercio
+              <LuPencil size={20} />
+            </Button>
+            <Button
+              as={Link}
+              href={url}
+              target="_blank"
+              isIconOnly
+              color="secondary"
+            >
+              <TbWorldShare size={20} />
             </Button>
           </div>
         );
@@ -73,7 +82,7 @@ export const CommercesTable: React.FC<Props> = ({ commerces }) => {
 
       if (columnKey === "categories") {
         return (
-          <Popover placement="bottom" showArrow={true} backdrop="opaque">
+          <Popover placement="bottom" showArrow={true} backdrop="opaque" >
             <PopoverTrigger>
               <Button>{categories.length}</Button>
             </PopoverTrigger>

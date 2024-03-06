@@ -7,8 +7,8 @@ export default async function CommercePage() {
   const commerces = await commerceActions.getCommerces();
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-2">
+    <div className="grid gap-2">
+      <div className="flex justify-between items-center">
         <h1 className="text-left">Tabla de comercios</h1>
         <div className="flex gap-2">
           <Button as={Link} href="/commerces/create" color="success">
