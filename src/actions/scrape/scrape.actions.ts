@@ -26,15 +26,15 @@ export const scrapeCommerceByCategory = async (
     commerceId,
     categoryId,
   };
-  
+
 
   switch (slug) {
     case CommerceSlugs.EXITO:
-      await generalService.scrapeExito(null,scraperProps)
+      await generalService.scrapeExito(null, scraperProps)
 
       break;
     case CommerceSlugs.METRO:
-      await metroActions.scrapeMetro(scraperProps);
+      // await metroActions.scrapeMetro(scraperProps);
       break;
     default:
       throw new Error("No hay acciones para este comercio");

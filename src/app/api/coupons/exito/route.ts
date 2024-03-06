@@ -130,7 +130,7 @@ const getData = async (
 		// 	commerceId,
 		// 	data: filteredProducts,
 		// });
-
+			
 		console.log(filteredProducts)
 		await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
 		return NextResponse.json({ Products: filteredProducts }, { status: 200 })
