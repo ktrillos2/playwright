@@ -56,6 +56,7 @@ export const CouponsScraperMultiSelect = () => {
         (e) => e.category._id === category
       )?.category.name;
       try {
+    
         const response = await scrapeActions.scrapeCommerceByCategory(
           selectedPlatform,
           category

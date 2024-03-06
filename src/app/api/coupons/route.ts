@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { couponService, dbConnect,  } from "@/lib";
 import { getSearchParams } from "@/helpers";
+import { couponService, dbConnect } from "@/lib";
 
 export async function GET(request: NextRequest) {
   const { page: pageParam, limit: limitParam } = getSearchParams(request);

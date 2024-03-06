@@ -3,6 +3,7 @@ import { commerceActions } from "@/actions";
 import { CommerceSlugs } from "@/enums";
 import { getBrowser } from "./helpers";
 import { exitoActions, metroActions } from "./commerces";
+import { generalService } from "@/service";
 
 export const scrapeCommerceByCategory = async (
   commerceId: string,
@@ -19,18 +20,18 @@ export const scrapeCommerceByCategory = async (
 
   const scrapUrl = `${url}/${path}/${queries}`;
 
-  const browser = await getBrowser();
 
   const scraperProps = {
-    browser,
     url: scrapUrl,
     commerceId,
     categoryId,
   };
+  
 
   switch (slug) {
     case CommerceSlugs.EXITO:
-      await exitoActions.scrapeExito(scraperProps);
+      await generalService.scrapeExito(null,scraperProps)
+
       break;
     case CommerceSlugs.METRO:
       await metroActions.scrapeMetro(scraperProps);

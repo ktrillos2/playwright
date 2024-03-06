@@ -14,10 +14,11 @@ class GeneralService extends ServiceClass {
     });
   }
 
-  async scrapeExito(params?:any): Promise<any> {
+  async scrapeExito(params?:any,body?:any): Promise<any> {
     return await super.postQuery<any>({
       URL: BASE_API_URL,
       path: "api/coupons/exito",
+      body,
       params
     });
   }
