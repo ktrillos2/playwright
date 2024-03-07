@@ -28,7 +28,7 @@ export const CustomTable: React.FC<Props> = ({
 }) => {
   return (
     <Table
-      className="h-full"
+      className="h-full overflow-hidden"
       aria-label={`Una tabla de ${itemsName}`}
       topContentPlacement="outside"
     >

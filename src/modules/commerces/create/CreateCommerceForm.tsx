@@ -66,8 +66,8 @@ export const CommerceForm = () => {
   const onSubmit: SubmitHandler<IForm> = async () => {};
 
   return (
-    <div className="w-full flex flex-col md:flex-row gap-2">
-      <Card>
+    <div className="w-full flex flex-col sm:flex-row gap-2">
+      <Card className="w-full">
         <CardHeader className="pb-0 pt-4 px-4 lg:px-8 flex-col items-start">
           <h4 className="font-bold text-large">Crear comercio</h4>
         </CardHeader>
@@ -106,7 +106,7 @@ export const CommerceForm = () => {
           <div className="w-[200px] h-[200px] grid place-content-center bg-gradient-to-tl from-green-300 via-blue-500 to-purple-600">
             {image && !errors[FieldsForm.IMAGE] ? (
               <Image
-                alt="Woman listing to music"
+                alt="Commerce image"
                 className="object-cover"
                 height={200}
                 src={image}
