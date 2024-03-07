@@ -8,4 +8,5 @@ export * from './ui/AsyncCustomTable';
 export * from './ui/CustomTable';
 export * from './ui/LoadingScraper';
 export * from './ui/StartsBackground';
+export * from './ui/Stepper';
 export * from './ui/inputs/PasswordInput';
