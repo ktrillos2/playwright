@@ -25,12 +25,14 @@ export const CustomTable: React.FC<Props> = ({
   columns,
   renderCell = getKeyValue,
   itemsName = "items",
+  ...props
 }) => {
   return (
     <Table
       className="h-full overflow-hidden"
       aria-label={`Una tabla de ${itemsName}`}
       topContentPlacement="outside"
+      {...(props as any)}
     >
       <TableHeader columns={columns}>
         {(column) => (
