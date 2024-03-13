@@ -9,19 +9,49 @@ import Lottie from "lottie-react";
 import clsx from "clsx";
 
 import { useToTransparentImage } from "@/hooks";
-import { couponLayout } from "@/helpers";
+import { couponLayout1, couponLayout2 } from "@/helpers";
 import { Coupon } from "@/interfaces";
 
 import loadingImage from "../../../../public/lottie/loading-image.json";
 import loadingEditor from "../../../../public/lottie/loading-editor.json";
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+} from "@nextui-org/react";
+
+interface Layout {
+  name: string;
+  layout: (props: any) => any;
+  size: { width: string; height: string };
+  image: string;
+}
+
+const LAYOUTS = [
+  {
+    name: "Plantilla 1",
+    layout: couponLayout1,
+    size: { width: "993px", height: "550px" },
+    image: "/coupons/layouts/layout-1.png",
+  },
+  {
+    name: "Plantilla 2",
+    layout: couponLayout2,
+    size: { width: "993px", height: "550px" },
+    image: "/coupons/layouts/layout-2.png",
+  },
+];
 
 interface Props {
   coupon: Coupon;
+  selectedLayout: Layout;
 }
 
-const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
+export const CouponImageEditor: React.FC<Props> = ({
+  coupon,
+  selectedLayout,
+}) => {
   const editedImage = useRef<getCurrentImgDataFunction>();
+
+  const [currentLayout, setCurrentLayout] = useState<Layout>(selectedLayout);
 
   const { images, name, commerce } = coupon;
 
@@ -33,16 +63,16 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
 
   const { displayImage, isLoading: transparentIsLoading } =
     useToTransparentImage(images[0]);
-  const [size, setSize] = useState<{ width: string; height: string }>({
-    width: "993px",
-    height: "550px",
-  });
+
 
   const [sizeIsLoading, setSizeIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSize({ width: "100%", height: "calc(100vh - 120px)" });
+      setCurrentLayout({
+        ...currentLayout,
+        size: { width: "100%", height: "calc(100vh - 120px)" },
+      });
       setSizeIsLoading(false);
     }, 3500);
 
@@ -94,7 +124,7 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
         </div>
       </div>
       <div
-        style={size}
+        style={currentLayout.size}
         className={clsx("overflow-hidden z-0 relative", {
           "opacity-0": sizeIsLoading,
           "pointer-events-none opacity-50":
@@ -124,7 +154,7 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
           defaultSavedImageName={imageName}
           // @ts-ignore
           loadableDesignState={{
-            annotations: couponLayout({
+            annotations: currentLayout.layout({
               coupon,
               displayImage: displayImage || images[0],
             }),
@@ -149,5 +179,3 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
     </div>
   );
 };
-
-export default CouponImageEditor;
