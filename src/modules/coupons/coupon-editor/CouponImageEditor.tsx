@@ -14,9 +14,7 @@ import { Coupon } from "@/interfaces";
 
 import loadingImage from "../../../../public/lottie/loading-image.json";
 import loadingEditor from "../../../../public/lottie/loading-editor.json";
-import {
-  Button,
-} from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 
 interface Layout {
   name: string;
@@ -43,11 +41,13 @@ const LAYOUTS = [
 interface Props {
   coupon: Coupon;
   selectedLayout: Layout;
+  clearSelection: () => void;
 }
 
 export const CouponImageEditor: React.FC<Props> = ({
   coupon,
   selectedLayout,
+  clearSelection,
 }) => {
   const editedImage = useRef<getCurrentImgDataFunction>();
 
@@ -63,7 +63,6 @@ export const CouponImageEditor: React.FC<Props> = ({
 
   const { displayImage, isLoading: transparentIsLoading } =
     useToTransparentImage(images[0]);
-
 
   const [sizeIsLoading, setSizeIsLoading] = useState<boolean>(true);
 
@@ -105,22 +104,30 @@ export const CouponImageEditor: React.FC<Props> = ({
             </span>
           </div>
         ) : null}
-        <div className="flex justify-between items-center mb-2">
-          {sizeIsLoading ? (
-            <span />
-          ) : (
-            <small className="md:hidden">
-              Recomendamos usar un computador para una mejor experiencia.
-            </small>
-          )}
-          <Button
-            isDisabled={sizeIsLoading}
-            onClick={getLayoutImage}
-            size="sm"
-            variant="flat"
-          >
-            Guardar Plantilla
-          </Button>
+        <div className="grid justify-end gap-2 mb-2">
+          <div className="flex justify-end  gap-2 items-center">
+            <Button
+              isDisabled={sizeIsLoading}
+              onClick={clearSelection}
+              size="sm"
+              variant="flat"
+              color="danger"
+            >
+              Seleccionar otra plantilla
+            </Button>
+            <Button
+              isDisabled={sizeIsLoading}
+              onClick={getLayoutImage}
+              size="sm"
+              variant="flat"
+              color="success"
+            >
+              Guardar Plantilla
+            </Button>
+          </div>
+          <small className="md:hidden">
+            Recomendamos usar un computador para una mejor experiencia.
+          </small>
         </div>
       </div>
       <div

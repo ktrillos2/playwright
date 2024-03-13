@@ -5,8 +5,6 @@ import { Card, CardFooter, Divider, Image } from "@nextui-org/react";
 import { Coupon, CouponLayout } from "@/interfaces";
 import { CouponImageEditor } from "./CouponImageEditor";
 
-
-
 const LAYOUTS: CouponLayout[] = [
   {
     name: "Plantilla 1",
@@ -26,8 +24,12 @@ interface Props {
   coupon: Coupon;
 }
 
-export const SelectLayout: React.FC<Props> = ({coupon}) => {
-  const [selectedLayout, setSelectedLayout] = useState<CouponLayout | null>(null);
+export const SelectLayout: React.FC<Props> = ({ coupon }) => {
+  const [selectedLayout, setSelectedLayout] = useState<CouponLayout | null>(
+    null
+  );
+
+  const clearSelection = () => setSelectedLayout(null);
 
   if (!selectedLayout) {
     return (
@@ -60,10 +62,7 @@ export const SelectLayout: React.FC<Props> = ({coupon}) => {
     );
   }
 
-  return <CouponImageEditor coupon={coupon} selectedLayout={selectedLayout}/>
-
-  
+  return <CouponImageEditor coupon={coupon} selectedLayout={selectedLayout} clearSelection={clearSelection} />;
 };
-
 
 export default SelectLayout;
