@@ -8,50 +8,31 @@ import FilerobotImageEditor, {
 import Lottie from "lottie-react";
 import clsx from "clsx";
 
-import { useToTransparentImage } from "@/hooks";
-import { couponLayout1, couponLayout2 } from "@/helpers";
-import { Coupon } from "@/interfaces";
+import { Coupon, CouponLayout } from "@/interfaces";
 
 import loadingImage from "../../../../public/lottie/loading-image.json";
 import loadingEditor from "../../../../public/lottie/loading-editor.json";
 import { Button } from "@nextui-org/react";
 
-interface Layout {
-  name: string;
-  layout: (props: any) => any;
-  size: { width: string; height: string };
-  image: string;
-}
-
-const LAYOUTS = [
-  {
-    name: "Plantilla 1",
-    layout: couponLayout1,
-    size: { width: "993px", height: "550px" },
-    image: "/coupons/layouts/layout-1.png",
-  },
-  {
-    name: "Plantilla 2",
-    layout: couponLayout2,
-    size: { width: "993px", height: "550px" },
-    image: "/coupons/layouts/layout-2.png",
-  },
-];
-
 interface Props {
   coupon: Coupon;
-  selectedLayout: Layout;
+  selectedLayout: CouponLayout;
   clearSelection: () => void;
+  transparentIsLoading: boolean;
+  displayImage: string;
 }
 
 export const CouponImageEditor: React.FC<Props> = ({
   coupon,
   selectedLayout,
   clearSelection,
+  transparentIsLoading,
+  displayImage,
 }) => {
   const editedImage = useRef<getCurrentImgDataFunction>();
 
-  const [currentLayout, setCurrentLayout] = useState<Layout>(selectedLayout);
+  const [currentLayout, setCurrentLayout] =
+    useState<CouponLayout>(selectedLayout);
 
   const { images, name, commerce } = coupon;
 
@@ -60,9 +41,6 @@ export const CouponImageEditor: React.FC<Props> = ({
     .split(" ")
     .slice(0, 5)
     .join("-")}`.toLowerCase();
-
-  const { displayImage, isLoading: transparentIsLoading } =
-    useToTransparentImage(images[0]);
 
   const [sizeIsLoading, setSizeIsLoading] = useState<boolean>(true);
 

@@ -4,6 +4,7 @@ import { couponLayout1, couponLayout2 } from "@/helpers";
 import { Card, CardFooter, Divider, Image } from "@nextui-org/react";
 import { Coupon, CouponLayout } from "@/interfaces";
 import { CouponImageEditor } from "./CouponImageEditor";
+import { useToTransparentImage } from "@/hooks";
 
 const LAYOUTS: CouponLayout[] = [
   {
@@ -28,6 +29,9 @@ export const SelectLayout: React.FC<Props> = ({ coupon }) => {
   const [selectedLayout, setSelectedLayout] = useState<CouponLayout | null>(
     null
   );
+
+  const { displayImage, isLoading: transparentIsLoading } =
+    useToTransparentImage(coupon.images[0]);
 
   const clearSelection = () => setSelectedLayout(null);
 
@@ -62,7 +66,15 @@ export const SelectLayout: React.FC<Props> = ({ coupon }) => {
     );
   }
 
-  return <CouponImageEditor coupon={coupon} selectedLayout={selectedLayout} clearSelection={clearSelection} />;
+  return (
+    <CouponImageEditor
+      displayImage={displayImage}
+      transparentIsLoading={transparentIsLoading}
+      coupon={coupon}
+      selectedLayout={selectedLayout}
+      clearSelection={clearSelection}
+    />
+  );
 };
 
 export default SelectLayout;
