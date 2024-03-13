@@ -13,8 +13,9 @@ export const scrapeMetro = async ({
         let products: CouponScraped[] = [];
         
         const page = await browser.newPage();
-        console.log("entro")
-        await page.goto("https://www.tiendasmetro.co/tecnologia",{ waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.goto(url);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         // Obtén todos los botones
         console.log("entro2")
         const buttons = await page.$$(
