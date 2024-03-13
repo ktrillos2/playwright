@@ -13,7 +13,9 @@ export const scrapeMetro = async ({
         let products: CouponScraped[] = [];
         
         const page = await browser.newPage();
-        await page.goto(url,{ waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.goto(url);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         // Obtén todos los botones
         const buttons = await page.$$(
             ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
