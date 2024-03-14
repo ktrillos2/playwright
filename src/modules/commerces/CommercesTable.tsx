@@ -82,7 +82,7 @@ export const CommercesTable: React.FC<Props> = ({ commerces }) => {
 
       if (columnKey === "categories") {
         return (
-          <Popover placement="bottom" showArrow={true} backdrop="opaque" >
+          <Popover placement="bottom" showArrow={true} backdrop="opaque">
             <PopoverTrigger>
               <Button>{categories.length}</Button>
             </PopoverTrigger>
@@ -101,7 +101,7 @@ export const CommercesTable: React.FC<Props> = ({ commerces }) => {
                       target="_blank"
                       className="text-tiny underline"
                     >
-                      {path} <MdArrowOutward />{" "}
+                      {path} <TbWorldShare />
                     </Link>
                   </div>
                 ))}

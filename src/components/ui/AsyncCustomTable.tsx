@@ -1,12 +1,7 @@
 "use client";
 import { useMemo } from "react";
 
-import {
-  Pagination,
-  Select,
-  SelectItem,
-  getKeyValue,
-} from "@nextui-org/react";
+import { Pagination, Select, SelectItem, getKeyValue } from "@nextui-org/react";
 
 import { Columns } from "../../interfaces";
 import { useCustomSearchParams } from "@/hooks";
@@ -59,6 +54,7 @@ export const AsyncCustomTable: React.FC<Props> = ({
     return (
       <div className="flex flex-col gap-4 pt-3">
         <div className="flex justify-between items-center">
+          
           {extraTopContent ?? (
             <span className="text-default-400 text-small">
               Total: {totalItems} {itemsName}
