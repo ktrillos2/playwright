@@ -20,8 +20,9 @@ import { RegisterOptions, SubmitHandler, useForm } from "react-hook-form";
 import { commerceActions } from "@/actions";
 import toast from "react-hot-toast";
 import { useBoolean } from "usehooks-ts";
-import { CardCommerce } from "../CardCommerce";
+import { CardCommerce } from "./CardCommerce";
 import { motion } from "framer-motion";
+import { Commerce } from "@/interfaces";
 
 export enum FieldsForm {
   NAME = "name",
@@ -62,7 +63,15 @@ const handleConfetti = () => {
   });
 };
 
-export const CommerceForm = () => {
+interface Props {
+  commerce?: Commerce;
+  isEditForm?: boolean;
+}
+
+export const CommerceForm: React.FC<Props> = ({
+  commerce,
+  isEditForm = false,
+}) => {
   const {
     value: isLoading,
     setTrue: setIsLoadingTrue,
@@ -81,7 +90,16 @@ export const CommerceForm = () => {
     setFalse: setIsCategoriesFormFalse,
   } = useBoolean(false);
 
-  const form = useForm<IForm>({});
+  const form = useForm<IForm>({
+    defaultValues: commerce
+      ? {
+          [FieldsForm.NAME]: commerce?.name,
+          [FieldsForm.URL]: commerce?.url,
+          [FieldsForm.QUERIES]: commerce?.queries || "",
+          [FieldsForm.IMAGE]: commerce?.image,
+        }
+      : {},
+  });
 
   const {
     handleSubmit,
@@ -93,15 +111,26 @@ export const CommerceForm = () => {
   const image = watch(FieldsForm.IMAGE);
   const name = watch(FieldsForm.NAME);
   const url = watch(FieldsForm.URL);
+  const queries = watch(FieldsForm.QUERIES);
 
   const onSubmit: SubmitHandler<IForm> = async (data) => {
     try {
       setIsLoadingTrue();
+      if (isEditForm) {
+        await commerceActions.editCommerce(commerce?._id!, data);
+        toast.success("Comercio editado correctamente");
+        return;
+      }
       await commerceActions.createCommerce(data);
       toast.success("Comercio creado correctamente");
       setCreatedTrue();
       handleConfetti();
     } catch (error: any) {
+      if (isEditForm) {
+        toast.error("Ocurrió un error al editar el comercio: " + error.message);
+
+        return;
+      }
       toast.error("Ocurrió un error al crear el comercio: " + error.message);
     } finally {
       setIsLoadingFalse();
@@ -153,7 +182,11 @@ export const CommerceForm = () => {
       ) : (
         <Card className="w-full max-w-[600px] mx-auto">
           <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
-            <h3 className="font-bold text-xl">Crear comercio</h3>
+            <h3 className="font-bold text-xl">
+              {isEditForm
+                ? `Editar comercio: ${commerce?.name}`
+                : "Crear comercio"}
+            </h3>
           </CardHeader>
           <CardBody>
             <Divider />
@@ -171,6 +204,7 @@ export const CommerceForm = () => {
                     )}
                     isInvalid={!!errors[FieldsForm.NAME]}
                     errorMessage={errors[FieldsForm.NAME]?.message}
+                    value={name}
                   />
                   <Input
                     isRequired
@@ -182,6 +216,7 @@ export const CommerceForm = () => {
                     )}
                     isInvalid={!!errors[FieldsForm.URL]}
                     errorMessage={errors[FieldsForm.URL]?.message}
+                    value={url}
                   />
 
                   <Input
@@ -194,6 +229,7 @@ export const CommerceForm = () => {
                     )}
                     isInvalid={!!errors[FieldsForm.IMAGE]}
                     errorMessage={errors[FieldsForm.IMAGE]?.message}
+                    value={image}
                   />
                 </div>
 
@@ -220,6 +256,7 @@ export const CommerceForm = () => {
                 description={
                   "Ingresa las queries usadas por el comercio para mejorar el ordenamiento y la calidad de data"
                 }
+                value={queries}
               />
 
               <Divider />
@@ -230,7 +267,7 @@ export const CommerceForm = () => {
                   isDisabled={!isValid}
                   className="w-full md:w-auto"
                 >
-                  Crear comercio
+                  {isEditForm ? "Editar comercio" : "Crear comercio"}
                 </Button>
               </div>
             </form>

@@ -7,6 +7,18 @@ import { transformData } from "@/helpers";
 dbConnect();
 const commerceModel = CommerceModel;
 
+export const getCommerceBySlug = async (
+  slug: string
+): Promise<Commerce | null> => {
+  try {
+    const commerce = await commerceModel.findOne({ slug });
+    if (!commerce) return null;
+    return transformData<Commerce>(commerce);
+  } catch (error) {
+    return null;
+  }
+};
+
 export const getCommerces = async (): Promise<Commerce[]> => {
   try {
     const commerces = await commerceModel
@@ -33,8 +45,29 @@ export const getCommerceById = async (
   }
 };
 
-export const createCommerce = async (commerce: Omit<DBCommerce, "slug" | "categories">) => {
+export const createCommerce = async (
+  commerce: Omit<DBCommerce, "slug" | "categories">
+) => {
   const slug = commerce.name.toLowerCase().replace(/ /g, "-");
-  const newCommerce = commerceModel.create({...commerce, slug});
+  const newCommerce = commerceModel.create({ ...commerce, slug });
   return transformData<Commerce>(newCommerce);
+};
+
+export const editCommerce = async (
+  commerceId: string,
+  commerce: Omit<DBCommerce, "slug" | "categories"> & { slug?: string }
+) => {
+
+  if (commerce.name) {
+    commerce.slug = commerce.name.toLowerCase().replace(/ /g, "-");
+  }
+
+  const updatedCommerce = await commerceModel.findByIdAndUpdate(
+    commerceId,
+    commerce,
+    {
+      new: true,
+    }
+  );
+  return transformData<Commerce>(updatedCommerce);
 };
