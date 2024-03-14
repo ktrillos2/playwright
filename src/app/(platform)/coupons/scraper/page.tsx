@@ -1,5 +1,4 @@
-
-import { CouponsScraperMultiSelect } from '@/modules/coupons/scraper';
+import { CouponsScraperMultiSelect } from "@/modules/coupons/scraper";
 
 export default function CouponsScraperPage() {
   // const [messages, setMessages] = useState<LogMessage[]>([]);
