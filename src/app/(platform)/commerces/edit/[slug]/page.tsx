@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { commerceActions } from "@/actions";
+import { categoryActions, commerceActions } from "@/actions";
 import { CommerceForm } from "@/modules";
 
 interface Props {
@@ -10,9 +10,11 @@ interface Props {
 }
 
 export default async function CommerceEditPage({ params: { slug } }: Props) {
-  const commerce = await commerceActions.getCommerceBySlug(slug);
-
+  const [commerce, categories] = await Promise.all([
+    commerceActions.getCommerceBySlug(slug),
+    categoryActions.getCategories(),
+  ]);
   if (!commerce) notFound();
 
-  return <CommerceForm commerce={commerce} isEditForm />;
+  return <CommerceForm commerce={commerce} isEditForm categories={categories} />;
 }

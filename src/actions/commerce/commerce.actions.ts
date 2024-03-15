@@ -9,11 +9,11 @@ const commerceModel = CommerceModel;
 
 export const getCommerceBySlug = async (
   slug: string
-): Promise<Commerce | null> => {
+): Promise<DBCommerce | null> => {
   try {
     const commerce = await commerceModel.findOne({ slug });
     if (!commerce) return null;
-    return transformData<Commerce>(commerce);
+    return transformData<DBCommerce>(commerce);
   } catch (error) {
     return null;
   }
@@ -49,7 +49,7 @@ export const createCommerce = async (
   commerce: Omit<DBCommerce, "slug" | "categories">
 ) => {
   const slug = commerce.name.toLowerCase().replace(/ /g, "-");
-  const newCommerce = commerceModel.create({ ...commerce, slug });
+  const newCommerce = await commerceModel.create({ ...commerce, slug });
   return transformData<Commerce>(newCommerce);
 };
 

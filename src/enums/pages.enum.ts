@@ -6,6 +6,7 @@ export enum PagePaths {
 
   COMMERCES = "commerces",
   CREATE_COMMERCE = PagePaths.COMMERCES + "/create",
+  EDIT_COMMERCE = PagePaths.COMMERCES + "/edit",
 
   HOME = "/",
 

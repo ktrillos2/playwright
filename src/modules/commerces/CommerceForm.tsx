@@ -12,29 +12,37 @@ import {
   Input,
   Link,
 } from "@nextui-org/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
 import { IoIosImages } from "react-icons/io";
 
-import { RegisterOptions, SubmitHandler, useForm } from "react-hook-form";
+import {
+  RegisterOptions,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { commerceActions } from "@/actions";
 import toast from "react-hot-toast";
 import { useBoolean } from "usehooks-ts";
 import { CardCommerce } from "./CardCommerce";
 import { motion } from "framer-motion";
-import { Commerce } from "@/interfaces";
+import { Category, Commerce, DBCommerce } from "@/interfaces";
+import { PagePaths } from "@/enums";
 
 export enum FieldsForm {
   NAME = "name",
   URL = "url",
   QUERIES = "queries",
   IMAGE = "image",
+  CATEGORIES = "categories",
 }
 export interface IForm {
   [FieldsForm.NAME]: string;
   [FieldsForm.URL]: string;
   [FieldsForm.QUERIES]: string;
   [FieldsForm.IMAGE]: string;
+  [FieldsForm.CATEGORIES]: string[];
 }
 
 const validationForm: Record<string, RegisterOptions> = {
@@ -64,13 +72,15 @@ const handleConfetti = () => {
 };
 
 interface Props {
-  commerce?: Commerce;
+  commerce?: DBCommerce;
   isEditForm?: boolean;
+  categories?: Category[];
 }
 
 export const CommerceForm: React.FC<Props> = ({
   commerce,
   isEditForm = false,
+  categories,
 }) => {
   const {
     value: isLoading,
@@ -90,6 +100,8 @@ export const CommerceForm: React.FC<Props> = ({
     setFalse: setIsCategoriesFormFalse,
   } = useBoolean(false);
 
+  const [createdCommerceSlug, setCreatedCommerceSlug] = useState<string>("")
+
   const form = useForm<IForm>({
     defaultValues: commerce
       ? {
@@ -106,6 +118,7 @@ export const CommerceForm: React.FC<Props> = ({
     watch,
     register,
     formState: { isValid, errors },
+    control,
   } = form;
 
   const image = watch(FieldsForm.IMAGE);
@@ -113,29 +126,53 @@ export const CommerceForm: React.FC<Props> = ({
   const url = watch(FieldsForm.URL);
   const queries = watch(FieldsForm.QUERIES);
 
-  const onSubmit: SubmitHandler<IForm> = async (data) => {
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control,
+      name: FieldsForm.CATEGORIES,
+    }
+  );
+
+  const onSubmitForm: SubmitHandler<IForm> = async (data) => {
+    const { categories, ...rest } = data;
     try {
       setIsLoadingTrue();
-      if (isEditForm) {
-        await commerceActions.editCommerce(commerce?._id!, data);
-        toast.success("Comercio editado correctamente");
-        return;
-      }
-      await commerceActions.createCommerce(data);
+      // if (isEditForm) {
+      //   await commerceActions.editCommerce(commerce?._id!, rest);
+      //   toast.success("Comercio editado correctamente");
+      //   return;
+      // }
+     const commerce = await commerceActions.createCommerce(rest);
       toast.success("Comercio creado correctamente");
       setCreatedTrue();
       handleConfetti();
+      setCreatedCommerceSlug(commerce.slug)
     } catch (error: any) {
-      if (isEditForm) {
-        toast.error("Ocurrió un error al editar el comercio: " + error.message);
+      // if (isEditForm) {
+      //   toast.error("Ocurrió un error al editar el comercio: " + error.message);
 
-        return;
-      }
+      //   return;
+      // }
       toast.error("Ocurrió un error al crear el comercio: " + error.message);
     } finally {
       setIsLoadingFalse();
     }
   };
+
+  const onSubmitCategoryForm: SubmitHandler<IForm> = async (data) => {
+    console.log(data);
+  };
+
+  useEffect(() => {
+    const commerceCategories = categories?.map((e) => ({
+      ...e,
+      path: commerce?.categories?.find((c) => c.category === e._id)?.path || "",
+    }));
+
+    console.log(commerceCategories);
+
+    append(commerceCategories || []);
+  }, []);
 
   return (
     <div className="w-full flex flex-col sm:flex-row gap-2">
@@ -169,14 +206,67 @@ export const CommerceForm: React.FC<Props> = ({
             </div>
             <Divider />
             <div className="w-full flex max-md:flex-col gap-2 justify-center">
-              <Button as={Link} href="/commerces">
+              <Button as={Link} href={`/${PagePaths.COMMERCES}`}>
                 Ver comercios
               </Button>
-              <Button onClick={setIsCategoriesFormTrue}>
+              <Button as={Link} href={`/${PagePaths.EDIT_COMMERCE}/${createdCommerceSlug}`}>
                 Agregar categorías
               </Button>
               <Button onClick={setCreatedFalse}>Crear otro comercio</Button>
             </div>
+          </CardBody>
+        </Card>
+      ) : isCategoriesForm ? (
+        <Card className="w-full max-w-[600px] mx-auto">
+          <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
+            <h3 className="font-bold text-xl">Agregar categorías</h3>
+          </CardHeader>
+
+          <CardBody>
+            <Divider />
+            <small className="my-2">
+              Ingresa las categorías que pertenecen al comercio y el path que
+              usan para su url
+            </small>
+
+            <form onSubmit={handleSubmit(onSubmitCategoryForm)}>
+              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-y-2">
+                {(fields as any[])?.map((field, index) => (
+                  <>
+                    <label
+                      htmlFor={field.id}
+                      className="self-center col-span-1 max-md:mt-2"
+                    >
+                      {field.name}
+                    </label>
+                    <Input
+                      className="col-span-2"
+                      id={field.id}
+                      {...register(`${FieldsForm.CATEGORIES}.${index}`)}
+                      defaultValue={field.path}
+                      placeholder={`path de la categoría ${field.name}...`}
+                      // label={field.name}
+                      // labelPlacement="outside-left"
+                    />
+                  </>
+                ))}
+              </div>
+              <Divider />
+
+              <Button
+                onClick={setIsCategoriesFormFalse}
+                className="w-full md:w-auto"
+              >
+                Volver
+              </Button>
+              <Button
+                type="submit"
+                color="success"
+                className="w-full md:w-auto"
+              >
+                Guardar
+              </Button>
+            </form>
           </CardBody>
         </Card>
       ) : (
@@ -191,7 +281,10 @@ export const CommerceForm: React.FC<Props> = ({
           <CardBody>
             <Divider />
 
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-4 grid gap-4">
+            <form
+              onSubmit={handleSubmit(onSubmitForm)}
+              className="mt-4 grid gap-4"
+            >
               <div className="flex gap-4">
                 <div className="grid gap-4 flex-1">
                   <Input
@@ -264,7 +357,7 @@ export const CommerceForm: React.FC<Props> = ({
                 <Button
                   type="submit"
                   color="success"
-                  isDisabled={!isValid}
+                  isDisabled={!isValid || isLoading}
                   className="w-full md:w-auto"
                 >
                   {isEditForm ? "Editar comercio" : "Crear comercio"}
