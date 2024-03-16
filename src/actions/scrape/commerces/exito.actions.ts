@@ -1,6 +1,7 @@
 import { DBCoupon, LogType } from "@/interfaces";
 import { Browser } from "playwright";
 import { logger, saveCoupons } from "../helpers";
+import { autoScroll } from "@/helpers";
 
 export interface ScrapePageProps {
 	browser: Browser;
@@ -28,7 +29,7 @@ export const scrapeExito = async ({
 
 		for (let i = 0; i < 2; i++) {
 			console.log("4");
-			// await autoScroll(page);
+			await autoScroll(page);
 			const data = await page.$$eval("article", (articles) =>
 				articles.map((article: Element) => {
 					const convertToNumber = (
@@ -82,7 +83,7 @@ export const scrapeExito = async ({
 				".Pagination_nextPreviousLink__UYeAp"
 			);
 			if (nextButton) {
-				await nextButton.click();
+				await nextButton.dispatchEvent('click');
 				await page.waitForLoadState("networkidle");
 			} else {
 				break;
@@ -109,6 +110,7 @@ export const scrapeExito = async ({
 			commerceId,
 			data: filteredProducts,
 		});
+		console.log(page.content())
 		console.log(url, "SE SCRAPEOOOOOOOOOOOOOOOOOOO");
 
 		await logger(LogType.SUCCESS, "Exito scrapeado correctamente");

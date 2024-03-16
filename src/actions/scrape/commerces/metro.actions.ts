@@ -78,7 +78,7 @@ export const scrapeMetro = async ({
             );
             products.push(...newDivs);
             // Haz clic en el botón
-            await buttons[i].click();
+            await buttons[i].dispatchEvent('click');
             // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
 
             await new Promise((resolve) => setTimeout(resolve, 1000));
