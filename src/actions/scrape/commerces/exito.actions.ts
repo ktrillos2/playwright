@@ -29,6 +29,7 @@ export const scrapeExito = async ({
 		for (let i = 0; i < 2; i++) {
 			console.log("4");
 			await autoScroll(page);
+			console.log("4 scroll");
 			const data = await page.$$eval("article", (articles) =>
 				articles.map((article: Element) => {
 					const convertToNumber = (
@@ -76,14 +77,19 @@ export const scrapeExito = async ({
 				})
 			);
 
+			console.log("4 paso 1");
 			products = products.concat(data);
+			console.log("4 paso 2");
 
 			const nextButton = await page.$(
 				".Pagination_nextPreviousLink__UYeAp"
 			);
+			console.log("4 paso 3");
 			if (nextButton) {
+				console.log("4 paso if");
 				await nextButton.dispatchEvent('click');
 			} else {
+				console.log("4 paso else");
 				break;
 			}
 		}
