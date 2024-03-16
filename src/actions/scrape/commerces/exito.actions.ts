@@ -106,6 +106,7 @@ export const scrapeExito = async ({
     	commerceId,
     	data: filteredProducts,
     });
+	console.log(url,"Scrapeado correctamente")
 
     await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
     return true;

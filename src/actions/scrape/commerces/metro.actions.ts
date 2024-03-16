@@ -104,7 +104,8 @@ export const scrapeMetro = async ({
             commerceId,
             data: filteredProducts,
         });
-
+        
+        console.log(url,"Scrapeado correctamente")
         await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
 
         return true;
