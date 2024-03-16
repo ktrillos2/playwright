@@ -1,5 +1,5 @@
 import { DBCoupon, LogType } from "@/interfaces";
-import { Browser } from "puppeteer";
+import { Browser } from "playwright";
 import { logger, saveCoupons } from "../helpers";
 
 export interface ScrapePageProps {
@@ -21,7 +21,7 @@ export const scrapeExito = async ({
     let products: CouponScraped[] = [];
 
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "networkidle0" });
+    await page.goto(url, { waitUntil: "networkidle" });
 
     for (let i = 0; i < 2; i++) {
       // await autoScroll(page);
@@ -80,7 +80,7 @@ export const scrapeExito = async ({
       const nextButton = await page.$(".Pagination_nextPreviousLink__UYeAp");
       if (nextButton) {
         await nextButton.click();
-        await page.waitForNavigation({ waitUntil: "networkidle0" });
+        await page.waitForNavigation({ waitUntil: "networkidle" });
       } else {
         break;
       }

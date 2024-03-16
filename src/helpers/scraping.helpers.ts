@@ -1,4 +1,4 @@
-import { Page } from "puppeteer";
+import { Page } from "playwright";
 
 export const autoScroll = async (page: Page) => {
   await page.evaluate(async () => {
