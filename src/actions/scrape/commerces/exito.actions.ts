@@ -23,7 +23,7 @@ export const scrapeExito = async ({
 		console.log("1");
 		const page = await browser.newPage();
 		console.log("2");
-		await page.goto(url);
+		await page.goto(url,{waitUntil: 'load'});
 		console.log("3");
 
 		for (let i = 0; i < 2; i++) {
@@ -114,7 +114,6 @@ export const scrapeExito = async ({
 			commerceId,
 			data: filteredProducts,
 		});
-		console.log(page.content())
 		console.log(url, "SE SCRAPEOOOOOOOOOOOOOOOOOOO");
 
 		await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
