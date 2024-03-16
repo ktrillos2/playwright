@@ -22,10 +22,9 @@ export const scrapeExito = async ({
 		let products: CouponScraped[] = [];
 		console.log("1");
 		const page = await browser.newPage();
-		console.log("2", page);
-		console.log("2", page);
-		await page.goto(url, { waitUntil: "domcontentloaded" });
-		console.log("3", page);
+		console.log("2");
+		await page.goto(url);
+		console.log("3");
 
 		for (let i = 0; i < 2; i++) {
 			console.log("4");
@@ -84,7 +83,6 @@ export const scrapeExito = async ({
 			);
 			if (nextButton) {
 				await nextButton.dispatchEvent('click');
-				await page.waitForLoadState("networkidle");
 			} else {
 				break;
 			}
