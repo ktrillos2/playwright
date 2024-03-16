@@ -1,17 +1,14 @@
 "use client";
 import {
-  ChangeEvent,
-  ChangeEventHandler,
   useCallback,
   useEffect,
   useState,
 } from "react";
-import { Button, Image, Selection, useDisclosure } from "@nextui-org/react";
+import { Button, Image, } from "@nextui-org/react";
 import { clsx } from "clsx";
-import { useDebounceCallback } from "usehooks-ts";
 
 import { Columns, Coupon, Commerce, Category } from "@/interfaces";
-import { AsyncCustomTable, CopyClipboardButton } from "@/components/ui/buttons";
+import { AsyncCustomTable, CopyClipboardButton } from "@/components";
 import { formatToMoney } from "@/helpers";
 import Link from "next/link";
 import { SelectCategory, SelectCommerce } from ".";
@@ -108,7 +105,7 @@ export const CouponsTable: React.FC<Props> = ({
     if (columnKey === "url") {
       return (
         <div className="flex gap-2">
-          <Button onClick={() => window.open(url, "_blank")}>Ver más</Button>
+          <Button as={Link} href={url} target="_blank">Ver más</Button>
           <CopyClipboardButton content={url} />
         </div>
       );

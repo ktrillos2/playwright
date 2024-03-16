@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/ui/buttons";
+import { Navbar } from "@/components";
 import { adminAuthMiddleware } from "@/config";
 
 export default async function PlatformLayout({

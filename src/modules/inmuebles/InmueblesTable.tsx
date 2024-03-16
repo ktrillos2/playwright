@@ -3,7 +3,8 @@ import { useCallback } from "react";
 import { Button, Image } from "@nextui-org/react";
 
 import { Columns, Inmueble } from "@/interfaces";
-import { AsyncCustomTable } from "@/components/ui/buttons";
+import { AsyncCustomTable } from "@/components";
+import Link from "next/link";
 
 const columns: Columns[] = [
   {
@@ -58,7 +59,9 @@ export const InmueblesTable: React.FC<Props> = ({
 
       case "url":
         return (
-          <Button onClick={() => window.open(url, "_blank")}>Ver más</Button>
+          <Button as={Link} href={url} target="_blank">
+            Ver más
+          </Button>
         );
 
       default:

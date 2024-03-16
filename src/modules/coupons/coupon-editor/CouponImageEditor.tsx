@@ -8,9 +8,7 @@ import FilerobotImageEditor, {
 import Lottie from "lottie-react";
 import clsx from "clsx";
 
-import { useToTransparentImage } from "@/hooks";
-import { couponLayout } from "@/helpers";
-import { Coupon } from "@/interfaces";
+import { Coupon, CouponLayout } from "@/interfaces";
 
 import loadingImage from "../../../../public/lottie/loading-image.json";
 import loadingEditor from "../../../../public/lottie/loading-editor.json";
@@ -18,10 +16,23 @@ import { Button } from "@nextui-org/react";
 
 interface Props {
   coupon: Coupon;
+  selectedLayout: CouponLayout;
+  clearSelection: () => void;
+  transparentIsLoading: boolean;
+  displayImage: string;
 }
 
-const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
+export const CouponImageEditor: React.FC<Props> = ({
+  coupon,
+  selectedLayout,
+  clearSelection,
+  transparentIsLoading,
+  displayImage,
+}) => {
   const editedImage = useRef<getCurrentImgDataFunction>();
+
+  const [currentLayout, setCurrentLayout] =
+    useState<CouponLayout>(selectedLayout);
 
   const { images, name, commerce } = coupon;
 
@@ -31,18 +42,14 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
     .slice(0, 5)
     .join("-")}`.toLowerCase();
 
-  const { displayImage, isLoading: transparentIsLoading } =
-    useToTransparentImage(images[0]);
-  const [size, setSize] = useState<{ width: string; height: string }>({
-    width: "993px",
-    height: "550px",
-  });
-
   const [sizeIsLoading, setSizeIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSize({ width: "100%", height: "calc(100vh - 120px)" });
+      setCurrentLayout({
+        ...currentLayout,
+        size: { width: "100%", height: "calc(100vh - 120px)" },
+      });
       setSizeIsLoading(false);
     }, 3500);
 
@@ -75,26 +82,34 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
             </span>
           </div>
         ) : null}
-        <div className="flex justify-between items-center mb-2">
-          {sizeIsLoading ? (
-            <span />
-          ) : (
-            <small className="md:hidden">
-              Recomendamos usar un computador para una mejor experiencia.
-            </small>
-          )}
-          <Button
-            isDisabled={sizeIsLoading}
-            onClick={getLayoutImage}
-            size="sm"
-            variant="flat"
-          >
-            Guardar Plantilla
-          </Button>
+        <div className="grid justify-end gap-2 mb-2">
+          <div className="flex justify-end  gap-2 items-center">
+            <Button
+              isDisabled={sizeIsLoading}
+              onClick={clearSelection}
+              size="sm"
+              variant="flat"
+              color="danger"
+            >
+              Seleccionar otra plantilla
+            </Button>
+            <Button
+              isDisabled={sizeIsLoading}
+              onClick={getLayoutImage}
+              size="sm"
+              variant="flat"
+              color="success"
+            >
+              Guardar Plantilla
+            </Button>
+          </div>
+          <small className="md:hidden">
+            Recomendamos usar un computador para una mejor experiencia.
+          </small>
         </div>
       </div>
       <div
-        style={size}
+        style={currentLayout.size}
         className={clsx("overflow-hidden z-0 relative", {
           "opacity-0": sizeIsLoading,
           "pointer-events-none opacity-50":
@@ -124,7 +139,7 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
           defaultSavedImageName={imageName}
           // @ts-ignore
           loadableDesignState={{
-            annotations: couponLayout({
+            annotations: currentLayout.layout({
               coupon,
               displayImage: displayImage || images[0],
             }),
@@ -149,5 +164,3 @@ const CouponImageEditor: React.FC<Props> = ({ coupon }) => {
     </div>
   );
 };
-
-export default CouponImageEditor;
