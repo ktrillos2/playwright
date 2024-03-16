@@ -3,124 +3,140 @@ import { Browser } from "playwright";
 import { logger, saveCoupons } from "../helpers";
 
 export interface ScrapePageProps {
-  browser: Browser;
-  url: string;
-  commerceId: string;
-  categoryId: string;
+	browser: Browser;
+	url: string;
+	commerceId: string;
+	categoryId: string;
 }
 
 export type CouponScraped = Omit<DBCoupon, "commerce" | "category">;
 
 export const scrapeExito = async ({
-  browser,
-  url,
-  categoryId,
-  commerceId,
+	browser,
+	url,
+	categoryId,
+	commerceId,
 }: ScrapePageProps) => {
-  try {
-    let products: CouponScraped[] = [];
+	try {
+		let products: CouponScraped[] = [];
+		console.log("1");
+		const page = await browser.newPage();
+		console.log("2", page);
+		console.log("2", page);
+		await page.goto(url, { waitUntil: "networkidle" });
+		console.log("3", page);
 
-    const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "networkidle" });
+		for (let i = 0; i < 2; i++) {
+			console.log("4");
+			// await autoScroll(page);
+			const data = await page.$$eval("article", (articles) =>
+				articles.map((article: Element) => {
+					const convertToNumber = (
+						item: string | null | undefined
+					) => {
+						if (item) {
+							const numericValue = item.replace(/[^\d]/g, "");
+							return parseInt(numericValue, 10);
+						} else {
+							return 0;
+						}
+					};
 
-    for (let i = 0; i < 2; i++) {
-      // await autoScroll(page);
-      const data = await page.$$eval("article", (articles) =>
-        articles.map((article: Element) => {
-          const convertToNumber = (item: string | null | undefined) => {
-            if (item) {
-              const numericValue = item.replace(/[^\d]/g, "");
-              return parseInt(numericValue, 10);
-            } else {
-              return 0;
-            }
-          };
+					const linkElement = article.querySelectorAll(
+						".link_fs-link__6oAwa"
+					) as NodeListOf<HTMLAnchorElement>;
 
-          const linkElement = article.querySelectorAll(
-            ".link_fs-link__6oAwa"
-          ) as NodeListOf<HTMLAnchorElement>;
+					const img = article.querySelector(
+						"img.imagen_plp"
+					) as HTMLImageElement;
 
-          const img = article.querySelector(
-            'img.imagen_plp'
-          ) as HTMLImageElement;
+					const priceWithDiscount = article.querySelector(
+						".ProductPrice_container__price__LS1Td"
+					);
+					const priceWithoutDiscount = article.querySelector(
+						".priceSection_container-promotion_price-dashed__Pzc_z"
+					);
+					const priceWithCard = article.querySelector(
+						".price_fs-price__7Y_0s"
+					);
+					const discount = article.querySelector(
+						'span[data-percentage="true"]'
+					);
+					const brandName = article.querySelector(
+						".BrandName_BrandNameTitle__9LquF"
+					);
+					const imgURL = img.getAttribute("src");
 
-          const priceWithDiscount = article.querySelector(
-            ".ProductPrice_container__price__LS1Td"
-          );
-          const priceWithoutDiscount = article.querySelector(
-            ".priceSection_container-promotion_price-dashed__Pzc_z"
-          );
-          const priceWithCard = article.querySelector(".price_fs-price__7Y_0s");
-          const discount = article.querySelector(
-            'span[data-percentage="true"]'
-          );
-          const brandName = article.querySelector(
-            ".BrandName_BrandNameTitle__9LquF"
-          );
-          const imgURL = img.getAttribute("src");
+					const body: CouponScraped = {
+						name: linkElement[1].title,
+						url: linkElement[1].href,
+						images: imgURL ? [imgURL] : [],
+						lowPrice: convertToNumber(
+							priceWithDiscount?.textContent
+						),
+						discountWithCard: convertToNumber(
+							priceWithCard?.textContent
+						),
+						discountPercentage: convertToNumber(
+							discount?.textContent
+						),
+						brandName: brandName?.textContent,
+						priceWithoutDiscount: convertToNumber(
+							priceWithoutDiscount?.textContent
+						),
+					};
+					return body;
+				})
+			);
 
-          const body: CouponScraped = {
-            name: linkElement[1].title,
-            url: linkElement[1].href,
-            images: imgURL ? [imgURL] : [],
-            lowPrice: convertToNumber(priceWithDiscount?.textContent),
-            discountWithCard: convertToNumber(priceWithCard?.textContent),
-            discountPercentage: convertToNumber(discount?.textContent),
-            brandName: brandName?.textContent,
-            priceWithoutDiscount: convertToNumber(
-              priceWithoutDiscount?.textContent
-            ),
-          };
-          return body;
-        })
-      );
+			products = products.concat(data);
 
-      products = products.concat(data);
+			const nextButton = await page.$(
+				".Pagination_nextPreviousLink__UYeAp"
+			);
+			if (nextButton) {
+				await nextButton.click();
+				await page.waitForLoadState("networkidle");
+			} else {
+				break;
+			}
+		}
+		console.log("paso");
+		const parsedProducts: DBCoupon[] = products.map((e) => ({
+			...e,
+			commerce: commerceId,
+			category: categoryId,
+		}));
+		console.log("volvio a pasar");
+		const filteredProducts = Array.from(
+			new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
+		)
+			.map((div: string) => JSON.parse(div) as DBCoupon)
+			.filter(
+				({ priceWithoutDiscount, discountPercentage }) =>
+					priceWithoutDiscount || discountPercentage
+			);
+		console.log("DIOS MIOOOO PASOOO");
+		await saveCoupons({
+			categoryId,
+			commerceId,
+			data: filteredProducts,
+		});
+		console.log(url, "SE SCRAPEOOOOOOOOOOOOOOOOOOO");
 
-      const nextButton = await page.$(".Pagination_nextPreviousLink__UYeAp");
-      if (nextButton) {
-        await nextButton.click();
-        await page.waitForNavigation({ waitUntil: "networkidle" });
-      } else {
-        break;
-      }
-    }
+		await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
+		return true;
+	} catch (error: any) {
+		await logger(
+			LogType.ERROR,
+			error?.message ?? "No se pudo scrapear Exito",
+			error
+		);
 
-    const parsedProducts: DBCoupon[] = products.map((e) => ({
-      ...e,
-      commerce: commerceId,
-      category: categoryId,
-    }));
-
-    const filteredProducts = Array.from(
-      new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
-    )
-      .map((div: string) => JSON.parse(div) as DBCoupon)
-      .filter(
-        ({ priceWithoutDiscount, discountPercentage }) =>
-          priceWithoutDiscount || discountPercentage
-      );
-
-    await saveCoupons({
-    	categoryId,
-    	commerceId,
-    	data: filteredProducts,
-    });
-	console.log(url,"Scrapeado correctamente")
-
-    await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
-    return true;
-  } catch (error: any) {
-    await logger(
-      LogType.ERROR,
-      error?.message ?? "No se pudo scrapear Exito",
-      error
-    );
-
-    throw new Error(error.message);
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
-  }
+		throw new Error(error.message);
+	} finally {
+		if (browser) {
+			await browser.close();
+		}
+	}
 };
