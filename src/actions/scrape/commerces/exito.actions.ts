@@ -23,7 +23,7 @@ export const scrapeExito = async ({
 		console.log("1");
 		const page = await browser.newPage();
 		console.log("2");
-		await page.goto(url,{waitUntil: 'load'});
+		await page.goto(url, { waitUntil: 'commit' });
 		console.log("3");
 
 		for (let i = 0; i < 2; i++) {
