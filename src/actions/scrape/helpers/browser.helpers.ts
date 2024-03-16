@@ -1,5 +1,6 @@
 import locateChrome from "locate-chrome";
 import puppeteer from "puppeteer";
+import playwright from "playwright";
 
 const getLocateChrome = async () => {
 	let localeChrome: string | null = await locateChrome();
@@ -8,20 +9,20 @@ const getLocateChrome = async () => {
 };
 
 export const getBrowser = async () => {
-	const locateBrowser = await getLocateChrome();
+	// const locateBrowser = await getLocateChrome();
 
-	const browser = await puppeteer.launch({
-		// args: [
-		// 	"--disable-setuid-sandbox",
-		// 	// "--no-sandbox",
-		// 	"--single-process",
-		// 	"--no-zygote",
-		// ],
+	const browser = await playwright.chromium.launch({
+		args: [
+			"--disable-setuid-sandbox",
+			"--no-sandbox",
+			"--single-process",
+			"--no-zygote",
+		],
 		// headless: false,
-		executablePath:
-			process.env.NODE_ENV === "production"
-				? process.env.PUPPETEER_EXECUTABLE_PATH
-				: locateBrowser,
+		// executablePath:
+		// 	process.env.NODE_ENV === "production"
+		// 		? process.env.PUPPETEER_EXECUTABLE_PATH
+		// 		: locateBrowser,
 	});
 
 	return browser;

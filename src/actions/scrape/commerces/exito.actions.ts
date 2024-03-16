@@ -117,13 +117,12 @@ export const scrapeExito = async ({
 				({ priceWithoutDiscount, discountPercentage }) =>
 					priceWithoutDiscount || discountPercentage
 			);
-		console.log(filteredProducts)
 		await saveCoupons({
 			categoryId,
 			commerceId,
 			data: filteredProducts,
 		});
-
+		console.log(url,"scrapeado correctamente")
 		await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
 		return true;
 	} catch (error: any) {
