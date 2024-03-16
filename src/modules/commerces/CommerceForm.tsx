@@ -126,12 +126,12 @@ export const CommerceForm: React.FC<Props> = ({
   const url = watch(FieldsForm.URL);
   const queries = watch(FieldsForm.QUERIES);
 
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control,
-      name: FieldsForm.CATEGORIES,
-    }
-  );
+  // const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+  //   {
+  //     control,
+  //     name: FieldsForm.CATEGORIES,
+  //   }
+  // );
 
   const onSubmitForm: SubmitHandler<IForm> = async (data) => {
     const { categories, ...rest } = data;
@@ -171,7 +171,7 @@ export const CommerceForm: React.FC<Props> = ({
 
     console.log(commerceCategories);
 
-    append(commerceCategories || []);
+    // append(commerceCategories || []);
   }, []);
 
   return (
@@ -231,7 +231,7 @@ export const CommerceForm: React.FC<Props> = ({
 
             <form onSubmit={handleSubmit(onSubmitCategoryForm)}>
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-y-2">
-                {(fields as any[])?.map((field, index) => (
+                {/* {(fields as any[])?.map((field, index) => (
                   <>
                     <label
                       htmlFor={field.id}
@@ -249,7 +249,7 @@ export const CommerceForm: React.FC<Props> = ({
                       // labelPlacement="outside-left"
                     />
                   </>
-                ))}
+                ))} */}
               </div>
               <Divider />
 
