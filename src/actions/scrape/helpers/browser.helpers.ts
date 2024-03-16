@@ -12,12 +12,12 @@ export const getBrowser = async () => {
 	// const locateBrowser = await getLocateChrome();
 
 	const browser = await playwright.chromium.launch({
-		args: [
-			"--disable-setuid-sandbox",
-			"--no-sandbox",
-			"--single-process",
-			"--no-zygote",
-		],
+		// args: [
+		// 	"--disable-setuid-sandbox",
+		// 	"--no-sandbox",
+		// 	"--single-process",
+		// 	"--no-zygote",
+		// ],
 		// headless: false,
 		// executablePath:
 		// 	process.env.NODE_ENV === "production"
