@@ -7,7 +7,7 @@ import { exitoActions, metroActions } from "./commerces";
 export const scrapeCommerceByCategory = async (
   commerceId: string,
   categoryId: string
-) => {
+): Promise<number> => {
   const commerce = await commerceActions.getCommerceById(commerceId);
   if (!commerce) throw new Error("El comercio seleccionado no existe");
 
@@ -30,14 +30,10 @@ export const scrapeCommerceByCategory = async (
 
   switch (slug) {
     case CommerceSlugs.EXITO:
-      await exitoActions.scrapeExito(scraperProps);
-      break;
+      return await exitoActions.scrapeExito(scraperProps);
     case CommerceSlugs.METRO:
-      await metroActions.scrapeMetro(scraperProps);
-      break;
+      return await metroActions.scrapeMetro(scraperProps);
     default:
       throw new Error("No hay acciones para este comercio");
   }
-
-  return scrapUrl;
 };

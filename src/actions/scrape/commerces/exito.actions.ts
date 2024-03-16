@@ -17,6 +17,8 @@ export const scrapeExito = async ({
   categoryId,
   commerceId,
 }: ScrapePageProps) => {
+  let totalProducts = 0;
+
   try {
     let products: CouponScraped[] = [];
 
@@ -41,7 +43,7 @@ export const scrapeExito = async ({
           ) as NodeListOf<HTMLAnchorElement>;
 
           const img = article.querySelector(
-            'img.imagen_plp'
+            "img.imagen_plp"
           ) as HTMLImageElement;
 
           const priceWithDiscount = article.querySelector(
@@ -102,13 +104,13 @@ export const scrapeExito = async ({
       );
 
     await saveCoupons({
-    	categoryId,
-    	commerceId,
-    	data: filteredProducts,
+      categoryId,
+      commerceId,
+      data: filteredProducts,
     });
 
     await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
-    return true;
+    totalProducts = filteredProducts.length;
   } catch (error: any) {
     await logger(
       LogType.ERROR,
@@ -121,5 +123,6 @@ export const scrapeExito = async ({
     if (browser) {
       await browser.close();
     }
+    return totalProducts;
   }
 };

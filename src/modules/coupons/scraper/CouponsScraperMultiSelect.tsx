@@ -1,11 +1,17 @@
 "use client";
-import { categoryActions, commerceActions, scrapeActions } from "@/actions";
-import { Category, Commerce, LogCategory, LogType } from "@/interfaces";
-import { generalService } from "@/service";
-import { Avatar, Button, Image, Select, SelectItem } from "@nextui-org/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { Divider, Button } from "@nextui-org/react";
+import { RiCoupon2Line } from "react-icons/ri";
 import toast from "react-hot-toast";
+
+import { LoggerComponent } from "@/components";
 import { SelectCategory, SelectCommerce } from "..";
+
+import { commerceActions, scrapeActions } from "@/actions";
+import { Commerce, LogMessage, LogType, SpecialLog } from "@/interfaces";
+
+import { PagePaths } from "@/enums";
 
 export const CouponsScraperMultiSelect = () => {
   const [platform, setPlatform] = useState<any>(new Set([]));
@@ -15,6 +21,12 @@ export const CouponsScraperMultiSelect = () => {
   const [loadingScraper, setLoadingScraper] = useState(false);
 
   const [commerces, setCommerces] = useState<Commerce[]>([]);
+
+  const [scrapperLogger, setScrapperLogger] = useState<
+    (LogMessage | SpecialLog)[]
+  >([]);
+
+  const [successScrapper, setSuccessScrapper] = useState(false);
 
   const categoriesBySelectedCommerce = useMemo(() => {
     setSelectedCategory(new Set([]));
@@ -44,76 +56,166 @@ export const CouponsScraperMultiSelect = () => {
     const [selectedPlatform] = platform;
     const categories = [...selectedCategories];
 
-    const responses = [];
+    const responses: number[] = [];
 
     const commerce = commerces.find((e) => e._id === selectedPlatform);
 
     if (!commerce) return;
 
+    setSuccessScrapper(false);
     setLoadingScraper(true);
+
+    const firstLog: (LogMessage | SpecialLog)[] = [];
+
+    if (scrapperLogger.length) {
+      firstLog.unshift(SpecialLog.SEPARATOR);
+    }
+
+    firstLog.unshift({
+      message: `Empezando a scrapear ${commerce.name}...`,
+      createdAt: new Date(),
+      type: LogType.INFO,
+    });
+
+    setScrapperLogger((prevLogger) => [...firstLog, ...prevLogger]);
+
     for (const category of categories) {
       const categoryName = commerce.categories.find(
         (e) => e.category._id === category
       )?.category.name;
+
+      setScrapperLogger((prevLogger) => [
+        {
+          message: "Scrapeando " + categoryName,
+          createdAt: new Date(),
+          type: LogType.LOADING,
+        },
+        ...prevLogger,
+      ]);
+
       try {
-        const response = await scrapeActions.scrapeCommerceByCategory(
+        const totalProducts = await scrapeActions.scrapeCommerceByCategory(
           selectedPlatform,
           category
         );
-        responses.push(response);
+
+        responses.push(totalProducts);
+
+        // responses.push("response");
+
+        setScrapperLogger((prevLogger) => [
+          {
+            message: `(${totalProducts}) productos scrapeados de ${categoryName} `,
+            createdAt: new Date(),
+            type: LogType.SUCCESS,
+          },
+          ...prevLogger,
+        ]);
 
         toast.success(`Se ha scrapeado la categoría: ${categoryName}`);
-      } catch (error) {
+      } catch (error: any) {
         toast.error(`Error en la categoría ${categoryName}:`);
+
+        setScrapperLogger((prevLogger) => [
+          {
+            message: "Error en " + categoryName + ": " + error.message,
+            createdAt: new Date(),
+            type: LogType.ERROR,
+          },
+          ...prevLogger,
+        ]);
       }
     }
+
+    setScrapperLogger((prevLogger) => [
+      {
+        message: `(${responses.reduce(
+          (acc, curr) => acc + curr,
+          0
+        )}) Productos scrapeados`,
+        createdAt: new Date(),
+        type: LogType.INFO,
+      },
+      {
+        message: `[${responses.length}/${categories.length}] Categorías scrapeadas correctamente`,
+        createdAt: new Date(),
+        type: LogType.INFO,
+      },
+      ...prevLogger,
+    ]);
+
+    setSuccessScrapper(true);
     setLoadingScraper(false);
   };
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-4">
-      <div className="w-full flex justify-center items-center gap-4">
-        {loading ? (
-          <span>Cargando...</span>
-        ) : (
-          <>
+      {loading ? (
+        <span>Cargando...</span>
+      ) : (
+        <div className="flex flex-col gap-x-4 gap-y-2 w-full max-w-[800px] min-h-[80vh]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <SelectCommerce
               commerces={commerces}
               selectedKeys={platform}
               onSelectionChange={setPlatform}
-              className="w-1/6"
               classNames={{
                 label: "group-data-[filled=true]:-translate-y-5",
                 trigger: "min-h-unit-18",
               }}
             />
-            {platform.size > 0 && (
-              <>
-                <SelectCategory
-                  categories={categoriesBySelectedCommerce}
-                  selectedKeys={selectedCategories}
-                  onSelectionChange={setSelectedCategory}
-                  selectionMode="multiple"
-                  isCategoryByCommerce
-                  className="w-1/6"
-                  classNames={{
-                    trigger: "min-h-unit-18",
-                  }}
-                />
-                <Button
-                  onClick={scrape}
-                  variant="flat"
-                  color={selectedCategories.size ? "success" : "default"}
-                  isDisabled={!selectedCategories.size || loadingScraper}
-                >
-                  Scrapear
-                </Button>
-              </>
+            {platform.size ? (
+              <SelectCategory
+                categories={categoriesBySelectedCommerce}
+                selectedKeys={selectedCategories}
+                onSelectionChange={setSelectedCategory}
+                selectionMode="multiple"
+                isCategoryByCommerce
+                classNames={{
+                  trigger: "min-h-unit-18",
+                }}
+              />
+            ) : (
+              <small className="text-xs self-end">
+                Selecciona un comercio para ver sus categorías
+              </small>
             )}
-          </>
-        )}
-      </div>
-      {loadingScraper ? "Se está scrapeando, porfavor espere..." : null}
+            {/* {loadingScraper ? "Se está scrapeando, porfavor espere..." : null} */}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={scrape}
+              className="flex-1"
+              variant="flat"
+              size="lg"
+              color={selectedCategories.size ? "success" : "default"}
+              isDisabled={!selectedCategories.size || loadingScraper}
+            >
+              Scrapear
+            </Button>
+            {successScrapper ? (
+              <Button
+                as={Link}
+                href={`/${PagePaths.COUPONS}`}
+                size="lg"
+                color={"secondary"}
+                isIconOnly
+              >
+                <RiCoupon2Line size={25} />
+              </Button>
+            ) : null}
+          </div>
+          {scrapperLogger.length ? (
+            <>
+              <Divider />
+              <LoggerComponent
+                messages={scrapperLogger}
+                className="max-h-[50vh] md:max-h-[55vh]"
+              />
+            </>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 };

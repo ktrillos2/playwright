@@ -1,12 +1,16 @@
 
 export interface LogMessage {
   type: LogType;
-  category: LogCategory;
+  category?: LogCategory;
   message: string;
   error?: any
   createdAt?: Date;
   updatedAt?: Date;
   date?: string
+}
+
+export enum SpecialLog {
+  SEPARATOR = "separator",
 }
 
 export enum LogType {

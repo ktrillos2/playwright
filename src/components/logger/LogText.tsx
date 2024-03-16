@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { LogMessage, LogType } from "@/interfaces";
 
 const Colors = {
-  INFO: "text-white",
+  INFO: "text-blue-500",
   LOADING: "text-white",
   ERROR: "text-red-500",
   SUCCESS: "text-green-500",
@@ -24,7 +24,7 @@ export const LogText: React.FC<Props> = ({ logMessage, isLast = false }) => {
   return (
     <div className={Colors[type]}>
       <span>
-        [{formattedDate}] {category} | {type} : {message}
+        [{formattedDate}] {category ? `${category} |` : null} {type} : {message}
       </span>
       {isLoading && isLast ? <span className="dot ml-0.5" /> : null}
     </div>
