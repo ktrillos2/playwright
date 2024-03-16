@@ -1,4 +1,4 @@
-import { LoadingScraper } from "@/components/ui/buttons";
+import { LoadingScraper } from "@/components";
 
 export default function LoadingCoupons() {
   return (

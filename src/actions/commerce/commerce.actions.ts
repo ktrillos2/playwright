@@ -33,6 +33,8 @@ export const getCommerceById = async (
   }
 };
 
-export const saveCommerce = async (commerce: DBCommerce) => {
-  return commerceModel.create(commerce);
+export const createCommerce = async (commerce: Omit<DBCommerce, "slug" | "categories">) => {
+  const slug = commerce.name.toLowerCase().replace(/ /g, "-");
+  const newCommerce = commerceModel.create({...commerce, slug});
+  return transformData<Commerce>(newCommerce);
 };

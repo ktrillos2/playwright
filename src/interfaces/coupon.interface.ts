@@ -28,3 +28,10 @@ export interface Coupon {
   commerce: Commerce
   category: Category
 }
+
+export interface CouponLayout {
+  name: string;
+  layout: (props: any) => any;
+  size: { width: string; height: string };
+  image: string;
+}

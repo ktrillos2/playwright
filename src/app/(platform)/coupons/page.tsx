@@ -41,7 +41,7 @@ export default async function CouponsPage({ searchParams }: Props) {
   const { docs: coupons, totalPages, totalDocs } = paginatedCoupons;
 
   return (
-    <div>
+    <div className="grid gap-2">
       <div className="flex justify-between items-center">
         <h1 className="text-left">Cupones Spider</h1>
         <div className="flex gap-2">

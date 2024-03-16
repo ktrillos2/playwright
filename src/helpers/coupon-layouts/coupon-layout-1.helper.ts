@@ -8,8 +8,7 @@ interface Props {
 
 const KUMONERA_LOGO = "/kumonera-logo.png";
 
-
-export const couponLayout = ({ coupon, displayImage }: Props) => {
+export const couponLayout1 = ({ coupon, displayImage }: Props) => {
   const {
     name,
     discountPercentage,
