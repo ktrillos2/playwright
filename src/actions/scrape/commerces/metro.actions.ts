@@ -11,20 +11,20 @@ export const scrapeMetro = async ({
 }: ScrapePageProps) => {
     try {
         let products: CouponScraped[] = [];
-        
+
         const page = await browser.newPage();
-        await page.goto(url);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        console.log("entro1")
+        await page.goto(url, { waitUntil: "domcontentloaded" });
 
         // Obtén todos los botones
         console.log("entro2")
         const buttons = await page.$$(
             ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
-            );
-            console.log("entro3")
-            
-            // Itera sobre cada botón
-            for (let i = 1; i < (buttons.length>5?5:buttons.length); i++) {
+        );
+        console.log("entro3")
+
+        // Itera sobre cada botón
+        for (let i = 1; i < (buttons.length > 5 ? 5 : buttons.length); i++) {
             console.log("entro4")
 
             await autoScroll(page);
@@ -80,10 +80,10 @@ export const scrapeMetro = async ({
             // Haz clic en el botón
             await buttons[i].click();
             // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
-            
+
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
-        
+
         const parsedProducts: DBCoupon[] = products.map((e) => ({
             ...e,
             commerce: commerceId,
@@ -104,8 +104,8 @@ export const scrapeMetro = async ({
             commerceId,
             data: filteredProducts,
         });
-        
-        console.log(url,"Scrapeado correctamente")
+
+        console.log(url, "Scrapeado correctamente")
         await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
 
         return true;

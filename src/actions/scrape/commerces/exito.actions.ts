@@ -23,7 +23,7 @@ export const scrapeExito = async ({
 		const page = await browser.newPage();
 		console.log("2", page);
 		console.log("2", page);
-		await page.goto(url, { waitUntil: "networkidle" });
+		await page.goto(url, { waitUntil: "domcontentloaded" });
 		console.log("3", page);
 
 		for (let i = 0; i < 2; i++) {
@@ -42,48 +42,35 @@ export const scrapeExito = async ({
 						}
 					};
 
-					const linkElement = article.querySelectorAll(
-						".link_fs-link__6oAwa"
-					) as NodeListOf<HTMLAnchorElement>;
+					const linkElement = article.querySelectorAll(".link_fs-link__6oAwa") as NodeListOf<HTMLAnchorElement>;
+					let linkTitle = '';
+					let linkHref = '';
+					if (linkElement.length > 0) {
+						linkTitle = linkElement[1].title;
+						linkHref = linkElement[1].href;
+					}
 
-					const img = article.querySelector(
-						"img.imagen_plp"
-					) as HTMLImageElement;
+					const img = article.querySelector("img.imagen_plp");
+					let imgURL = '';
+					if (img) {
+						imgURL = img.getAttribute("src") ?? '';
+					}
 
-					const priceWithDiscount = article.querySelector(
-						".ProductPrice_container__price__LS1Td"
-					);
-					const priceWithoutDiscount = article.querySelector(
-						".priceSection_container-promotion_price-dashed__Pzc_z"
-					);
-					const priceWithCard = article.querySelector(
-						".price_fs-price__7Y_0s"
-					);
-					const discount = article.querySelector(
-						'span[data-percentage="true"]'
-					);
-					const brandName = article.querySelector(
-						".BrandName_BrandNameTitle__9LquF"
-					);
-					const imgURL = img.getAttribute("src");
+					const priceWithDiscount = article.querySelector(".ProductPrice_container__price__LS1Td");
+					const priceWithoutDiscount = article.querySelector(".priceSection_container-promotion_price-dashed__Pzc_z");
+					const priceWithCard = article.querySelector(".price_fs-price__7Y_0s");
+					const discount = article.querySelector('span[data-percentage="true"]');
+					const brandName = article.querySelector(".BrandName_BrandNameTitle__9LquF");
 
 					const body: CouponScraped = {
-						name: linkElement[1].title,
-						url: linkElement[1].href,
+						name: linkTitle,
+						url: linkHref,
 						images: imgURL ? [imgURL] : [],
-						lowPrice: convertToNumber(
-							priceWithDiscount?.textContent
-						),
-						discountWithCard: convertToNumber(
-							priceWithCard?.textContent
-						),
-						discountPercentage: convertToNumber(
-							discount?.textContent
-						),
+						lowPrice: convertToNumber(priceWithDiscount?.textContent),
+						discountWithCard: convertToNumber(priceWithCard?.textContent),
+						discountPercentage: convertToNumber(discount?.textContent),
 						brandName: brandName?.textContent,
-						priceWithoutDiscount: convertToNumber(
-							priceWithoutDiscount?.textContent
-						),
+						priceWithoutDiscount: convertToNumber(priceWithoutDiscount?.textContent),
 					};
 					return body;
 				})
