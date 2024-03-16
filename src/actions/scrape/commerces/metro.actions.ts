@@ -14,7 +14,7 @@ export const scrapeMetro = async ({
 
         const page = await browser.newPage();
         console.log("entro1")
-        await page.goto(url, { waitUntil: 'load' });
+        await page.goto(url, { waitUntil: 'commit' });
 
         // Obtén todos los botones
         console.log("entro2")
