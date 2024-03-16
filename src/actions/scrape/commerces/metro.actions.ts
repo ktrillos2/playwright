@@ -74,6 +74,8 @@ export const scrapeMetro = async ({
       // Haz clic en el botón
       await buttons[i].click();
       // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
+      console.log(url, "Scrapeado correctamente");
+      await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
@@ -101,6 +103,10 @@ export const scrapeMetro = async ({
 
     await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
     totalProducts = filteredProducts.length;
+
+    if (!totalProducts)
+      throw new Error("No se encontraron productos en el scrapeo");
+    
   } catch (error: any) {
     await logger(
       LogType.ERROR,

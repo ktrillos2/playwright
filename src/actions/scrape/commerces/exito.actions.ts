@@ -1,6 +1,7 @@
 import { DBCoupon, LogType } from "@/interfaces";
-import { Browser } from "puppeteer";
+import { Browser } from "playwright";
 import { logger, saveCoupons } from "../helpers";
+import { autoScroll } from "@/helpers";
 
 export interface ScrapePageProps {
   browser: Browser;
@@ -20,13 +21,18 @@ export const scrapeExito = async ({
   let totalProducts = 0;
 
   try {
-    let products: CouponScraped[] = [];
+		let products: CouponScraped[] = [];
 
+		console.log("1");
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "networkidle0" });
+    console.log("2");
+    await page.goto(url, { waitUntil: "commit" });
+    console.log("3");
 
     for (let i = 0; i < 2; i++) {
-      // await autoScroll(page);
+      console.log("4");
+      await autoScroll(page);
+      console.log("4 scroll");
       const data = await page.$$eval("article", (articles) =>
         articles.map((article: Element) => {
           const convertToNumber = (item: string | null | undefined) => {
@@ -41,11 +47,22 @@ export const scrapeExito = async ({
           const linkElement = article.querySelectorAll(
             ".link_fs-link__6oAwa"
           ) as NodeListOf<HTMLAnchorElement>;
+          let linkTitle = "";
+          let linkHref = "";
+          if (linkElement.length > 0) {
+            linkTitle = linkElement[1].title;
+            linkHref = linkElement[1].href;
+          }
 
-          const img = article.querySelector(
-            "img.imagen_plp"
-          ) as HTMLImageElement;
+          const img = article.querySelector("img.imagen_plp");
+          let imgURL = "";
+          if (img) {
+            imgURL = img.getAttribute("src") ?? "";
+          }
 
+          // const img = article.querySelector(
+          //   "img.imagen_plp"
+          // ) as HTMLImageElement;
           const priceWithDiscount = article.querySelector(
             ".ProductPrice_container__price__LS1Td"
           );
@@ -59,11 +76,10 @@ export const scrapeExito = async ({
           const brandName = article.querySelector(
             ".BrandName_BrandNameTitle__9LquF"
           );
-          const imgURL = img.getAttribute("src");
 
           const body: CouponScraped = {
-            name: linkElement[1].title,
-            url: linkElement[1].href,
+            name: linkTitle,
+            url: linkHref,
             images: imgURL ? [imgURL] : [],
             lowPrice: convertToNumber(priceWithDiscount?.textContent),
             discountWithCard: convertToNumber(priceWithCard?.textContent),
@@ -77,23 +93,27 @@ export const scrapeExito = async ({
         })
       );
 
+      console.log("4 paso 1");
       products = products.concat(data);
+      console.log("4 paso 2");
 
       const nextButton = await page.$(".Pagination_nextPreviousLink__UYeAp");
+      console.log("4 paso 3");
       if (nextButton) {
-        await nextButton.click();
-        await page.waitForNavigation({ waitUntil: "networkidle0" });
+        console.log("4 paso if");
+        await nextButton.dispatchEvent("click");
       } else {
+        console.log("4 paso else");
         break;
       }
     }
-
+    console.log("paso");
     const parsedProducts: DBCoupon[] = products.map((e) => ({
       ...e,
       commerce: commerceId,
       category: categoryId,
     }));
-
+    console.log("volvio a pasar");
     const filteredProducts = Array.from(
       new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
     )
@@ -102,15 +122,18 @@ export const scrapeExito = async ({
         ({ priceWithoutDiscount, discountPercentage }) =>
           priceWithoutDiscount || discountPercentage
       );
-
+    console.log("DIOS MIOOOO PASOOO");
     await saveCoupons({
       categoryId,
       commerceId,
       data: filteredProducts,
     });
+    console.log(url, "SE SCRAPEOOOOOOOOOOOOOOOOOOO");
 
-    await logger(LogType.SUCCESS, "Exito scrapeado correctamente");
-    totalProducts = filteredProducts.length;
+		totalProducts = filteredProducts.length;
+
+		if(!totalProducts)throw new Error("No se encontraron productos en el scrapeo");
+
   } catch (error: any) {
     await logger(
       LogType.ERROR,

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Divider, Button } from "@nextui-org/react";
 import { RiCoupon2Line } from "react-icons/ri";
 import toast from "react-hot-toast";
+import { Tooltip } from "@nextui-org/react";
 
 import { LoggerComponent } from "@/components";
 import { SelectCategory, SelectCommerce } from "..";
@@ -25,8 +26,6 @@ export const CouponsScraperMultiSelect = () => {
   const [scrapperLogger, setScrapperLogger] = useState<
     (LogMessage | SpecialLog)[]
   >([]);
-
-  const [successScrapper, setSuccessScrapper] = useState(false);
 
   const categoriesBySelectedCommerce = useMemo(() => {
     setSelectedCategory(new Set([]));
@@ -62,7 +61,6 @@ export const CouponsScraperMultiSelect = () => {
 
     if (!commerce) return;
 
-    setSuccessScrapper(false);
     setLoadingScraper(true);
 
     const firstLog: (LogMessage | SpecialLog)[] = [];
@@ -144,7 +142,6 @@ export const CouponsScraperMultiSelect = () => {
       ...prevLogger,
     ]);
 
-    setSuccessScrapper(true);
     setLoadingScraper(false);
   };
 
@@ -193,17 +190,18 @@ export const CouponsScraperMultiSelect = () => {
             >
               Scrapear
             </Button>
-            {successScrapper ? (
+            <Tooltip content="Ir a tabla de cupones">
               <Button
                 as={Link}
                 href={`/${PagePaths.COUPONS}`}
                 size="lg"
                 color={"secondary"}
                 isIconOnly
+                isDisabled={loadingScraper}
               >
                 <RiCoupon2Line size={25} />
               </Button>
-            ) : null}
+            </Tooltip>
           </div>
           {scrapperLogger.length ? (
             <>
