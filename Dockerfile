@@ -13,6 +13,9 @@ COPY package*.json ./
 # Instalar las dependencias del proyecto
 RUN npm ci
 
+# Instalar Playwright
+RUN npx playwright install
+
 # Copiar el resto del código de la aplicación
 COPY . .
 
