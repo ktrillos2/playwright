@@ -23,11 +23,15 @@ export const scrapeExito = async ({
 		console.log("1");
 		const page = await browser.newPage();
 		console.log("2");
-		await page.goto(url, { waitUntil: 'commit' });
+		await page.goto(url);
+
 		console.log("3");
 
+		await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");
+		console.log("ENTROOO")
 		for (let i = 0; i < 2; i++) {
 			console.log("4");
+
 			await autoScroll(page);
 			console.log("4 scroll");
 			const data = await page.$$eval("article", (articles) =>
