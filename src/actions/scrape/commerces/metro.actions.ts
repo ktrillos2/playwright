@@ -78,7 +78,32 @@ export const scrapeMetro = async ({
       await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
+        const parsedProducts: DBCoupon[] = products.map((e) => ({
+            ...e,
+            commerce: commerceId,
+            category: categoryId,
+        }));
+
+        const filteredProducts = Array.from(
+            new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
+        )
+            .map((div: string) => JSON.parse(div) as DBCoupon)
+            .filter(
+                ({ priceWithoutDiscount, discountPercentage }) =>
+                    priceWithoutDiscount || discountPercentage
+            );
+
+        await saveCoupons({
+            categoryId,
+            commerceId,
+            data: filteredProducts,
+        });
+        console.log(products)
+        console.log(url, "Scrapeado correctamente")
+        await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
+
+        return true;
+    } 
 
     const parsedProducts: DBCoupon[] = products.map((e) => ({
       ...e,

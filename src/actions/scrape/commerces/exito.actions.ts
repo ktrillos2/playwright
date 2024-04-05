@@ -24,25 +24,31 @@ export const scrapeExito = async ({
 		let products: CouponScraped[] = [];
 
 		console.log("1");
-    const page = await browser.newPage();
-    console.log("2");
-    await page.goto(url, { waitUntil: "commit" });
-    console.log("3");
+		const page = await browser.newPage();
+		console.log("2");
+		await page.goto(url);
 
-    for (let i = 0; i < 2; i++) {
-      console.log("4");
-      await autoScroll(page);
-      console.log("4 scroll");
-      const data = await page.$$eval("article", (articles) =>
-        articles.map((article: Element) => {
-          const convertToNumber = (item: string | null | undefined) => {
-            if (item) {
-              const numericValue = item.replace(/[^\d]/g, "");
-              return parseInt(numericValue, 10);
-            } else {
-              return 0;
-            }
-          };
+		console.log("3");
+
+		await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");
+		console.log("ENTROOO")
+		for (let i = 0; i < 2; i++) {
+			console.log("4");
+
+			await autoScroll(page);
+			console.log("4 scroll");
+			const data = await page.$$eval("article", (articles) =>
+				articles.map((article: Element) => {
+					const convertToNumber = (
+						item: string | null | undefined
+					) => {
+						if (item) {
+							const numericValue = item.replace(/[^\d]/g, "");
+							return parseInt(numericValue, 10);
+						} else {
+							return 0;
+						}
+					};
 
           const linkElement = article.querySelectorAll(
             ".link_fs-link__6oAwa"
