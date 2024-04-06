@@ -101,8 +101,6 @@ export const scrapeMetro = async ({
         console.log(products)
         console.log(url, "Scrapeado correctamente")
         await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
-
-        return true;
     } 
 
     const parsedProducts: DBCoupon[] = products.map((e) => ({
@@ -129,8 +127,7 @@ export const scrapeMetro = async ({
     await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
     totalProducts = filteredProducts.length;
 
-    if (!totalProducts)
-      throw new Error("No se encontraron productos en el scrapeo");
+    if(!totalProducts)throw new Error("No se encontraron productos en el scrapeo");
     
   } catch (error: any) {
     await logger(
