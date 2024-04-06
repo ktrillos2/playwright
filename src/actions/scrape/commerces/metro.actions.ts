@@ -75,7 +75,7 @@ export const scrapeMetro = async ({
       await buttons[i].click();
       // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
       console.log(url, "Scrapeado correctamente");
-      await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
+      // await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
