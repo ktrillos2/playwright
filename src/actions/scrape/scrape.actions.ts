@@ -2,7 +2,7 @@
 import { commerceActions } from "@/actions";
 import { CommerceSlugs } from "@/enums";
 import { getBrowser } from "./helpers";
-import { exitoActions, metroActions } from "./commerces";
+import { exitoActions, metroActions, koajActions  } from "./commerces";
 
 export const scrapeCommerceByCategory = async (
   commerceId: string,
@@ -12,12 +12,21 @@ export const scrapeCommerceByCategory = async (
   if (!commerce) throw new Error("El comercio seleccionado no existe");
 
   const { url, queries, slug } = commerce;
+  console.log(url)
 
   const path = commerce?.categories.find(
     (e) => e.category === categoryId
   )?.path;
 
-  const scrapUrl = `${url}/${path}/${queries}`;
+  let scrapUrl
+
+  if (!url.includes('koaj')) { 
+
+    scrapUrl = `${url}/${path}/${queries}`;
+  } else {
+    
+    scrapUrl = url;
+  }
 
   const browser = await getBrowser();
 
@@ -33,6 +42,8 @@ export const scrapeCommerceByCategory = async (
       return await exitoActions.scrapeExito(scraperProps);
     case CommerceSlugs.METRO:
       return await metroActions.scrapeMetro(scraperProps);
+    case CommerceSlugs.KOAJ:
+      return await koajActions.scrapeKoaj(scraperProps);
     default:
       throw new Error("No hay acciones para este comercio");
   }
