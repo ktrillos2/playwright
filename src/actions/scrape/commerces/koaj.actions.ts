@@ -33,7 +33,7 @@ export const scrapeKoaj = async ({
 					"a",
 					(a) => (a as HTMLAnchorElement).href
 				);
-				linksToNavigate.push(linkHref);
+                linksToNavigate.push(linkHref);
 			}
 		}
 
@@ -92,13 +92,10 @@ export const scrapeKoaj = async ({
 			let imgSrc = "";
 			if (imgWrapperElement) {
 				// Buscar la primera imagen dentro del div y obtener su atributo 'src'
-				const imgElement = await imgWrapperElement.$("img");
+				const imgElement = await imgWrapperElement.$("img[itemprop='image']");
 				if (imgElement) {
-					imgSrc = await imgWrapperElement.$eval(
-						"img",
-						(img) => (img as HTMLImageElement).src
-					);
-				}
+                    imgSrc = await page.$eval('img[itemprop="image"]', img => (img as HTMLImageElement).src);
+                  }
 			}
 
 			// Agregar los valores obtenidos al array 'productsScrapped'
