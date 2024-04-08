@@ -51,7 +51,7 @@ export const scrapeExito = async ({
 					};
 
           const linkElement = article.querySelectorAll(
-            ".link_fs-link__6oAwa"
+            ".link_fs-link__6oAwa",
           ) as NodeListOf<HTMLAnchorElement>;
           let linkTitle = "";
           let linkHref = "";

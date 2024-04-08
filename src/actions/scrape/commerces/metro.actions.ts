@@ -75,7 +75,7 @@ export const scrapeMetro = async ({
       await buttons[i].click();
       // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
       console.log(url, "Scrapeado correctamente");
-      await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
+      // await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
         const parsedProducts: DBCoupon[] = products.map((e) => ({
@@ -100,7 +100,6 @@ export const scrapeMetro = async ({
         });
         console.log(products)
         console.log(url, "Scrapeado correctamente")
-        await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
     } 
 
     const parsedProducts: DBCoupon[] = products.map((e) => ({
@@ -124,7 +123,6 @@ export const scrapeMetro = async ({
       data: filteredProducts,
     });
 
-    await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
     totalProducts = filteredProducts.length;
 
     if(!totalProducts)throw new Error("No se encontraron productos en el scrapeo");

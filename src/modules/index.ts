@@ -6,5 +6,6 @@ export * from './coupons/coupon-editor/CouponImageEditor';
 export * from './coupons';
 export * from './coupons/inputs';
 export * from './coupons/scraper';
+export * from './home/HomeComponent';
 export * from './inmuebles/DeleteInmueblesButton';
 export * from './inmuebles/InmueblesTable';
