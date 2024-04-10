@@ -41,7 +41,6 @@ export const CouponsScraperMultiSelect = () => {
       const commerces = await commerceActions.getCommerces();
       setCommerces(commerces);
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }

@@ -26,7 +26,6 @@ export const login = async (user: string, password: string) => {
     });
     return { ok: true };
   } catch (error) {
-    console.log(error);
     return {
       ok: false,
       message: "No se pudo iniciar sesión",

@@ -29,6 +29,7 @@ import { CardCommerce } from "./CardCommerce";
 import { motion } from "framer-motion";
 import { Category, Commerce, DBCommerce } from "@/interfaces";
 import { PagePaths } from "@/enums";
+import { useCustomSearchParams } from "@/hooks";
 
 export enum FieldsForm {
   NAME = "name",
@@ -100,7 +101,8 @@ export const CommerceForm: React.FC<Props> = ({
     setFalse: setIsCategoriesFormFalse,
   } = useBoolean(false);
 
-  const [createdCommerceSlug, setCreatedCommerceSlug] = useState<string>("")
+
+  const [createdCommerceSlug, setCreatedCommerceSlug] = useState<string>("");
 
   const form = useForm<IForm>({
     defaultValues: commerce
@@ -142,11 +144,11 @@ export const CommerceForm: React.FC<Props> = ({
       //   toast.success("Comercio editado correctamente");
       //   return;
       // }
-     const commerce = await commerceActions.createCommerce(rest);
+      const commerce = await commerceActions.createCommerce(rest);
       toast.success("Comercio creado correctamente");
       setCreatedTrue();
       handleConfetti();
-      setCreatedCommerceSlug(commerce.slug)
+      setCreatedCommerceSlug(commerce.slug);
     } catch (error: any) {
       // if (isEditForm) {
       //   toast.error("Ocurrió un error al editar el comercio: " + error.message);
@@ -159,17 +161,13 @@ export const CommerceForm: React.FC<Props> = ({
     }
   };
 
-  const onSubmitCategoryForm: SubmitHandler<IForm> = async (data) => {
-    console.log(data);
-  };
+  const onSubmitCategoryForm: SubmitHandler<IForm> = async (data) => {};
 
   useEffect(() => {
     const commerceCategories = categories?.map((e) => ({
       ...e,
       path: commerce?.categories?.find((c) => c.category === e._id)?.path || "",
     }));
-
-    console.log(commerceCategories);
 
     // append(commerceCategories || []);
   }, []);
@@ -209,7 +207,10 @@ export const CommerceForm: React.FC<Props> = ({
               <Button as={Link} href={`/${PagePaths.COMMERCES}`}>
                 Ver comercios
               </Button>
-              <Button as={Link} href={`/${PagePaths.EDIT_COMMERCE}/${createdCommerceSlug}`}>
+              <Button
+                as={Link}
+                href={`/${PagePaths.EDIT_COMMERCE}/${createdCommerceSlug}?addCategories=true`}
+              >
                 Agregar categorías
               </Button>
               <Button onClick={setCreatedFalse}>Crear otro comercio</Button>

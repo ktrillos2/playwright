@@ -57,7 +57,6 @@ export const ModalImage: React.FC<Props> = ({ isOpen, onOpenChange, info }) => {
         const response = await removeBackground(info.images[0]);
         setDisplayImage(response)
       } catch (error) {
-        console.log(error);
       } finally {
         setIsLoading(false);
       }

@@ -9,12 +9,16 @@ interface Props {
   };
 }
 
-export default async function CommerceEditPage({ params: { slug } }: Props) {
+export default async function CommerceEditPage({
+  params: { slug },
+}: Props) {
   const [commerce, categories] = await Promise.all([
     commerceActions.getCommerceBySlug(slug),
-    categoryActions.getCategories(),
+    categoryActions.getCategories()
   ]);
   if (!commerce) notFound();
 
-  return <CommerceForm commerce={commerce} isEditForm categories={categories} />;
+  return (
+    <CommerceForm commerce={commerce} isEditForm categories={categories} />
+  );
 }

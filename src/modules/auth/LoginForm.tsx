@@ -74,7 +74,6 @@ export const LoginForm: React.FC<Props> = ({ error }) => {
         callbackUrl: "/",
       });
     } catch (error) {
-      console.log({ error });
     }
   };
 

@@ -23,20 +23,13 @@ export const scrapeExito = async ({
   try {
 		let products: CouponScraped[] = [];
 
-		console.log("1");
 		const page = await browser.newPage();
-		console.log("2");
 		await page.goto(url);
 
-		console.log("3");
-
 		await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");
-		console.log("ENTROOO")
 		for (let i = 0; i < 2; i++) {
-			console.log("4");
 
 			await autoScroll(page);
-			console.log("4 scroll");
 			const data = await page.$$eval("article", (articles) =>
 				articles.map((article: Element) => {
 					const convertToNumber = (
@@ -99,27 +92,21 @@ export const scrapeExito = async ({
         })
       );
 
-      console.log("4 paso 1");
       products = products.concat(data);
-      console.log("4 paso 2");
 
       const nextButton = await page.$(".Pagination_nextPreviousLink__UYeAp");
-      console.log("4 paso 3");
+      
       if (nextButton) {
-        console.log("4 paso if");
         await nextButton.dispatchEvent("click");
       } else {
-        console.log("4 paso else");
         break;
       }
     }
-    console.log("paso");
     const parsedProducts: DBCoupon[] = products.map((e) => ({
       ...e,
       commerce: commerceId,
       category: categoryId,
     }));
-    console.log("volvio a pasar");
     const filteredProducts = Array.from(
       new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
     )
@@ -128,13 +115,11 @@ export const scrapeExito = async ({
         ({ priceWithoutDiscount, discountPercentage }) =>
           priceWithoutDiscount || discountPercentage
       );
-    console.log("DIOS MIOOOO PASOOO");
     await saveCoupons({
       categoryId,
       commerceId,
       data: filteredProducts,
     });
-    console.log(url, "SE SCRAPEOOOOOOOOOOOOOOOOOOO");
 
 		totalProducts = filteredProducts.length;
 

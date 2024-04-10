@@ -1,6 +1,5 @@
 import { DBCoupon, LogType } from "@/interfaces";
 import { CouponScraped, ScrapePageProps } from "./exito.actions";
-import { autoScroll } from "@/helpers";
 import { logger, saveCoupons } from "../helpers";
 
 export const scrapeKoaj = async ({
@@ -104,7 +103,7 @@ export const scrapeKoaj = async ({
         discountPercentage: discountPercentage,
       });
     }
-    console.log(products);
+    
     const parsedProducts: DBCoupon[] = products.map((e) => ({
       ...e,
       commerce: commerceId,

@@ -12,7 +12,6 @@ export const scrapeCommerceByCategory = async (
   if (!commerce) throw new Error("El comercio seleccionado no existe");
 
   const { url, queries, slug } = commerce;
-  console.log(url)
 
   const path = commerce?.categories.find(
     (e) => e.category === categoryId

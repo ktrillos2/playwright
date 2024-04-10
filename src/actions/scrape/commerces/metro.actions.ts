@@ -19,15 +19,12 @@ export const scrapeMetro = async ({
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Obtén todos los botones
-    console.log("entro2");
     const buttons = await page.$$(
       ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
     );
-    console.log("entro3");
 
     // Itera sobre cada botón
     for (let i = 1; i < (buttons.length > 5 ? 5 : buttons.length); i++) {
-      console.log("entro4");
 
       await autoScroll(page);
       const newDivs: any = await page.$$eval(
@@ -74,7 +71,6 @@ export const scrapeMetro = async ({
       // Haz clic en el botón
       await buttons[i].click();
       // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
-      console.log(url, "Scrapeado correctamente");
       // await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -98,8 +94,6 @@ export const scrapeMetro = async ({
             commerceId,
             data: filteredProducts,
         });
-        console.log(products)
-        console.log(url, "Scrapeado correctamente")
     } 
 
     const parsedProducts: DBCoupon[] = products.map((e) => ({
