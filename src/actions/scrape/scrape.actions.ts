@@ -17,15 +17,7 @@ export const scrapeCommerceByCategory = async (
     (e) => e.category === categoryId
   )?.path;
 
-  let scrapUrl
-
-  if (!url.includes('koaj')) { 
-
-    scrapUrl = `${url}/${path}/${queries}`;
-  } else {
-    
-    scrapUrl = url;
-  }
+  let scrapUrl = `${url}/${path}/${queries}`;
 
   const browser = await getBrowser();
 
