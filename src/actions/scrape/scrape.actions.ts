@@ -1,8 +1,10 @@
 "use server";
 import { commerceActions } from "@/actions";
 import { CommerceSlugs } from "@/enums";
-import { getBrowser } from "./helpers";
-import { exitoActions, metroActions, koajActions  } from "./commerces";
+import { getBrowser, saveCoupons } from "./helpers";
+import { exitoActions, metroActions, koajActions } from "./commerces";
+import { CouponScraped } from "./commerces/exito.actions";
+import { DBCoupon } from "@/interfaces";
 
 export const scrapeCommerceByCategory = async (
   commerceId: string,
@@ -28,14 +30,47 @@ export const scrapeCommerceByCategory = async (
     categoryId,
   };
 
+  let products: CouponScraped[] = [];
+
   switch (slug) {
     case CommerceSlugs.EXITO:
-      return await exitoActions.scrapeExito(scraperProps);
+      products = await exitoActions.scrapeExito(scraperProps);
+      break;
     case CommerceSlugs.METRO:
-      return await metroActions.scrapeMetro(scraperProps);
+      products = await metroActions.scrapeMetro(scraperProps);
+      break;
     case CommerceSlugs.KOAJ:
-      return await koajActions.scrapeKoaj(scraperProps);
+      products = await koajActions.scrapeKoaj(scraperProps);
+      break;
     default:
       throw new Error("No hay acciones para este comercio");
   }
+
+  const parsedProducts: DBCoupon[] = products.map((e) => ({
+    ...e,
+    commerce: commerceId,
+    category: categoryId,
+  }));
+
+  const filteredProducts = Array.from(
+    new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
+  )
+    .map((div: string) => JSON.parse(div) as DBCoupon)
+    .filter(
+      ({ priceWithoutDiscount, discountPercentage }) =>
+        priceWithoutDiscount || discountPercentage
+    );
+
+  await saveCoupons({
+    categoryId,
+    commerceId,
+    data: filteredProducts,
+  });
+
+  const totalProducts = filteredProducts.length;
+
+  if (!totalProducts)
+    throw new Error("No se encontraron productos en el scrapeo");
+
+  return totalProducts;
 };
