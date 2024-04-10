@@ -1,50 +1,42 @@
 import { DBCoupon, LogType } from "@/interfaces";
 import { Browser } from "playwright";
-import { logger, saveCoupons } from "../helpers";
+import { logger } from "../helpers";
 import { autoScroll } from "@/helpers";
 
 export interface ScrapePageProps {
   browser: Browser;
   url: string;
-  commerceId: string;
-  categoryId: string;
 }
 
 export type CouponScraped = Omit<DBCoupon, "commerce" | "category">;
 
-export const scrapeExito = async ({
-  browser,
-  url,
-  categoryId,
-  commerceId,
-}: ScrapePageProps) => {
-  let totalProducts = 0;
-
+export const scrapeExito = async ({ browser, url }: ScrapePageProps) => {
+  let products: CouponScraped[] = [];
+  
   try {
-		let products: CouponScraped[] = [];
 
-		const page = await browser.newPage();
-		await page.goto(url);
+    //* Navega a la página
+    const page = await browser.newPage();
+    await page.goto(url);
 
-		await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");
-		for (let i = 0; i < 2; i++) {
+    //* Obtener botón para cargar más productos
+    await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");
+    for (let i = 0; i < 2; i++) {
+      await autoScroll(page);
 
-			await autoScroll(page);
-			const data = await page.$$eval("article", (articles) =>
-				articles.map((article: Element) => {
-					const convertToNumber = (
-						item: string | null | undefined
-					) => {
-						if (item) {
-							const numericValue = item.replace(/[^\d]/g, "");
-							return parseInt(numericValue, 10);
-						} else {
-							return 0;
-						}
-					};
+      const data = await page.$$eval("article", (articles) =>
+        articles.map((article: Element) => {
+          const convertToNumber = (item: string | null | undefined) => {
+            if (item) {
+              const numericValue = item.replace(/[^\d]/g, "");
+              return parseInt(numericValue, 10);
+            } else {
+              return 0;
+            }
+          };
 
           const linkElement = article.querySelectorAll(
-            ".link_fs-link__6oAwa",
+            ".link_fs-link__6oAwa"
           ) as NodeListOf<HTMLAnchorElement>;
           let linkTitle = "";
           let linkHref = "";
@@ -54,14 +46,12 @@ export const scrapeExito = async ({
           }
 
           const img = article.querySelector("img.imagen_plp");
+
           let imgURL = "";
           if (img) {
             imgURL = img.getAttribute("src") ?? "";
           }
 
-          // const img = article.querySelector(
-          //   "img.imagen_plp"
-          // ) as HTMLImageElement;
           const priceWithDiscount = article.querySelector(
             ".ProductPrice_container__price__LS1Td"
           );
@@ -95,35 +85,16 @@ export const scrapeExito = async ({
       products = products.concat(data);
 
       const nextButton = await page.$(".Pagination_nextPreviousLink__UYeAp");
-      
+
       if (nextButton) {
         await nextButton.dispatchEvent("click");
       } else {
         break;
       }
     }
-    const parsedProducts: DBCoupon[] = products.map((e) => ({
-      ...e,
-      commerce: commerceId,
-      category: categoryId,
-    }));
-    const filteredProducts = Array.from(
-      new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
-    )
-      .map((div: string) => JSON.parse(div) as DBCoupon)
-      .filter(
-        ({ priceWithoutDiscount, discountPercentage }) =>
-          priceWithoutDiscount || discountPercentage
-      );
-    await saveCoupons({
-      categoryId,
-      commerceId,
-      data: filteredProducts,
-    });
 
-		totalProducts = filteredProducts.length;
-
-		if(!totalProducts)throw new Error("No se encontraron productos en el scrapeo");
+    if (!products.length)
+      throw new Error("No se encontraron productos en el scrapeo");
 
   } catch (error: any) {
     await logger(
@@ -137,6 +108,6 @@ export const scrapeExito = async ({
     if (browser) {
       await browser.close();
     }
-    return totalProducts;
+    return products;
   }
 };

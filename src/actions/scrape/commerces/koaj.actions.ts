@@ -1,17 +1,10 @@
-import { DBCoupon, LogType } from "@/interfaces";
+import { LogType } from "@/interfaces";
 import { CouponScraped, ScrapePageProps } from "./exito.actions";
-import { logger, saveCoupons } from "../helpers";
+import { logger } from "../helpers";
 
-export const scrapeKoaj = async ({
-  browser,
-  url,
-  categoryId,
-  commerceId,
-}: ScrapePageProps) => {
-  let totalProducts = 0;
-
+export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
+  let products: CouponScraped[] = [];
   try {
-    let products: CouponScraped[] = [];
     let linksToNavigate: string[] = [];
 
     const page = await browser.newPage();
@@ -20,7 +13,7 @@ export const scrapeKoaj = async ({
     const buttonFired = await page.$(".wpn-mv-bubble");
     buttonFired?.click();
 
-    // Buscar todos los divs padres con clase 'wpn-mv-single-product'
+    //* Buscar todos los divs padres con clase 'wpn-mv-single-product'
     const parentElements = await page.$$(".wpn-mv-single-product");
     if (!parentElements) throw new Error("Hubo un error, vuelve a scrapear");
     for (const parentElement of parentElements) {
@@ -103,32 +96,10 @@ export const scrapeKoaj = async ({
         discountPercentage: discountPercentage,
       });
     }
-    
-    const parsedProducts: DBCoupon[] = products.map((e) => ({
-      ...e,
-      commerce: commerceId,
-      category: categoryId,
-    }));
 
-    const filteredProducts = Array.from(
-      new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
-    )
-      .map((div: string) => JSON.parse(div) as DBCoupon)
-      .filter(
-        ({ priceWithoutDiscount, discountPercentage }) =>
-          priceWithoutDiscount || discountPercentage
-      );
-
-    await saveCoupons({
-      categoryId,
-      commerceId,
-      data: filteredProducts,
-    });
-
-    totalProducts = filteredProducts.length;
-
-    if (!totalProducts)
+    if (!products.length)
       throw new Error("No se encontraron productos en el scrapeo");
+
   } catch (error: any) {
     await logger(
       LogType.ERROR,
@@ -141,6 +112,6 @@ export const scrapeKoaj = async ({
     if (browser) {
       await browser.close();
     }
-    return totalProducts;
+    return products;
   }
 };

@@ -1,31 +1,27 @@
-import { DBCoupon, LogType } from "@/interfaces";
 import { CouponScraped, ScrapePageProps } from "./exito.actions";
 import { autoScroll } from "@/helpers";
-import { logger, saveCoupons } from "../helpers";
+import { logger, sleep } from "../helpers";
+import { LogType } from "@/interfaces";
 
 export const scrapeMetro = async ({
   browser,
   url,
-  categoryId,
-  commerceId,
 }: ScrapePageProps) => {
-  let totalProducts = 0;
-
+  let products: CouponScraped[] = [];
   try {
-    let products: CouponScraped[] = [];
 
+    //* Navega a la página
     const page = await browser.newPage();
     await page.goto(url);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await sleep(1000);
 
-    // Obtén todos los botones
+    //* Obtener todos los botones
     const buttons = await page.$$(
       ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
     );
 
-    // Itera sobre cada botón
+    //* Itera sobre cada botón
     for (let i = 1; i < (buttons.length > 5 ? 5 : buttons.length); i++) {
-
       await autoScroll(page);
       const newDivs: any = await page.$$eval(
         ".vtex-product-summary-2-x-container", // Selector que tiene cada card de producto
@@ -63,45 +59,20 @@ export const scrapeMetro = async ({
               brandName,
               discountWithCard: stringToNumber(discountWithCard),
               url: link,
-              page: "METRO",
             };
           })
       );
       products.push(...newDivs);
-      // Haz clic en el botón
+      //* Haz clic en el botón
       await buttons[i].click();
-      // Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
-      // await logger(LogType.SUCCESS, "Metro scrapeado correctamente");
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-       
-    } 
+      //* Espera un poco para que la página tenga tiempo de reaccionar (ajusta el tiempo según sea necesario)
+      await sleep(1000);
+    }
 
-    const parsedProducts: DBCoupon[] = products.map((e) => ({
-      ...e,
-      commerce: commerceId,
-      category: categoryId,
-    }));
+    if (!products.length)
+      throw new Error("No se encontraron productos en el scrapeo");
 
-    const filteredProducts = Array.from(
-      new Set(parsedProducts.map((div: DBCoupon) => JSON.stringify(div)))
-    )
-      .map((div: string) => JSON.parse(div) as DBCoupon)
-      .filter(
-        ({ priceWithoutDiscount, discountPercentage }) =>
-          priceWithoutDiscount || discountPercentage
-      );
-
-    await saveCoupons({
-      categoryId,
-      commerceId,
-      data: filteredProducts,
-    });
-
-    totalProducts = filteredProducts.length;
-
-    if(!totalProducts)throw new Error("No se encontraron productos en el scrapeo");
-    
   } catch (error: any) {
     await logger(
       LogType.ERROR,
@@ -114,6 +85,6 @@ export const scrapeMetro = async ({
     if (browser) {
       await browser.close();
     }
-    return totalProducts;
+    return products;
   }
 };
