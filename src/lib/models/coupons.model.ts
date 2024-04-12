@@ -11,8 +11,8 @@ interface CouponDocument extends Document, Coupon {}
 interface CouponModel extends AggregatePaginateModel<CouponDocument>, PaginateModel<CouponDocument> {}
 
 const couponSchema = new Schema<CouponDocument>({
-  name: { type: String, required: true },
-  brandName: { type: String, default: null },
+  name: { type: String, required: true, trim: true },
+  brandName: { type: String, default: null, trim: true },
   images: { type: [String], default: [] },
   lowPrice: { type: Number, required: true },
   priceWithoutDiscount: { type: Number, required: true },
