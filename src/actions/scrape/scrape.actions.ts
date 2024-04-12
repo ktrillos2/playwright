@@ -44,6 +44,9 @@ export const scrapeCommerceByCategory = async (
       break;
     case CommerceSlugs.HYM:
       products = await hymActions.scrapeHym(scraperProps)
+      break;
+      case CommerceSlugs.ALKOMPRAR:
+      products = await hymActions.scrapeHym(scraperProps)
       break
     default:
       throw new Error("No hay acciones para este comercio");
