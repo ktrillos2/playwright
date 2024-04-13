@@ -21,7 +21,7 @@ export const scrapeMetro = async ({
     );
 
     //* Itera sobre cada botón
-    for (let i = 1; i < (buttons.length > 5 ? 5 : buttons.length); i++) {
+    for (let i = 1; i < (buttons.length > 7 ? 7 : buttons.length); i++) {
       await autoScroll(page);
       const newDivs: any = await page.$$eval(
         ".vtex-product-summary-2-x-container", // Selector que tiene cada card de producto

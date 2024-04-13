@@ -26,8 +26,6 @@ export const scrapeCommerceByCategory = async (
   const scraperProps = {
     browser,
     url: scrapUrl,
-    commerceId,
-    categoryId,
   };
 
   let products: CouponScraped[] = [];

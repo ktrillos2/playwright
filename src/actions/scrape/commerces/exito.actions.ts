@@ -21,7 +21,7 @@ export const scrapeExito = async ({ browser, url }: ScrapePageProps) => {
 
     //* Obtener botón para cargar más productos
     await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 4; i++) {
       await autoScroll(page);
 
       const data = await page.$$eval("article", (articles) =>

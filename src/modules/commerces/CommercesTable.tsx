@@ -10,6 +10,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Tooltip,
 } from "@nextui-org/react";
 
 import { TbWorldShare } from "react-icons/tb";
@@ -53,29 +54,35 @@ export const CommercesTable: React.FC<Props> = ({ commerces }) => {
       const { image, url, categories, slug } = data;
 
       if (columnKey === "image") {
-        return <Image src={image} alt="image" className="!w-[90px]" />;
+        return (
+          <Image src={image} alt="image" className="!w-[90px] rounded-full" />
+        );
       }
 
       if (columnKey === "url") {
         return (
           <div className="flex justify-center gap-2">
-            <Button
-              as={Link}
-              href={`/commerces/edit/${slug}`}
-              color="primary"
-              isIconOnly
-            >
-              <LuPencil size={20} />
-            </Button>
-            <Button
-              as={Link}
-              href={url}
-              target="_blank"
-              isIconOnly
-              color="secondary"
-            >
-              <TbWorldShare size={20} />
-            </Button>
+            <Tooltip content="Editar comercio">
+              <Button
+                as={Link}
+                href={`/commerces/edit/${slug}`}
+                color="primary"
+                isIconOnly
+              >
+                <LuPencil size={20} />
+              </Button>
+            </Tooltip>
+            <Tooltip content="Visitar comercio">
+              <Button
+                as={Link}
+                href={url}
+                target="_blank"
+                isIconOnly
+                color="secondary"
+              >
+                <TbWorldShare size={20} />
+              </Button>
+            </Tooltip>
           </div>
         );
       }

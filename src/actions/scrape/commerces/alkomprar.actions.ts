@@ -106,7 +106,7 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps) => {
   }catch (error: any) {
     await logger(
       LogType.ERROR,
-      error?.message ?? "No se pudo scrapear Exito",
+      error?.message ?? "No se pudo scrapear Alkomprar",
       error
     );
 
