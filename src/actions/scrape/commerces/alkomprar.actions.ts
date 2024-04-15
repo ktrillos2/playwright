@@ -21,75 +21,85 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps) => {
     await autoScroll(page);
 
     //* Obtener botón para cargar más productos
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 3; i++) {
       const buttonFired = await page.$(".ais-InfiniteHits-loadMore");
       await buttonFired?.click();
       await autoScroll(page);
     }
 
-    const allElement = await page.$$eval(
-      ".promotedProduct",
-      (promotedProduct) =>
-        promotedProduct.map((product: Element) => {
-          const convertToNumber = (item: string | null | undefined) => {
-            if (item) {
-              const numericValue = item.replace(/[^\d]/g, "");
-              return parseInt(numericValue, 10);
-            } else {
-              return 0;
-            }
-          };
-          const linkElement = product.querySelectorAll(
-            ".product__item__top__title"
-          ) as NodeListOf<HTMLAnchorElement>;
-          let linkTitle = "";
-          let linkHref = "";
-          if (linkElement.length > 0) {
-            linkTitle = linkElement[1].title;
-            linkHref = linkElement[1].href;
-          }
+    // esperar a que los elementos carguen
+    await page.waitForSelector(".promotedProduct");
 
-          const img = product.querySelector(
-            ".product__item__information__image"
-          );
+const section: any;
+    const allElement = await page.$$eval(section=> {
+      const promotedProduct = document.querySelectorAll('.promotedProduct');
 
-          let imgURL = "";
-          if (img) {
-            imgURL = img.getAttribute("src") ?? "";
-          }
+      const convertToNumber = (item: string | null | undefined): number => {
+        // logica para convertir de string a numero
+        if (item === null || item === undefined) {
+            return 0; 
+        }
+        return parseInt(item); 
+    };
+    
+      promotedProduct.forEach((product: Element) => {
+        const nameElement = product.querySelectorAll(
+          ".product__item__top__title"
+        );
 
-          const priceWithDiscount = product.querySelector(
-            ".product__price--discounts__old"
-          );
-          const priceWithoutDiscount = product.querySelector(".price");
+        console.log(nameElement);
+        const linkElement = product.querySelectorAll(
+          ".alk-grid-items-category"
+        ) as NodeListOf<HTMLAnchorElement>;
+        if (linkElement.length > 0) {
+          console.log(linkElement);
+        }
 
-          const priceWithCard = product.querySelector(".price-contentPlp");
-          const discount = 0;
-          const brandName = product.querySelector(
-            ".product__item__information__brand"
-          );
 
-          const body: CouponScraped = {
-            name: linkTitle,
-            url: linkHref,
-            images: imgURL ? [imgURL] : [],
-            lowPrice: convertToNumber(priceWithDiscount?.textContent),
-            discountWithCard: convertToNumber(priceWithCard?.textContent),
-            discountPercentage: 0,
-            brandName: brandName?.textContent,
-            priceWithoutDiscount: convertToNumber(
-              priceWithoutDiscount?.textContent
-            ),
-          };
-          return body;
-        })
-    );
+        const img = product.querySelector(".product__item__information__image");
+        console.log(img);
 
-    console.log("salgo: " + allElement);
+        let imgURL = "";
+        if (img) {
+          imgURL = img.getAttribute("src") ?? "";
+        }
 
-    products = allElement;
-    if (!products.length)
+        const priceWithDiscount = product.querySelector(
+          ".product__price--discounts__old"
+        );
+        console.log(priceWithDiscount);
+
+        const priceWithoutDiscount = product.querySelector(".price");
+
+        const priceWithCard = product.querySelector(".price-contentPlp");
+        const discount = 0;
+        const brandName = product.querySelector(
+          ".product__item__information__brand"
+        );
+
+        const body: CouponScraped = {
+          name: convertToNumber(nameElement?.textContext),
+          url: "0",
+          images: imgURL ? [imgURL] : [],
+          lowPrice: convertToNumber(priceWithDiscount?.textContent),
+          discountWithCard: convertToNumber(priceWithCard?.textContent),
+          discountPercentage: 0,
+
+          brandName: brandName?.textContent,
+          priceWithoutDiscount: convertToNumber(
+            priceWithoutDiscount?.textContent
+          ),p
+        };
+        return body;
+      })
+    });
+
+    console.log(allElement);
+
+    if (!allElement.length)
       throw new Error("No se encontraron productos en el scrapeo");
+    const promotedProduct = document.querySelectorAll('.promotedProduct');
+
   } catch (error: any) {
     await logger(
       LogType.ERROR,

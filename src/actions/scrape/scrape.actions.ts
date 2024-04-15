@@ -65,11 +65,11 @@ export const scrapeCommerceByCategory = async (
         priceWithoutDiscount || discountPercentage
     );
 
- await saveCoupons({
+/*  await saveCoupons({
     categoryId,
     commerceId,
     data: filteredProducts,
-  }); 
+  });  */
 
   const totalProducts = filteredProducts.length;
 
