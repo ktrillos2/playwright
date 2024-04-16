@@ -2,6 +2,8 @@ import { DBCoupon, LogType } from "@/interfaces";
 import { Browser } from "playwright";
 import { logger, sleep } from "../helpers";
 import { autoScroll } from "@/helpers";
+import { IoBody } from "react-icons/io5";
+import { all } from "axios";
 
 export interface ScrapePageProps {
   browser: Browser;
@@ -22,85 +24,115 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps) => {
     await autoScroll(page);
 
 
-    //* Obtener botón para cargar más productos
+    //* Obtener botón para cargar más productos 
     for (let i = 0; i < 5; i++) {
       const buttonFired = await page.$(".ais-InfiniteHits-loadMore");
       await buttonFired?.click();
       await autoScroll(page);
     }
 
-      const allElement = await page.$$eval(".promotedProduct", (promotedProduct) => {
-        const convertToNumber = (item: string | null | undefined) => {
-          if (item === null || item === undefined) {
+    const allElement = await page.$$eval("section", (promotedProduct) =>
+      promotedProduct.map((product) => {
+        const convertToNumber = (item: string | null) => {
+          if (item) {
+            const numericValue = item.replace(/[^\d]/g, "");
+            return parseInt(numericValue, 10);
+          } else {
             return 0;
           }
-          return parseInt(item);
         };
 
-        return promotedProduct.map((product: any) => {
 
-          const nameElement = product.querySelector(
-            ".product__item__top__title"
-          );
-          const linkElement = product.querySelectorAll(
-            ".alk-container-items-category"
-          ) as HTMLAnchorElement | null;
+        const nameElement = product.querySelector(
+          ".product__item__top__title"
+        );
+
+        const linkElement: NodeListOf<Element> = product.querySelectorAll("a.skiptocontent");
+
+        let link: Element | null = null;
+
+        if (linkElement.length > 0) {
+          link = linkElement[0];
+        }
+        console.log(link)
+
+        console.log(linkElement);
+
+        // verificar que no sea undefine o null y crear la lista de elementos encontrados
+        const image: Element | null = product.querySelector(".product__item__information__image");
+
+        let imagesElements: NodeListOf<Element>;
+
+        if (image) {
+          imagesElements = document.querySelectorAll(".product__item__information__image");
+        } else {
+          imagesElements = document.querySelectorAll(""); // Esto devolverá una NodeList vacía
+        }
 
 
+        const images: string[] = [];
 
-          const img = product.querySelector(".product__item__information__image");
-
-          let imgURL = "";
+        imagesElements.forEach((img) => {
           if (img) {
-            imgURL = img ? img.getAttribute("src") ?? "" : "";;
+            images.push(img.getAttribute("src")!);
           }
+        });
+        console.log(image)
 
-          const priceWithDiscount = product.querySelector(
-            ".product__price--discounts__old"
-          );
-          const priceWithoutDiscount = product.querySelector(
-            ".price"
-          );
+        const priceWithDiscount = product.querySelector(
+          ".product__price--discounts__old"
+        );
+        console.log(priceWithDiscount)
+        const priceWithoutDiscount = product.querySelector(
+          ".price"
+        );
+        console.log(priceWithoutDiscount)
 
-          const priceWithCard = product.querySelector(".price-contentPlp");
-          const discount = 0;
+        const priceWithCard = product.querySelector(".price-contentPlp"
 
-          const brandName = product.querySelector(
-            ".product__item__information__brand"
-          );
+        );
+        console.log(priceWithCard)
+
+        const discount = 0;
+        console.log(discount);
+
+        const brandName = product.querySelector(
+          ".product__item__information__brand"
+        );
+
+        console.log(brandName)
+        return {
+          name: nameElement ? nameElement.textContent! : "",
+          url: linkElement ? "https://www.alkomprar.com/celulares" +
+            linkElement.getAttribute("href")
+            : "",
+          image,
+          lowPrice: convertToNumber(priceWithDiscount ? priceWithDiscount.textContent! : ""),
+          discountWithCard: convertToNumber(priceWithCard ? priceWithCard.textContent! : ""
+          ),
+          brandName: "",
+          priceWithoutDiscount: convertToNumber(priceWithoutDiscount ? priceWithoutDiscount.textContent! : ""
+          ),
+          discountPercentage: 0,
+
+        };
+      })
+    );
 
 
-          const body: CouponScraped = {
-            name: nameElement?.textContent ?? "",
-            url: linkElement ? linkElement.href : "",
-            images: imgURL ? [imgURL] : [],
-            lowPrice: convertToNumber(priceWithDiscount?.textContent),
-            discountWithCard: convertToNumber(priceWithCard?.textContent),
-            discountPercentage: 0,
-            brandName: brandName?.textContent,
-            priceWithoutDiscount:  convertToNumber(priceWithoutDiscount?.textContent),
-          }
-          return body;
-        })
-      });
-      console.log(allElement);
+    products = allElement;
 
-      if (allElement.length == 0)
-        throw new Error("No se encontraron productos en el scrapeo");
-       products = allElement;
+  } catch (error: any) {
+    await logger(
+      LogType.ERROR,
+      error?.message ?? "No se pudo scrapear Alkomprar",
+      error
+    );
 
-    }catch (error: any) {
-      await logger(
-        LogType.ERROR,
-        error?.message ?? "No se pudo scrapear Alkomprar",
-        error
-      );
-
-      throw new Error(error.message);
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-      return products;
+    throw new Error(error.message);
+  } finally {
+    if (browser) {
+      await browser.close();
     }
-  };
+    return products;
+  }
