@@ -49,14 +49,16 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps) => {
 
         const linkElement: NodeListOf<Element> = product.querySelectorAll("a.skiptocontent");
 
-        let link: Element | null = null;
+        let link: string | null = null;
 
         if (linkElement.length > 0) {
-          link = linkElement[0];
+          const firstElement = linkElement[0];
+          // Accedemos al atributo href del elemento
+          link = firstElement.getAttribute("href");
         }
-        console.log(link)
 
-        console.log(linkElement);
+
+        console.log(link);
 
         // verificar que no sea undefine o null y crear la lista de elementos encontrados
         const image: Element | null = product.querySelector(".product__item__information__image");
@@ -77,7 +79,7 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps) => {
             images.push(img.getAttribute("src")!);
           }
         });
-        console.log(image)
+        console.log(images)
 
         const priceWithDiscount = product.querySelector(
           ".product__price--discounts__old"
@@ -98,15 +100,16 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps) => {
 
         const brandName = product.querySelector(
           ".product__item__information__brand"
-        );
+        ); 'NodeListOf<Element>'
+
 
         console.log(brandName)
         return {
           name: nameElement ? nameElement.textContent! : "",
           url: linkElement ? "https://www.alkomprar.com/celulares" +
-            linkElement.getAttribute("href")
+            linkElement
             : "",
-          image,
+          images,
           lowPrice: convertToNumber(priceWithDiscount ? priceWithDiscount.textContent! : ""),
           discountWithCard: convertToNumber(priceWithCard ? priceWithCard.textContent! : ""
           ),
@@ -136,3 +139,4 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps) => {
     }
     return products;
   }
+}
