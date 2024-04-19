@@ -3,7 +3,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 import { DBCommerce } from "@/interfaces";
 
-interface CommerceDocument extends Document, DBCommerce {}
+interface CommerceDocument extends Document, DBCommerce { }
 
 const commerceSchema = new Schema<CommerceDocument>({
   name: { type: String, required: true },
@@ -11,6 +11,7 @@ const commerceSchema = new Schema<CommerceDocument>({
   url: { type: String, required: true },
   queries: { type: String, default: null },
   image: { type: String, required: true },
+  companyKumonera: { type: String, default: null },
   categories: [{
     category: { type: mongoose.Types.ObjectId, ref: "Category" },
     path: { type: String, required: true },

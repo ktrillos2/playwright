@@ -13,6 +13,7 @@ export interface DBCommerce {
   queries?: string | null;
   image: string;
   categories: DBCategoryCommerce[];
+  companyKumonera?: string | null,
 }
 
 interface CategoryCommerce {

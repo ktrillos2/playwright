@@ -13,13 +13,14 @@ export const scrapeMetro = async ({
     //* Navega a la página
     const page = await browser.newPage();
     await page.goto(url);
-    await sleep(1000);
 
+    await sleep(5000);
+    await autoScroll(page);
     //* Obtener todos los botones
     const buttons = await page.$$(
       ".tiendasjumboqaio-metro-fetch-more-paginator-0-x-buttonPerPage" // Selector que tiene cada botón para cambiar de página
     );
-
+    console.log(buttons.length)
     //* Itera sobre cada botón
     for (let i = 1; i < (buttons.length > 7 ? 7 : buttons.length); i++) {
       await autoScroll(page);
