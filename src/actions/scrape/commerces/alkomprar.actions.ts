@@ -1,6 +1,6 @@
 import { DBCoupon, LogType } from "@/interfaces";
 import { Browser } from "playwright";
-import { logger, sleep,  } from "../helpers";
+import { logger, sleep, } from "../helpers";
 import { autoScroll } from "@/helpers";
 
 export interface ScrapePageProps {
@@ -8,7 +8,7 @@ export interface ScrapePageProps {
   url: string;
 }
 
-export type CouponScraped = Omit<DBCoupon, "commerce" | "category">& { images?: string[] };
+export type CouponScraped = Omit<DBCoupon, "commerce" | "category"> & { images?: string[] };
 
 export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps): Promise<CouponScraped[]> => {
   let products: CouponScraped[] = [];
@@ -34,17 +34,16 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps): Promis
       return elements.map(product => {
 
         //obtener los datos 
-        const nameElement = product.querySelector(".product__item__top__title");
-        const linkElement = product.querySelector<HTMLAnchorElement>('.product__item__top__title a');         // HTMLAnchorElement= obtener dentro de cada elemento de producto un enlace `<a>
-        const image = product.querySelector(".product__item__information__image");
-        const priceWithDiscount = product.querySelector(".product__price--discounts__old");
-        const priceWithoutDiscount = product.querySelector(".price");
-        const priceWithCard = product.querySelector(".price-contentPlp");
+        const nameElement: any = product.querySelector(".product__item__top__title");
+        const image = product.querySelector<HTMLImageElement>("img");
+        const priceWithoutDiscountElement = product.querySelector(".product__price--discounts__old");
+        const priceWithDiscount = product.querySelector(".price");
+        const priceWithCard = product.querySelector(".price-contentPlp span");
         const brandName = product.querySelector(".product__item__information__brand");
 
-// calcilar el porcentaje de cada producto
+      
 
-//convertir los datos de string o null a numero
+        //convertir los datos de string o null a numero
         const convertToNumber = (item: string | null) => {
           if (item) {
             const numericValue = item.replace(/[^\d]/g, "");
@@ -53,21 +52,34 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps): Promis
             return 0;
           }
         };
+          // calcular el porcentaje de cada producto
+        const discountPercentage = (priceWithoutDiscount: number | null | undefined, priceWithDiscount: number): number => {
+          if (priceWithoutDiscount && priceWithDiscount) {
+            const discountAmount = priceWithoutDiscount - priceWithDiscount; // calcular la cantidad de descuento
+            const totalPercentage = (discountAmount / priceWithoutDiscount) * 100; // calcular el porcentaje
+            return Math.round(totalPercentage);
+          } else {
+            return 0;
+          }
+        };
+
+        const lowPrice = convertToNumber(priceWithDiscount ? priceWithDiscount.textContent : "");
+        const priceWithoutDiscount = convertToNumber(priceWithoutDiscountElement ? priceWithoutDiscountElement.textContent : "");
 
         return {
-          name: nameElement ? nameElement.textContent!.trim() : "", 
-          url: linkElement ? linkElement.href : "",
-          image: image ? image.getAttribute("src")! : "",
-          lowPrice: convertToNumber(priceWithDiscount ? priceWithDiscount.textContent : ""),
+          name: nameElement ? nameElement.textContent!.trim() : "",
+          url: nameElement ? "https://www.alkomprar.com" +  nameElement.getAttribute("data-url") : "",
+          lowPrice,
           discountWithCard: convertToNumber(priceWithCard ? priceWithCard.textContent : ""),
           brandName: brandName ? brandName.textContent!.trim() : "",
-          priceWithoutDiscount: convertToNumber(priceWithoutDiscount ? priceWithoutDiscount.textContent : ""),
-          discountPercentage: 0,
-          images: [],
+          priceWithoutDiscount,
+          discountPercentage: discountPercentage(
+            priceWithoutDiscount,
+            lowPrice),
+          images: image ? [image.src] : [],
         };
       });
     });
-    console.log(products);
   } catch (error: any) {
     await logger(LogType.ERROR, error?.message ?? "No se pudo scrapear Alkomprar", error);
     throw new Error(error?.message ?? "No se pudo scrapear Alkomprar");
