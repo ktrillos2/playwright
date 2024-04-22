@@ -2,7 +2,7 @@
 import { commerceActions } from "@/actions";
 import { CommerceSlugs } from "@/enums";
 import { getBrowser, saveCoupons } from "./helpers";
-import { exitoActions, metroActions, koajActions, hymActions } from "./commerces";
+import { exitoActions, metroActions, koajActions, hymActions, alkomprarActions } from "./commerces";
 import { CouponScraped } from "./commerces/exito.actions";
 import { DBCoupon } from "@/interfaces";
 
@@ -42,6 +42,9 @@ export const scrapeCommerceByCategory = async (
       break;
     case CommerceSlugs.HYM:
       products = await hymActions.scrapeHym(scraperProps)
+      break;
+      case CommerceSlugs.ALKOMPRAR:
+      products = await alkomprarActions.scrapeAlkomprar(scraperProps)
       break
     default:
       throw new Error("No hay acciones para este comercio");
@@ -62,11 +65,11 @@ export const scrapeCommerceByCategory = async (
         priceWithoutDiscount || discountPercentage
     );
 
-  await saveCoupons({
+ await saveCoupons({
     categoryId,
     commerceId,
     data: filteredProducts,
-  });
+  });  
 
   const totalProducts = filteredProducts.length;
 
