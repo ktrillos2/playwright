@@ -2,6 +2,7 @@ import { DBCoupon, LogType } from "@/interfaces";
 import { Browser, ElementHandle } from "playwright";
 import { logger, sleep } from "../helpers";
 import { autoScroll } from "@/helpers";
+import { navigation } from "../validation-production";
 
 export interface ScrapePageProps {
   browser: Browser;
@@ -16,9 +17,8 @@ export const scrapeHym = async ({ browser, url }: ScrapePageProps) => {
   try {
     //* Navega a la página
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "networkidle" });
+    await page.goto(url, navigation);
     await autoScroll(page);
-
     //* Primero se cargan todos los productos que se quieren scrapear
     let count = 0;
 
@@ -28,11 +28,13 @@ export const scrapeHym = async ({ browser, url }: ScrapePageProps) => {
       );
 
       if (!button) break;
+      
 
       button?.click();
       await page.waitForSelector(
         ".vtex-button.bw1.ba.fw5.v-mid.relative.pa0.lh-solid.br2.min-h-small.t-action--small.bg-action-primary.b--action-primary.c-on-action-primary.hover-bg-action-primary.hover-b--action-primary.hover-c-on-action-primary.pointer"
       );
+
       await autoScroll(page);
       count += 1;
     } while (count <= 3);
@@ -48,7 +50,7 @@ export const scrapeHym = async ({ browser, url }: ScrapePageProps) => {
             return 0;
           }
         };
-
+        console.log(5)
         const nameElement = article.querySelector(
           "span.vtex-product-summary-2-x-productBrand"
         );
