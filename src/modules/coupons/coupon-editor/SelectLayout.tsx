@@ -1,6 +1,11 @@
 "use client";
 import { useState } from "react";
-import { couponLayout1, couponLayout2 } from "@/helpers";
+import {
+  couponLayout1,
+  couponLayout2,
+  couponLayout3,
+  couponLayout4,
+} from "@/helpers";
 import { Card, CardFooter, Divider, Image } from "@nextui-org/react";
 import { Coupon, CouponLayout } from "@/interfaces";
 import { CouponImageEditor } from "./CouponImageEditor";
@@ -18,6 +23,18 @@ const LAYOUTS: CouponLayout[] = [
     layout: couponLayout2,
     size: { width: "1240px", height: "610px" },
     image: "/coupons/layouts/layout-2.png",
+  },
+  {
+    name: "Plantilla 3",
+    layout: couponLayout3,
+    size: { width: "993px", height: "550px" },
+    image: "/coupons/layouts/layout-3.png",
+  },
+  {
+    name: "Plantilla 4",
+    layout: couponLayout4,
+    size: { width: "993px", height: "550px" },
+    image: "/coupons/layouts/layout-4.png",
   },
 ];
 
