@@ -1,7 +1,6 @@
 import { LogType } from "@/interfaces";
 import { CouponScraped, ScrapePageProps } from "./exito.actions";
 import { logger } from "../helpers";
-import { navigation } from "../validation-production";
 
 export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
   let products: CouponScraped[] = [];
@@ -9,7 +8,7 @@ export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
     let linksToNavigate: string[] = [];
 
     const page = await browser.newPage();
-    await page.goto(url,navigation);
+    await page.goto(url, { waitUntil: "networkidle" });
 
     const buttonFired = await page.$(".wpn-mv-bubble");
     buttonFired?.click();

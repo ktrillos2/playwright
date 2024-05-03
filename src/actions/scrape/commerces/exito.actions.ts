@@ -58,6 +58,7 @@ export const scrapeExito = async ({ browser, url }: ScrapePageProps) => {
           const priceWithoutDiscount = article.querySelector(
             ".priceSection_container-promotion_price-dashed__Pzc_z"
           );
+          
           const priceWithCard = article.querySelector(".price_fs-price__7Y_0s");
           const discount = article.querySelector(
             'span[data-percentage="true"]'
