@@ -27,14 +27,14 @@ const LAYOUTS: CouponLayout[] = [
   {
     name: "Plantilla 3",
     layout: couponLayout3,
-    size: { width: "1240px", height: "610px" },
+    size: { width: "993px", height: "550px" },
     image: "/coupons/layouts/layout-3.png",
   },
   {
     name: "Plantilla 4",
     layout: couponLayout4,
-    size: { width: "1240px", height: "610px" },
-    image: "/coupons/layouts/layout-2.png",
+    size: { width: "993px", height: "550px" },
+    image: "/coupons/layouts/layout-4.png",
   },
 ];
 
