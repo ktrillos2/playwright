@@ -2,7 +2,7 @@ import { DBCoupon, LogType } from "@/interfaces";
 import { Browser } from "playwright";
 import { logger } from "../helpers";
 import { autoScroll } from "@/helpers";
-import { navigation } from "../validation-production";
+import { navegation } from "../validation-production";
 
 export interface ScrapePageProps {
   browser: Browser;
@@ -17,7 +17,7 @@ export const scrapeExito = async ({ browser, url }: ScrapePageProps) => {
   try {
     //* Navega a la página
     const page = await browser.newPage();
-    await page.goto(url, navigation);
+    await page.goto(url, navegation);
 
     //* Obtener botón para cargar más productos
     await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");

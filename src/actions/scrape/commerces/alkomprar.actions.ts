@@ -16,7 +16,7 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps): Promis
 
   try {
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "load" });
+    await page.goto(url, {waitUntil: "load"});
     await sleep(1000);
     await autoScroll(page);
 

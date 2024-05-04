@@ -2,7 +2,6 @@ import { CouponScraped, ScrapePageProps } from "./exito.actions";
 import { autoScroll } from "@/helpers";
 import { logger, sleep } from "../helpers";
 import { LogType } from "@/interfaces";
-import { navigation } from "../validation-production";
 
 export const scrapeMetro = async ({
   browser,
@@ -13,7 +12,7 @@ export const scrapeMetro = async ({
 
     //* Navega a la página
     const page = await browser.newPage();
-    await page.goto(url, navigation);
+    await page.goto(url, {waitUntil: "load"});
 
     await sleep(5000);
     await autoScroll(page);

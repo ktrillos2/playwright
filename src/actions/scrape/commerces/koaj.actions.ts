@@ -2,13 +2,14 @@ import { LogType } from "@/interfaces";
 import { CouponScraped, ScrapePageProps } from "./exito.actions";
 import { logger } from "../helpers";
 
+
 export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
   let products: CouponScraped[] = [];
   try {
     let linksToNavigate: string[] = [];
 
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "networkidle" });
+    await page.goto(url, {waitUntil: "load"});
 
     const buttonFired = await page.$(".wpn-mv-bubble");
     buttonFired?.click();

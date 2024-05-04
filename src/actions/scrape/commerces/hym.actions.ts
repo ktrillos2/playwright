@@ -2,7 +2,6 @@ import { DBCoupon, LogType } from "@/interfaces";
 import { Browser, ElementHandle } from "playwright";
 import { logger, sleep } from "../helpers";
 import { autoScroll } from "@/helpers";
-import { navigation } from "../validation-production";
 
 export interface ScrapePageProps {
   browser: Browser;
@@ -15,22 +14,10 @@ export const scrapeHym = async ({ browser, url }: ScrapePageProps) => {
   let products: CouponScraped[] = [];
 
   try {
-
-    const convertToNumber = (item: string | null) => {
-      if (item) {
-        const numericValue = item.replace(/[^\d]/g, "");
-        return parseInt(numericValue, 10);
-      } else {
-        return 0;
-      }
-    }
-
     //* Navega a la página
     const page = await browser.newPage();
-    await page.goto(url, navigation);
-    console.log(navigation, 123456);
+    await page.goto(url, {waitUntil: "load"} );
     await autoScroll(page);
-    console.log(25252);
 
     //* Primero se cargan todos los productos que se quieren scrapear
     let count = 0;
@@ -39,7 +26,6 @@ export const scrapeHym = async ({ browser, url }: ScrapePageProps) => {
       let button = await page.$(
         ".vtex-button.bw1.ba.fw5.v-mid.relative.pa0.lh-solid.br2.min-h-small.t-action--small.bg-action-primary.b--action-primary.c-on-action-primary.hover-bg-action-primary.hover-b--action-primary.hover-c-on-action-primary.pointer" // Selector que tiene el botón para cargar más productos
       );
-      console.log(65489);
 
       if (!button) break;
 
@@ -47,87 +33,90 @@ export const scrapeHym = async ({ browser, url }: ScrapePageProps) => {
       await page.waitForSelector(
         ".vtex-button.bw1.ba.fw5.v-mid.relative.pa0.lh-solid.br2.min-h-small.t-action--small.bg-action-primary.b--action-primary.c-on-action-primary.hover-bg-action-primary.hover-b--action-primary.hover-c-on-action-primary.pointer"
       );
-      console.log(36589);
-
       await autoScroll(page);
       count += 1;
     } while (count <= 3);
-    console.log(66669);
 
-   
-      //* Acá se obtienen
-      const data = await page.$$eval("section", (articles) =>
-        articles.map((article) => {
-          const nameElement = article.querySelector(
-            "span.vtex-product-summary-2-x-productBrand"
-          );
+    //* Acá se obtienen
+    const data = await page.$$eval("section", (articles) =>
+      articles.map((article) => {
+        const convertToNumber = (item: string | null) => {
+          if (item) {
+            const numericValue = item.replace(/[^\d]/g, "");
+            return parseInt(numericValue, 10);
+          } else {
+            return 0;
+          }
+        };
 
-          const linkElement = article.querySelector(
-            "a.vtex-product-summary-2-x-clearLink"
-          );
+        const nameElement = article.querySelector(
+          "span.vtex-product-summary-2-x-productBrand"
+        );
 
-          const imagesElements = article.querySelectorAll(
-            "img.vtex-product-summary-2-x-image"
-          );
+        const linkElement = article.querySelector(
+          "a.vtex-product-summary-2-x-clearLink"
+        );
 
-          const images: string[] = [];
+        const imagesElements = article.querySelectorAll(
+          "img.vtex-product-summary-2-x-image"
+        );
 
-          imagesElements.forEach((img) => {
-            if (img) {
-              images.push(img.getAttribute("src")!);
-            }
-          });
+        const images: string[] = [];
 
-          const priceElement = article.querySelector(
-            "span.vtex-product-price-1-x-sellingPrice"
-          );
+        imagesElements.forEach((img) => {
+          if (img) {
+            images.push(img.getAttribute("src")!);
+          }
+        });
 
-          const priceWithoutDiscountElement = article.querySelector(
-            "span.vtex-product-price-1-x-listPrice.vtex-product-price-1-x-listPrice--bestPrice"
-          );
+        const priceElement = article.querySelector(
+          "span.vtex-product-price-1-x-sellingPrice"
+        );
 
-          const discountElement = article.querySelector(
-            ".vtex-store-components-3-x-discountInsideContainer"
-          );
+        const priceWithoutDiscountElement = article.querySelector(
+          "span.vtex-product-price-1-x-listPrice.vtex-product-price-1-x-listPrice--bestPrice"
+        );
 
-          return {
-            name: nameElement ? nameElement.textContent! : "",
-            url: linkElement
-              ? "https://co.hm.com" + linkElement.getAttribute("href")
-              : "",
-            images,
-            lowPrice: convertToNumber(
-              priceElement ? priceElement.textContent : ""
-            ),
-            discountPercentage: convertToNumber(
-              discountElement ? discountElement.textContent : ""
-            ),
-            brandName: "H&M",
-            priceWithoutDiscount: convertToNumber(
-              priceWithoutDiscountElement
-                ? priceWithoutDiscountElement.textContent!
-                : ""
-            ),
-            discountWithCard: 0,
-          };
-        })
-      );
-    
-      products = data;
-    } catch (error: any) {
-      await logger(
-        LogType.ERROR,
-        error?.message ?? "No se pudo scrapear H&M",
-        error
-      );
+        const discountElement = article.querySelector(
+          ".vtex-store-components-3-x-discountInsideContainer"
+        );
 
-      throw new Error(error.message);
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-      return products;
-    };
-  
-};
+        return {
+          name: nameElement ? nameElement.textContent! : "",
+          url: linkElement
+            ? "https://co.hm.com" + linkElement.getAttribute("href")
+            : "",
+          images,
+          lowPrice: convertToNumber(
+            priceElement ? priceElement.textContent : ""
+          ),
+          discountPercentage: convertToNumber(
+            discountElement ? discountElement.textContent : ""
+          ),
+          brandName: "H&M",
+          priceWithoutDiscount: convertToNumber(
+            priceWithoutDiscountElement
+              ? priceWithoutDiscountElement.textContent!
+              : ""
+          ),
+          discountWithCard: 0,
+        };
+      })
+    );
 
+    products = data;
+  } catch (error: any) {
+    await logger(
+      LogType.ERROR,
+      error?.message ?? "No se pudo scrapear H&M",
+      error
+    );
+
+    throw new Error(error.message);
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    return products;
+  }
+}
