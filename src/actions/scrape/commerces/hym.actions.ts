@@ -2,6 +2,7 @@ import { DBCoupon, LogType } from "@/interfaces";
 import { Browser, ElementHandle } from "playwright";
 import { logger, sleep } from "../helpers";
 import { autoScroll } from "@/helpers";
+import { navegation } from "../validation-production";
 
 export interface ScrapePageProps {
   browser: Browser;
@@ -16,9 +17,11 @@ export const scrapeHym = async ({ browser, url }: ScrapePageProps) => {
   try {
     //* Navega a la página
     const page = await browser.newPage();
-    await page.goto(url, {waitUntil: "load"} );
+    await page.goto(url,navegation);
+    await page.waitForTimeout(5000); 
     await autoScroll(page);
 
+   
     //* Primero se cargan todos los productos que se quieren scrapear
     let count = 0;
 
