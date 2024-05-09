@@ -20,7 +20,7 @@ export const scrapeExito = async ({ browser, url }: ScrapePageProps) => {
     await page.goto(url);
 
     //* Obtener botón para cargar más productos
-    await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");
+    await page.waitForSelector(".Pagination_nextPreviousLink__f7_2J");
     for (let i = 0; i < 4; i++) {
       await autoScroll(page);
 

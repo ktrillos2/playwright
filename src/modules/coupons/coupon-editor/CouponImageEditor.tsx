@@ -117,7 +117,39 @@ export const CouponImageEditor: React.FC<Props> = ({
         })}
       >
         <FilerobotImageEditor
-          theme={{}}
+          theme={{
+            palette: {
+              'bg-secondary': '#000',
+              'bg-primary': '#f2f',
+              'accent-primary': '#000',
+              'accent-primary-active': '#000',
+              'icons-primary': '#000',
+              'icons-secondary': '#000',
+              'borders-secondary': '#000',
+              'borders-primary': '#000',
+              'borders-strong': '#000',
+              'light-shadow': '#000',
+              'warning': '#000',
+              'btn-primary-text': '#f2f',
+              'btn-disabled-text': '#000',
+              'btn-secondary-text': '#000',
+              'active-secondary-hover': '#000',
+              'btn-primary-bg': '#000',
+              'bg-btn-primary': '#000',
+              'btn-save': '#000',
+              'btn-save-bg': '#000',
+              'bg-btn-save': '#000',
+              'bg-btn': '#000',
+              'btn-bg': '#000',
+              'success': '#000',
+              'violet': '#000',
+              'indigo': '#000',
+              'salad': '#000',
+              'bg-primary-hover': '#000',
+              'bg-primary-active': '#000',
+              'bg-hover': '#000',
+            }
+          }}
           language="es"
           source={"default-coupon-bg.png"}
           onSave={(editedImageObject, designState) => {
@@ -144,6 +176,7 @@ export const CouponImageEditor: React.FC<Props> = ({
               displayImage: displayImage || images[0],
             }),
           }}
+
         />
       </div>
 
