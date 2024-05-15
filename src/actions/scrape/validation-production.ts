@@ -1,17 +1,12 @@
+export let navegationOption: "load" | "domcontentloaded" | "networkidle" | "commit";
 
- import * as dotenv from 'dotenv';
+// Lógica para determinar navegationOption en desarrollo o producción
+if (process.env.NODE_ENV === 'production') {
+  navegationOption = 'load'; // Opción de navegación en producción
+} else {
+  navegationOption = 'domcontentloaded'; // Opción de navegación en desarrollo
+}
 
-dotenv.config(); // Cargar variables de entorno desde el archivo .env
-
-// Ahora puedes acceder a process.env.NODE_ENV
-export const navegationOption:boolean = process.env.NODE_ENV === 'production'
-    
-export const navegation: { waitUntil: "load" | "domcontentloaded" | "networkidle" | "commit" } = navegationOption
-?{ waitUntil: "load" }
-: { waitUntil: "networkidle" };
-
-
-console.log(process.env.NODE_ENV);
-
-
- 
+export const navegation: { waitUntil?: "load" | "domcontentloaded" | "networkidle" | "commit" } = navegationOption
+  ? { waitUntil: "load" }
+  : { waitUntil: navegationOption === "domcontentloaded" || navegationOption === "commit" ? navegationOption : "domcontentloaded" };

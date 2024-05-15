@@ -15,12 +15,13 @@ export const scrapeExito = async ({ browser, url }: ScrapePageProps) => {
   let products: CouponScraped[] = [];
   
   try {
+
     //* Navega a la página
     const page = await browser.newPage();
     await page.goto(url, navegation);
 
     //* Obtener botón para cargar más productos
-    await page.waitForSelector(".Pagination_nextPreviousLink__UYeAp");
+    await page.waitForSelector(".Pagination_nextPreviousLink__f7_2J");
     for (let i = 0; i < 4; i++) {
       await autoScroll(page);
 
@@ -36,7 +37,7 @@ export const scrapeExito = async ({ browser, url }: ScrapePageProps) => {
           };
 
           const linkElement = article.querySelectorAll(
-            ".link_fs-link__6oAwa"
+            ".link_fs-link__J1sGD"
           ) as NodeListOf<HTMLAnchorElement>;
           let linkTitle = "";
           let linkHref = "";
@@ -53,18 +54,17 @@ export const scrapeExito = async ({ browser, url }: ScrapePageProps) => {
           }
 
           const priceWithDiscount = article.querySelector(
-            ".ProductPrice_container__price__LS1Td"
+            ".ProductPrice_container__price__XmMWA"
           );
           const priceWithoutDiscount = article.querySelector(
-            ".priceSection_container-promotion_price-dashed__Pzc_z"
+            ".priceSection_container-promotion_price-dashed__FJ7nI"
           );
-          
           const priceWithCard = article.querySelector(".price_fs-price__7Y_0s");
           const discount = article.querySelector(
             'span[data-percentage="true"]'
           );
           const brandName = article.querySelector(
-            ".BrandName_BrandNameTitle__9LquF"
+            ".BrandName_BrandNameTitle__Ain0w"
           );
 
           const body: CouponScraped = {
