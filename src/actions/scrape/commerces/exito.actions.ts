@@ -2,7 +2,7 @@ import { DBCoupon, LogType } from "@/interfaces";
 import { Browser } from "playwright";
 import { logger } from "../helpers";
 import { autoScroll } from "@/helpers";
-import { navegation } from "../validation-production";
+import { navegation } from '../validation-production';
 
 export interface ScrapePageProps {
   browser: Browser;

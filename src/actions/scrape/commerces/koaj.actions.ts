@@ -1,21 +1,23 @@
 import { LogType } from "@/interfaces";
 import { CouponScraped, ScrapePageProps } from "./exito.actions";
 import { logger } from "../helpers";
-import { navegationOption } from "../validation-production";
+import { navegation } from "../validation-production";
 
 export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
   let products: CouponScraped[] = [];
   try {
     let linksToNavigate: string[] = [];
-
+console.log(1111)
     const page = await browser.newPage();
-    await page.goto(url, navegationOption);
-
+    console.log(222)
+    await page.goto(url,navegation);
+    console.log(333)
     const buttonFired = await page.$(".wpn-mv-bubble");
     buttonFired?.click();
-
+    console.log(555, buttonFired)
     //* Buscar todos los divs padres con clase 'wpn-mv-single-product'
     const parentElements = await page.$$(".wpn-mv-single-product");
+    console.log(845, parentElements)
     if (!parentElements) throw new Error("Hubo un error, vuelve a scrapear");
     for (const parentElement of parentElements) {
       // Buscar el enlace dentro del div padre y obtener su atributo 'href'
@@ -28,11 +30,11 @@ export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
         linksToNavigate.push(linkHref);
       }
     }
-
+    console.log(88, linksToNavigate)
     for (const link of linksToNavigate) {
       // Navegar a la URL del enlace
       await page.goto(link, { waitUntil: "networkidle" });
-
+      console.log(99)
       // Buscar el span con id 'our_price_display' y obtener su valor
       const discountElement = await page.$("#our_price_display");
       let discount = "";
@@ -43,7 +45,7 @@ export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
         );
         discount = discount.replace(/\$|,/g, ""); // Eliminar el signo del dólar y la coma
       }
-
+      console.log(7554)
       // Buscar el span con id 'old_price_display' y obtener su valor
       const priceElement = await page.$("#old_price_display");
       let priceWithoutDiscount = "";
@@ -97,7 +99,7 @@ export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
         discountPercentage: discountPercentage,
       });
     }
-
+    console.log(965)
     if (!products.length)
       throw new Error("No se encontraron productos en el scrapeo");
 

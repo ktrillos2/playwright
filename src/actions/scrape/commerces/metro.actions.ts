@@ -13,7 +13,7 @@ export const scrapeMetro = async ({
 
     //* Navega a la página
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "load"});
+    await page.goto(url,navegation);
 
     await sleep(5000);
     await autoScroll(page);

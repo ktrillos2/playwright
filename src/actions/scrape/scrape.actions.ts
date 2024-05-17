@@ -12,7 +12,7 @@ export const scrapeCommerceByCategory = async (
 ): Promise<number> => {
   const commerce = await commerceActions.getCommerceById(commerceId);
   if (!commerce) throw new Error("El comercio seleccionado no existe");
-
+  
   const { url, queries, slug } = commerce;
 
   const path = commerce?.categories.find(
