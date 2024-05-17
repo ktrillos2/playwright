@@ -2,6 +2,8 @@ import { DBCoupon, LogType } from "@/interfaces";
 import { Browser } from "playwright";
 import { logger, sleep, } from "../helpers";
 import { autoScroll } from "@/helpers";
+import { navegation } from "../validation-production";
+
 
 export interface ScrapePageProps {
   browser: Browser;
@@ -16,7 +18,7 @@ export const scrapeAlkomprar = async ({ browser, url }: ScrapePageProps): Promis
 
   try {
     const page = await browser.newPage();
-    await page.goto(url, {waitUntil: "load"});
+    await page.goto(url, navegation);
     await sleep(1000);
     await autoScroll(page);
 

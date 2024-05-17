@@ -2,7 +2,7 @@ import { CouponScraped, ScrapePageProps } from "./exito.actions";
 import { autoScroll } from "@/helpers";
 import { logger, sleep } from "../helpers";
 import { LogType } from "@/interfaces";
-import { navegation } from "../validation-production";
+import { navegation } from '../validation-production';
 
 export const scrapeMetro = async ({
   browser,
