@@ -1,6 +1,7 @@
 import { LogType } from "@/interfaces";
 import { CouponScraped, ScrapePageProps } from "./exito.actions";
 import { logger } from "../helpers";
+import { navegation } from "../validation-production";
 
 export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
   let products: CouponScraped[] = [];
@@ -30,7 +31,7 @@ export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
 
     for (const link of linksToNavigate) {
       // Navegar a la URL del enlace
-      await page.goto(link, { waitUntil: "networkidle" });
+      await page.goto(link, navegation);
 
       // Buscar el span con id 'our_price_display' y obtener su valor
       const discountElement = await page.$("#our_price_display");
