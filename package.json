@@ -16,6 +16,7 @@
     "axios": "^1.6.7",
     "canvas": "^2.11.2",
     "canvas-confetti": "^1.9.2",
+    "chromium": "^3.0.3",
     "clsx": "^2.1.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.4.5",
