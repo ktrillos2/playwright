@@ -5,7 +5,7 @@ FROM node:20-bullseye
 WORKDIR /usr/src/app
 
 # Copiar el archivo package.json y package-lock.json
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 # Instalar dependencias
 RUN npm ci
