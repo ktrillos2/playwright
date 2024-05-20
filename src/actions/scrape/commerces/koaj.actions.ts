@@ -5,16 +5,15 @@ import { navegation } from "../validation-production";
 
 export const scrapeKoaj = async ({ browser, url }: ScrapePageProps) => {
   let products: CouponScraped[] = [];
-  
+  try {
     let linksToNavigate: string[] = [];
 
     const page = await browser.newPage();
-    await page.goto(url, navegation);
-    try {
-    await page.waitForSelector(".wpn-products");
+    await page.goto(url, { waitUntil: "networkidle" });
+
     const buttonFired = await page.$(".wpn-mv-bubble");
     buttonFired?.click();
-console.log("hola", buttonFired )
+
     //* Buscar todos los divs padres con clase 'wpn-mv-single-product'
     const parentElements = await page.$$(".wpn-mv-single-product");
     if (!parentElements) throw new Error("Hubo un error, vuelve a scrapear");
@@ -32,7 +31,7 @@ console.log("hola", buttonFired )
 
     for (const link of linksToNavigate) {
       // Navegar a la URL del enlace
-      await page.goto(link, { waitUntil: "networkidle" });
+      await page.goto(link, navegation);
 
       // Buscar el span con id 'our_price_display' y obtener su valor
       const discountElement = await page.$("#our_price_display");
@@ -77,7 +76,7 @@ console.log("hola", buttonFired )
       let imgSrc = "";
       if (imgWrapperElement) {
         // Buscar la primera imagen dentro del div y obtener su atributo 'src'
-        const imgElement = await imgWrapperElement.$("img[itemprop='image']");
+        const imgElement = await imgWrapperElement.$("img[itemprop='imaxsge']");
         if (imgElement) {
           imgSrc = await page.$eval(
             'img[itemprop="image"]',
