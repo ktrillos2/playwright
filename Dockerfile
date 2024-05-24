@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 
 # Instalar dependencias
-RUN npm ci
+RUN npm install 
 
 # Instalar dependencias del sistema necesarias para Playwright y Chromium
 RUN apt-get update && apt-get install -y wget --no-install-recommends \

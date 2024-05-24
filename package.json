@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "-": "^0.0.1",
     "@hugocxl/react-to-image": "^0.0.9",
     "@imgly/background-removal": "^1.4.1",
     "@nextui-org/react": "^2.2.9",
