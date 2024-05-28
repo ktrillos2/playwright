@@ -1,4 +1,4 @@
-import imglyRemoveBackground /*  */ from '@imgly/background-removal';
+import imglyRemoveBackground from '@imgly/background-removal-node';
 
 export const removeBackground = async (imageUrl: string) => {
   const image = await imglyRemoveBackground(imageUrl);
