@@ -3,5 +3,6 @@ export enum CommerceSlugs {
   METRO = "metro",
   KOAJ = "koaj",
   ALKOMPRAR="alkomprar",
-  HYM="h&m"
+  HYM = "h&m",
+  TELEGRAM="telegram",
 }
