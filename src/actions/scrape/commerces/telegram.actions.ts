@@ -60,7 +60,7 @@ export const scrapeTelegram = async ({
           lowPrice: 0,
           priceWithoutDiscount: 0, // Rellena con el valor adecuado
           discountWithCard: 0, // Rellena con el valor adecuado
-          discountPercentage: 90,
+          discountPercentage: 50,
           url: item.links[0],
           commerce: '', // Rellena con el valor adecuado
           category: '', // Rellena con el valor adecuado
