@@ -7,7 +7,7 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen bg-auth">
-      <StarsCanvas />
+      {/* <StarsCanvas /> */}
       <main className="flex justify-center">{children}</main>
     </div>
   );

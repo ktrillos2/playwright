@@ -3,6 +3,7 @@
 import { CommerceModel, dbConnect } from "@/lib";
 import { Commerce, DBCommerce } from "@/interfaces";
 import { transformData } from "@/helpers";
+import { companyService } from "@/service/company.service";
 
 dbConnect();
 const commerceModel = CommerceModel;
@@ -57,7 +58,6 @@ export const editCommerce = async (
   commerceId: string,
   commerce: Omit<DBCommerce, "slug" | "categories"> & { slug?: string }
 ) => {
-
   if (commerce.name) {
     commerce.slug = commerce.name.toLowerCase().replace(/ /g, "-");
   }
@@ -70,4 +70,10 @@ export const editCommerce = async (
     }
   );
   return transformData<Commerce>(updatedCommerce);
+};
+
+export const getExternalCompanies = async (): Promise<any> => {
+  const response = companyService.getExternalCompanies();
+
+  return response;
 };

@@ -22,6 +22,6 @@ logMessageSchema.plugin(mongoosePaginate);
 export const LogMessageModel: PaginateModel<LogMessageDocument> =
   (mongoose.models.LogMessage as PaginateModel<LogMessageDocument>) ||
   mongoose.model<LogMessageDocument, PaginateModel<LogMessageDocument>>(
-    "LogMessage",
+    "LogMessageScraper",
     logMessageSchema
   );

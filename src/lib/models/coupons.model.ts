@@ -19,8 +19,8 @@ const couponSchema = new Schema<CouponDocument>({
   discountWithCard: { type: Number, default: null},
   discountPercentage: { type: Number, required: true },
   url: { type: String, required: true },
-  commerce: { type: mongoose.Types.ObjectId, ref: "Commerce", required: true },
-  category:  { type: mongoose.Types.ObjectId, ref: "Category", required: true }
+  commerce: { type: mongoose.Types.ObjectId, ref: "CommerceScraper", required: true },
+  category:  { type: mongoose.Types.ObjectId, ref: "CategoryScraper", required: true }
 });
 
 couponSchema.plugin(mongoosePaginate);
@@ -29,6 +29,6 @@ couponSchema.plugin(aggregatePaginate);
 export const CouponModel: CouponModel =
   (mongoose.models.Coupon as CouponModel) ||
   mongoose.model<CouponDocument, CouponModel>(
-    "Coupon",
+    "CouponScraper",
     couponSchema
   );

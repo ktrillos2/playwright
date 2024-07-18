@@ -13,7 +13,7 @@ const commerceSchema = new Schema<CommerceDocument>({
   image: { type: String, required: true },
   companyKumonera: { type: String, default: null },
   categories: [{
-    category: { type: mongoose.Types.ObjectId, ref: "Category" },
+    category: { type: mongoose.Types.ObjectId, ref: "CategoryScraper" },
     path: { type: String, required: true },
     default: []
   }],
@@ -24,6 +24,6 @@ commerceSchema.plugin(mongoosePaginate);
 export const CommerceModel: PaginateModel<CommerceDocument> =
   (mongoose.models.Commerce as PaginateModel<CommerceDocument>) ||
   mongoose.model<CommerceDocument, PaginateModel<CommerceDocument>>(
-    "Commerce",
+    "CommerceScraper",
     commerceSchema
   );
