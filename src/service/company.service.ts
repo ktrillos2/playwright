@@ -7,6 +7,7 @@ class CompanyService extends ServiceClass {
     return await super.getQuery<any>({
       URL: AUTH_URL,
       path: "company/list-external",
+
     });
   }
 }

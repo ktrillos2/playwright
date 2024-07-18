@@ -4,6 +4,7 @@ import { CommerceModel, dbConnect } from "@/lib";
 import { Commerce, DBCommerce } from "@/interfaces";
 import { transformData } from "@/helpers";
 import { companyService } from "@/service/company.service";
+import { getSession } from "next-auth/react";
 
 dbConnect();
 const commerceModel = CommerceModel;
@@ -73,7 +74,8 @@ export const editCommerce = async (
 };
 
 export const getExternalCompanies = async (): Promise<any> => {
-  const response = companyService.getExternalCompanies();
 
-  return response;
+  /*   const response = companyService.getExternalCompanies();
+  
+    return response; */
 };

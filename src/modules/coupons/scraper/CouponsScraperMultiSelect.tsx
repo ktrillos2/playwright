@@ -117,8 +117,8 @@ export const CouponsScraperMultiSelect = () => {
 			}
 		}
 
-    setLoadingScraper(false);
-    setScrapeAllCommerces(false)
+		setLoadingScraper(false);
+		setScrapeAllCommerces(false)
 	};
 
 	const scrape = async () => {

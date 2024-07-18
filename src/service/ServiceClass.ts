@@ -1,10 +1,12 @@
 import axios, { AxiosHeaders } from "axios";
+import { getSession } from "next-auth/react";
 
 interface GetRequest {
   URL: string;
   path: string;
   params?: any;
   headers?: AxiosHeaders;
+  hasToken?: boolean;
 }
 
 interface PostRequest {
@@ -13,6 +15,7 @@ interface PostRequest {
   body?: any;
   params?: any;
   headers?: AxiosHeaders;
+  hasToken?: boolean;
 }
 
 interface PutRequest {
@@ -21,15 +24,26 @@ interface PutRequest {
   body?: any;
   params?: any;
   headers?: AxiosHeaders;
+  hasToken?: boolean;
 }
 
 class ServiceClass {
+
+  private setToken() {
+
+   const a = getSession()
+   
+    
+  }
+
   protected async getQuery<T>({
     URL,
     path,
     params,
     headers,
   }: GetRequest): Promise<T> {
+    
+
     return await axios
       .get<T>(`${URL}/${path}`, { headers, params })
       .then((response) => response.data)
