@@ -22,7 +22,7 @@ const commerceSchema = new Schema<CommerceDocument>({
 commerceSchema.plugin(mongoosePaginate);
 
 export const CommerceModel: PaginateModel<CommerceDocument> =
-  (mongoose.models.Commerce as PaginateModel<CommerceDocument>) ||
+  (mongoose.models.ScraperCommerce as PaginateModel<CommerceDocument>) ||
   mongoose.model<CommerceDocument, PaginateModel<CommerceDocument>>(
     "ScraperCommerce",
     commerceSchema

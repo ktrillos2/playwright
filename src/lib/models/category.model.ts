@@ -13,7 +13,7 @@ const categorySchema = new Schema<CategoryDocument>({
 categorySchema.plugin(mongoosePaginate);
 
 export const CategoryModel: PaginateModel<CategoryDocument> =
-  (mongoose.models.Category as PaginateModel<CategoryDocument>) ||
+  (mongoose.models.ScraperCategory as PaginateModel<CategoryDocument>) ||
   mongoose.model<CategoryDocument, PaginateModel<CategoryDocument>>(
     "ScraperCategory",
     categorySchema

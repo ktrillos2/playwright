@@ -27,7 +27,7 @@ couponSchema.plugin(mongoosePaginate);
 couponSchema.plugin(aggregatePaginate);
 
 export const CouponModel: CouponModel =
-  (mongoose.models.Coupon as CouponModel) ||
+  (mongoose.models.ScraperCoupon as CouponModel) ||
   mongoose.model<CouponDocument, CouponModel>(
     "ScraperCoupon",
     couponSchema
