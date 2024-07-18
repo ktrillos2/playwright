@@ -30,6 +30,12 @@ export const CouponsScraperMultiSelect = () => {
 		(LogMessage | SpecialLog)[]
 	>([]);
 
+	const commerceForSelect = useMemo(() => {
+		return commerces.map(({ _id, image, name }) => ({
+			_id, image, name
+		}))
+	}, [commerces])
+
 	const categoriesBySelectedCommerce = useMemo(() => {
 		setSelectedCategory(new Set([]));
 		const [parsedPlatform] = platform;
@@ -225,7 +231,7 @@ export const CouponsScraperMultiSelect = () => {
 				<div className="flex flex-col gap-x-4 gap-y-2 w-full max-w-[800px] min-h-[80vh]">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<SelectCommerce
-							commerces={commerces}
+							commerces={commerceForSelect}
 							selectedKeys={platform}
 							onSelectionChange={setPlatform}
 							classNames={{

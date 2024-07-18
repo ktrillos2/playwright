@@ -1,3 +1,4 @@
+import { getServerAuthSession } from "@/config";
 import axios, { AxiosHeaders } from "axios";
 import { getSession } from "next-auth/react";
 
@@ -5,7 +6,7 @@ interface GetRequest {
   URL: string;
   path: string;
   params?: any;
-  headers?: AxiosHeaders;
+  headers?: any;
   hasToken?: boolean;
 }
 
@@ -14,7 +15,7 @@ interface PostRequest {
   path: string;
   body?: any;
   params?: any;
-  headers?: AxiosHeaders;
+  headers?: any;
   hasToken?: boolean;
 }
 
@@ -23,27 +24,25 @@ interface PutRequest {
   path: string;
   body?: any;
   params?: any;
-  headers?: AxiosHeaders;
+  headers?: any;
   hasToken?: boolean;
 }
 
 class ServiceClass {
 
-  private setToken() {
-
-   const a = getSession()
-   
-    
+  private async setToken(headers: any) {
+    const session = await getServerAuthSession()
+    if (session?.accessToken) headers["x-token"] = session.accessToken;
   }
 
   protected async getQuery<T>({
     URL,
     path,
     params,
-    headers,
+    headers = {},
+    hasToken = false
   }: GetRequest): Promise<T> {
-    
-
+    if (hasToken) await this.setToken(headers);
     return await axios
       .get<T>(`${URL}/${path}`, { headers, params })
       .then((response) => response.data)
@@ -58,7 +57,10 @@ class ServiceClass {
     body = {},
     params,
     headers,
+    hasToken = false
   }: PostRequest): Promise<T> {
+    if (hasToken) await this.setToken(headers);
+
     return await axios
       .post<T>(`${URL}/${path}`, body, { headers, params })
       .then((response) => response.data)
@@ -73,7 +75,10 @@ class ServiceClass {
     body = {},
     params,
     headers,
+    hasToken = false
   }: PutRequest): Promise<T> {
+    if (hasToken) await this.setToken(headers);
+
     return await axios
       .put<T>(`${URL}/${path}`, body, { headers, params })
       .then((response) => response.data)

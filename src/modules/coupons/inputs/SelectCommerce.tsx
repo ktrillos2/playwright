@@ -1,7 +1,12 @@
 "use client";
-import { Commerce } from "@/interfaces";
 import { Avatar, Select, SelectItem, SelectProps } from "@nextui-org/react";
 import clsx from "clsx";
+
+interface Commerce {
+  _id: string;
+  name: string;
+  image: string;
+}
 
 interface Props extends Omit<SelectProps, "children"> {
   commerces: Commerce[];
@@ -22,7 +27,6 @@ export const SelectCommerce: React.FC<Props> = ({
       selectionMode={selectionMode}
       label="Comercio"
       variant="underlined"
-
       renderValue={(items: any) => {
         return (
           <div className={clsx({ "flex gap-1.5": isMultiple })}>

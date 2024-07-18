@@ -5,6 +5,7 @@ import { Commerce, DBCommerce } from "@/interfaces";
 import { transformData } from "@/helpers";
 import { companyService } from "@/service/company.service";
 import { getSession } from "next-auth/react";
+import { kumoneraService } from '../../service/cloud.service';
 
 dbConnect();
 const commerceModel = CommerceModel;
@@ -73,9 +74,19 @@ export const editCommerce = async (
   return transformData<Commerce>(updatedCommerce);
 };
 
-export const getExternalCompanies = async (): Promise<any> => {
-
-  /*   const response = companyService.getExternalCompanies();
-  
-    return response; */
+export const getExternalCompanies = async () => {
+  try {
+    const externalCompanies = await companyService.getExternalCompanies();
+    return externalCompanies.map(({
+      _id,
+      name,
+      logo
+    }: any) => ({
+      _id,
+      name,
+      image: kumoneraService.getImage(logo)
+    }));
+  } catch (error) {
+    throw error;
+  }
 };
