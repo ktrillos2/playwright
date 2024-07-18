@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+/* import mongoose, { Document, Model, Schema } from "mongoose";
 import { Inmueble } from "@/interfaces";
 
 import paginate from "mongoose-paginate-v2";
@@ -24,3 +24,4 @@ export const InmuebleModel: PaginateModel<InmuebleDocument> =
     inmuebleSchema,
     "inmuebles"
   );
+ */
