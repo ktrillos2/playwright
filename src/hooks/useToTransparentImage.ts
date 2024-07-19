@@ -16,6 +16,7 @@ export const useToTransparentImage = (originalImage: string) => {
         const response = await removeBackground(originalImage);
         setDisplayImage(response);
       } catch (error) {
+        console.log({ error })
       } finally {
         setIsLoading(false);
       }
