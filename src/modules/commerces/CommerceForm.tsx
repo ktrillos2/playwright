@@ -30,6 +30,7 @@ import { motion } from "framer-motion";
 import { Category, Commerce, DBCommerce } from "@/interfaces";
 import { PagePaths } from "@/enums";
 import { useCustomSearchParams } from "@/hooks";
+import { SelectCommerce } from "../coupons";
 
 export enum FieldsForm {
   NAME = "name",
@@ -72,17 +73,28 @@ const handleConfetti = () => {
   });
 };
 
+interface ExternalCompany {
+  _id: string;
+  name: string;
+  logo: string;
+}
+
 interface Props {
   commerce?: DBCommerce;
   isEditForm?: boolean;
   categories?: Category[];
+  externalCompanies: ExternalCompany[];
 }
 
 export const CommerceForm: React.FC<Props> = ({
   commerce,
   isEditForm = false,
   categories,
+  externalCompanies
 }) => {
+
+  const [platform, setPlatform] = useState<any>(new Set([]));
+
   const {
     value: isLoading,
     setTrue: setIsLoadingTrue,
@@ -107,11 +119,11 @@ export const CommerceForm: React.FC<Props> = ({
   const form = useForm<IForm>({
     defaultValues: commerce
       ? {
-          [FieldsForm.NAME]: commerce?.name,
-          [FieldsForm.URL]: commerce?.url,
-          [FieldsForm.QUERIES]: commerce?.queries || "",
-          [FieldsForm.IMAGE]: commerce?.image,
-        }
+        [FieldsForm.NAME]: commerce?.name,
+        [FieldsForm.URL]: commerce?.url,
+        [FieldsForm.QUERIES]: commerce?.queries || "",
+        [FieldsForm.IMAGE]: commerce?.image,
+      }
       : {},
   });
 
@@ -161,7 +173,7 @@ export const CommerceForm: React.FC<Props> = ({
     }
   };
 
-  const onSubmitCategoryForm: SubmitHandler<IForm> = async (data) => {};
+  const onSubmitCategoryForm: SubmitHandler<IForm> = async (data) => { };
 
   useEffect(() => {
     const commerceCategories = categories?.map((e) => ({
@@ -280,12 +292,23 @@ export const CommerceForm: React.FC<Props> = ({
             </h3>
           </CardHeader>
           <CardBody>
+
+
             <Divider />
 
             <form
               onSubmit={handleSubmit(onSubmitForm)}
-              className="mt-4 grid gap-4"
+              className="mt-2 grid gap-4"
             >
+              <SelectCommerce
+                commerces={externalCompanies as any}
+                selectedKeys={platform}
+                onSelectionChange={setPlatform}
+                classNames={{
+                  label: "group-data-[filled=true]:-translate-y-5",
+                  trigger: "min-h-unit-18",
+                }}
+              />
               <div className="flex gap-4">
                 <div className="grid gap-4 flex-1">
                   <Input

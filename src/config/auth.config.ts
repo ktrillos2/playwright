@@ -28,7 +28,7 @@ export const authConfig: NextAuthOptions = {
         if (!credentials) return null;
         const { user, password } = credentials;
         try {
-          const response = await authService.login(user, password);
+          const response = await authService.login(user.toUpperCase(), password);
           const { payload, token } = response;
           return { ...payload, token };
         } catch (error: any) {

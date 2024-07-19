@@ -14,6 +14,7 @@ export const SelectCategory: React.FC<Props> = ({
   valueKey = "_id",
   ...rest
 }) => {
+  console.log(categories)
   return (
     <Select
       items={categories}
@@ -24,10 +25,10 @@ export const SelectCategory: React.FC<Props> = ({
       {(e: any) => {
         const category = isCategoryByCommerce ? e.category : e;
         return (
-          <SelectItem key={category[valueKey]} textValue={category.name}>
+          <SelectItem key={category[valueKey]} textValue={category?.name}>
             <div className="flex gap-2 items-center">
               <div className="flex flex-col">
-                <span className="text-small">{category.name}</span>
+                <span className="text-small">{category?.name}</span>
               </div>
             </div>
           </SelectItem>

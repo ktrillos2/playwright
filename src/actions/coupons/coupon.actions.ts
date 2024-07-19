@@ -62,7 +62,7 @@ export const getPaginateCouponByCategoryAndCommerce = async ({
   categories,
   commerces,
 }: CommercesAndCategoriesProps) => {
-  
+
   const options: PaginateOptions = {
     limit,
     page,
