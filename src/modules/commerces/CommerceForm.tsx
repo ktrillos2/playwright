@@ -175,7 +175,7 @@ export const CommerceForm: React.FC<Props> = ({
       //   toast.success("Comercio editado correctamente");
       //   return;
       // }
-      const commerce = await commerceActions.createCommerce({ ...rest, companyKumonera: selectedExternalCompany._id });
+      const commerce = await commerceActions.createCommerce({ ...rest, companyKumonera: memorizedSelection?._id });
       toast.success("Comercio creado correctamente");
       setCreatedTrue();
       handleConfetti();
