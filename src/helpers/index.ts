@@ -1,4 +1,5 @@
 export * from './actions.helpers';
+export * from './convert-base64-to-image';
 export * from './coupon-layouts/coupon-layout-1.helper';
 export * from './coupon-layouts/coupon-layout-2.helper';
 export * from './coupon-layouts/coupon-layout-3.helper';

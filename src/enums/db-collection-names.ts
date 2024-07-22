@@ -1,5 +1,5 @@
 export enum DBCollectionNames {
-  COMMERCES = "commerces",
-  CATEGORIES = "categories",
-  COUPONS = "coupons"
+  COMMERCES = "scrapercommerces",
+  CATEGORIES = "scrapercategories",
+  COUPONS = "scrapercoupons"
 }

@@ -1,3 +1,5 @@
 export enum Info {
-  TITLE = "Scraper"
+  TITLE = "Scraper",
+
+  KUMONERA_ADMIN = "https://admin.kumonera.com"
 }

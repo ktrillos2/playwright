@@ -31,8 +31,14 @@ interface PutRequest {
 class ServiceClass {
 
   private async setToken(headers: any) {
-    const session = await getServerAuthSession()
-    if (session?.accessToken) headers["x-token"] = session.accessToken;
+    
+try {
+  const session = await getServerAuthSession()
+  if (session?.accessToken) headers["x-token"] = session.accessToken;
+} catch (error) {
+  
+}
+
   }
 
   protected async getQuery<T>({
@@ -56,7 +62,7 @@ class ServiceClass {
     path,
     body = {},
     params,
-    headers,
+    headers = {},
     hasToken = false
   }: PostRequest): Promise<T> {
     if (hasToken) await this.setToken(headers);
@@ -74,7 +80,7 @@ class ServiceClass {
     path,
     body = {},
     params,
-    headers,
+    headers = {},
     hasToken = false
   }: PutRequest): Promise<T> {
     if (hasToken) await this.setToken(headers);

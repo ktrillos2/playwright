@@ -63,7 +63,6 @@ export const CouponsScraperMultiSelect = () => {
 
 	const scrapeCommerces = async () => {
 		setScrapeAllCommerces(true);
-		console.log(commerces);
 		let responses = [];
 		for (const commerce of commerces) {
 			for (const category of commerce.categories) {

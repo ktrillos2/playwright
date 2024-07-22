@@ -13,6 +13,14 @@ import { Coupon, CouponLayout } from "@/interfaces";
 import loadingImage from "../../../../public/lottie/loading-image.json";
 import loadingEditor from "../../../../public/lottie/loading-editor.json";
 import { Button } from "@nextui-org/react";
+import Link from "next/link";
+import { CookiesKeys, Info } from "@/enums";
+import { kumoneraService } from "@/service/cloud.service";
+
+import Cookies from "js-cookie";
+import { convertBase64ToFile } from "@/helpers";
+import { saveCouponDetail } from "@/actions/coupon-details/coupon-detail.actions";
+import toast from "react-hot-toast";
 
 interface Props {
   coupon: Coupon;
@@ -56,12 +64,20 @@ export const CouponImageEditor: React.FC<Props> = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const getLayoutImage = () => {
+
+
+  const getJsonBlobImage = () => {
     const annotations = editedImage.current?.({})?.designState?.annotations;
 
     const jsonBlob = new Blob([JSON.stringify(annotations)], {
       type: "application/json",
     });
+
+    return jsonBlob;
+  }
+
+  const getLayoutImage = () => {
+    const jsonBlob = getJsonBlobImage();
 
     const link = document.createElement("a");
     link.download = "plantilla";
@@ -70,6 +86,23 @@ export const CouponImageEditor: React.FC<Props> = ({
 
     URL.revokeObjectURL(link.href);
   };
+
+  const createCouponOnAdmin = async () => {
+    try {
+      const imgBase64 = editedImage.current?.({}).imageData.imageBase64;
+
+      const couponDetail = await saveCouponDetail(imgBase64, coupon._id)
+
+      window.open(`${Info.KUMONERA_ADMIN}/platform/external-companies/create-coupon?scraper=${couponDetail._id}`, '_blank', 'noopener,noreferrer');
+      window.open(coupon.url, '_blank',);
+
+      toast.success("Redireccionando a Admin")
+
+    } catch (error) {
+      toast.error("Ha ocurrido un error")
+    }
+
+  }
 
   return (
     <div className="relative w-full">
@@ -101,6 +134,15 @@ export const CouponImageEditor: React.FC<Props> = ({
               color="success"
             >
               Guardar Plantilla
+            </Button>
+            <Button
+              isDisabled={sizeIsLoading}
+              onClick={createCouponOnAdmin}
+              size="sm"
+              variant="flat"
+              color="primary"
+            >
+              Crear cupón
             </Button>
           </div>
           <small className="md:hidden">
@@ -150,6 +192,7 @@ export const CouponImageEditor: React.FC<Props> = ({
               'bg-hover': '#000',
             }
           }}
+
           language="es"
           source={"default-coupon-bg.png"}
           onSave={(editedImageObject, designState) => {

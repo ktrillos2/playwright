@@ -126,8 +126,6 @@ export const CommerceForm: React.FC<Props> = ({
       : {},
   });
 
-
-
   const {
     handleSubmit,
     watch,

@@ -1,6 +1,7 @@
 export * from './category.interface';
 export * from './columns.interface';
 export * from './commerce.interface';
+export * from './coupon-details';
 export * from './coupon.interface';
 export * from './exito.interface';
 export * from './inmueble.interface';

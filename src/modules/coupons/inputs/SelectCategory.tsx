@@ -14,7 +14,7 @@ export const SelectCategory: React.FC<Props> = ({
   valueKey = "_id",
   ...rest
 }) => {
-  console.log(categories)
+
   return (
     <Select
       items={categories}

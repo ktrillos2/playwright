@@ -81,6 +81,7 @@ export const getPaginateCouponByCategoryAndCommerce = async ({
   ]);
 
   const response = await couponModel.aggregatePaginate(aggregate, options);
+
   return { ...response, docs: transformData(response.docs) };
 };
 

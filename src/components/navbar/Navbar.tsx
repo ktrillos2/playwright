@@ -27,10 +27,10 @@ import { Info, PagePaths } from "@/enums";
 import { IUser } from "../../../nextauth";
 
 const PAGES = [
-  {
-    path: PagePaths.INMUEBLES,
-    name: "Inmuebles",
-  },
+  /*   {
+      path: PagePaths.INMUEBLES,
+      name: "Inmuebles",
+    }, */
   {
     path: PagePaths.COUPONS,
     name: "Tabla de cupones",

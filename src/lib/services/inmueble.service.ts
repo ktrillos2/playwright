@@ -1,4 +1,4 @@
-import { FilterQuery } from "mongoose";
+/* import { FilterQuery } from "mongoose";
 import { InmuebleModel } from "..";
 import { type Inmueble } from "@/interfaces";
 
@@ -38,3 +38,4 @@ class InmuebleDbService {
 }
 
 export const inmuebleService = new InmuebleDbService();
+ */

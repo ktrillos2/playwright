@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+/* import { NextRequest, NextResponse } from "next/server";
 
 import { dbConnect, inmuebleService } from "@/lib";
 import { getSearchParams } from "@/helpers";
@@ -28,3 +28,4 @@ export async function DELETE(request: Request) {
     return new NextResponse(error.message, { status: 500 });
   }
 }
+ */

@@ -24,6 +24,7 @@
     "filerobot-image-editor": "^4.5.2",
     "framer-motion": "^11.0.3",
     "html-to-image": "^1.11.11",
+    "js-cookie": "^3.0.5",
     "locate-chrome": "^0.1.1",
     "lottie-react": "^2.4.0",
     "maath": "^0.10.7",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.6.4",
+    "@types/js-cookie": "^3.0.6",
     "@types/locate-chrome": "^0.1.2",
     "@types/mongoose-aggregate-paginate-v2": "^1.0.12",
     "@types/node": "^20",
