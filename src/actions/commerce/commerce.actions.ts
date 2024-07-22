@@ -84,7 +84,7 @@ export const getExternalCompanies = async () => {
     }: any) => ({
       _id,
       name,
-      image: kumoneraService.getImage(logo)
+      image: logo
     }));
   } catch (error) {
     throw error;

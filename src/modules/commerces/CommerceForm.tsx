@@ -12,7 +12,7 @@ import {
   Input,
   Link,
 } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import confetti from "canvas-confetti";
 import { IoIosImages } from "react-icons/io";
 
@@ -31,6 +31,7 @@ import { Category, Commerce, DBCommerce } from "@/interfaces";
 import { PagePaths } from "@/enums";
 import { useCustomSearchParams } from "@/hooks";
 import { SelectCommerce } from "../coupons";
+import { kumoneraService } from "@/service/cloud.service";
 
 export enum FieldsForm {
   NAME = "name",
@@ -76,7 +77,7 @@ const handleConfetti = () => {
 interface ExternalCompany {
   _id: string;
   name: string;
-  logo: string;
+  image: string;
 }
 
 interface Props {
@@ -92,8 +93,6 @@ export const CommerceForm: React.FC<Props> = ({
   categories,
   externalCompanies
 }) => {
-
-  const [platform, setPlatform] = useState<any>(new Set([]));
 
   const {
     value: isLoading,
@@ -127,15 +126,35 @@ export const CommerceForm: React.FC<Props> = ({
       : {},
   });
 
+
+
   const {
     handleSubmit,
     watch,
     register,
     formState: { isValid, errors },
     control,
+    setValue
   } = form;
 
+
+  const [selectedExternalCompany, setSelectedExternalCompany] = useState<any>(new Set([]));
+
+  const memorizedSelection = useMemo(() => {
+    const externalCompany = externalCompanies.find(e => e._id === [...selectedExternalCompany][0]);
+    if (externalCompany) {
+      setValue(FieldsForm.NAME, externalCompany.name);
+      setValue(FieldsForm.IMAGE, externalCompany.image);
+    } else {
+      setValue(FieldsForm.NAME, "");
+      setValue(FieldsForm.IMAGE, "")
+    }
+    return externalCompany
+  }, [selectedExternalCompany])
+
+
   const image = watch(FieldsForm.IMAGE);
+
   const name = watch(FieldsForm.NAME);
   const url = watch(FieldsForm.URL);
   const queries = watch(FieldsForm.QUERIES);
@@ -156,7 +175,7 @@ export const CommerceForm: React.FC<Props> = ({
       //   toast.success("Comercio editado correctamente");
       //   return;
       // }
-      const commerce = await commerceActions.createCommerce(rest);
+      const commerce = await commerceActions.createCommerce({ ...rest, companyKumonera: selectedExternalCompany._id });
       toast.success("Comercio creado correctamente");
       setCreatedTrue();
       handleConfetti();
@@ -301,13 +320,15 @@ export const CommerceForm: React.FC<Props> = ({
               className="mt-2 grid gap-4"
             >
               <SelectCommerce
-                commerces={externalCompanies as any}
-                selectedKeys={platform}
-                onSelectionChange={setPlatform}
+                commerces={externalCompanies.map(e => ({ ...e, image: kumoneraService.getImage(e.image) })) as any}
+                selectedKeys={selectedExternalCompany}
+                onSelectionChange={setSelectedExternalCompany}
+                description="El comercio debe estar creado en la plataforma"
                 classNames={{
                   label: "group-data-[filled=true]:-translate-y-5",
                   trigger: "min-h-unit-18",
                 }}
+
               />
               <div className="flex gap-4">
                 <div className="grid gap-4 flex-1">
@@ -322,6 +343,7 @@ export const CommerceForm: React.FC<Props> = ({
                     isInvalid={!!errors[FieldsForm.NAME]}
                     errorMessage={errors[FieldsForm.NAME]?.message}
                     value={name}
+                    disabled
                   />
                   <Input
                     isRequired
@@ -336,7 +358,23 @@ export const CommerceForm: React.FC<Props> = ({
                     value={url}
                   />
 
+
                   <Input
+                    type="text"
+                    label={"Queries (opcional)"}
+                    {...register(
+                      FieldsForm.QUERIES,
+                      validationForm[FieldsForm.QUERIES]
+                    )}
+                    isInvalid={!!errors[FieldsForm.QUERIES]}
+                    errorMessage={errors[FieldsForm.QUERIES]?.message}
+                    description={
+                      "Ingresa las queries usadas por el comercio para mejorar el ordenamiento y la calidad de data"
+                    }
+                    value={queries}
+                  />
+
+                  {/*         <Input
                     isRequired
                     type="url"
                     label={"Logo del comercio"}
@@ -347,13 +385,13 @@ export const CommerceForm: React.FC<Props> = ({
                     isInvalid={!!errors[FieldsForm.IMAGE]}
                     errorMessage={errors[FieldsForm.IMAGE]?.message}
                     value={image}
-                  />
+                  /> */}
                 </div>
 
                 <div className="hidden md:block">
                   <CardCommerce
                     url={url}
-                    image={image}
+                    image={kumoneraService.getImage(image)}
                     name={name}
                     showImage={!!image && !errors[FieldsForm.IMAGE]}
                     validUrl={!url || !!errors[FieldsForm.URL]}
@@ -361,20 +399,6 @@ export const CommerceForm: React.FC<Props> = ({
                 </div>
               </div>
 
-              <Input
-                type="text"
-                label={"Queries (opcional)"}
-                {...register(
-                  FieldsForm.QUERIES,
-                  validationForm[FieldsForm.QUERIES]
-                )}
-                isInvalid={!!errors[FieldsForm.QUERIES]}
-                errorMessage={errors[FieldsForm.QUERIES]?.message}
-                description={
-                  "Ingresa las queries usadas por el comercio para mejorar el ordenamiento y la calidad de data"
-                }
-                value={queries}
-              />
 
               <Divider />
               <div className="flex justify-end">

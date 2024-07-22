@@ -31,7 +31,7 @@ export const SelectCommerce: React.FC<Props> = ({
         return (
           <div className={clsx({ "flex gap-1.5": isMultiple })}>
             {items.map((commerce: any) => (
-              <div className="flex gap-2 items-center" key={commerce.key}>
+              <div className="flex gap-2 items-center mb-2" key={commerce.key}>
                 <Avatar src={commerce.data?.image} alt="image" size="sm" />
                 {isMultiple ? null : (
                   <div className="flex flex-col">

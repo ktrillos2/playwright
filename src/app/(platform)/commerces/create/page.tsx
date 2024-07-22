@@ -13,7 +13,6 @@ export default async function CreateCommercePage() {
 
   const externalCompanies = await getExternalCompanies();
 
-
   return (
     <div>
       <CommerceForm externalCompanies={externalCompanies} />
