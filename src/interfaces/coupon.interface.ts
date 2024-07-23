@@ -16,7 +16,6 @@ export interface DBCoupon {
 }
 
 export interface Coupon {
-  _id: string
   name: string;
   brandName?: string | null;
   images: string[];

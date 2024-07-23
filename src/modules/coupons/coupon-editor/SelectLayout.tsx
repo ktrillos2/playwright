@@ -39,7 +39,7 @@ const LAYOUTS: CouponLayout[] = [
 ];
 
 interface Props {
-  coupon: Coupon;
+  coupon: Coupon & { _id: string };
 }
 
 export const SelectLayout: React.FC<Props> = ({ coupon }) => {

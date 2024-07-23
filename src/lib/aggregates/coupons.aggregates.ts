@@ -1,50 +1,74 @@
 import { DBCollectionNames } from "@/enums";
-import { LookupProps } from "..";
+import { LookupProps, stringToObjectId } from "..";
 import { unwindLookup } from "../utils/unwind.util";
 import { PipelineStage } from "mongoose";
 
-export const commerceLookup = ({
+export const generalLookup = ({
   pipeline = [],
   unwindData = false,
-}: LookupProps = {}): PipelineStage[] => {
+  collection,
+  field
+}: LookupProps & {
+  collection: DBCollectionNames;
+  field: string;
+}): PipelineStage[] => {
   const stages: PipelineStage[] = [];
 
   stages.push({
     $lookup: {
-      from: DBCollectionNames.COMMERCES,
-      localField: "commerce",
+      from: collection,
+      localField: field,
       foreignField: "_id",
-      as: "commerce",
+      as: field,
       pipeline,
     },
   });
 
   if (unwindData) {
-    stages.push(unwindLookup("commerce"));
+    stages.push(unwindLookup(field));
   }
 
   return stages;
+};
+
+export const couponLookup = ({
+  pipeline = [],
+  unwindData = false,
+}: LookupProps = {}): PipelineStage[] => {
+  return generalLookup({
+    pipeline,
+    unwindData,
+    collection: DBCollectionNames.COUPONS,
+    field: "coupon",
+  })
+};
+
+export const commerceLookup = ({
+  pipeline = [],
+  unwindData = false,
+}: LookupProps = {}): PipelineStage[] => {
+  return generalLookup({
+    pipeline,
+    unwindData,
+    collection: DBCollectionNames.COMMERCES,
+    field: "commerce",
+  })
 };
 
 export const categoryLookup = ({
   pipeline = [],
   unwindData = false,
 }: LookupProps = {}) => {
-  const stages: PipelineStage[] = [];
-
-  stages.push({
-    $lookup: {
-      from: DBCollectionNames.CATEGORIES,
-      localField: "category",
-      foreignField: "_id",
-      as: "category",
-      pipeline,
-    },
-  });
-
-  if (unwindData) {
-    stages.push(unwindLookup("category"));
-  }
-
-  return stages;
+  return generalLookup({
+    pipeline,
+    unwindData,
+    collection: DBCollectionNames.CATEGORIES,
+    field: "category",
+  })
 };
+
+export const validateMongoId = (_id: string, label = '_id') => {
+  return {
+    [label]: stringToObjectId(_id)
+  }
+}

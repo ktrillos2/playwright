@@ -32,7 +32,7 @@ export const getCoupons = async (): Promise<Coupon[]> => {
   return couponModel.find().populate("category").populate("commerce").exec();
 };
 
-export const getCouponById = async (id: string): Promise<Coupon | null> => {
+export const getCouponById = async (id: string): Promise<Coupon & { _id: string } | null> => {
   if (!ObjectId.isValid(id)) return null;
   const coupon = await couponModel
     .findById(id)

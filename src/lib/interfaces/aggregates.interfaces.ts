@@ -1,6 +1,6 @@
 import { PipelineStage } from "mongoose";
 
 export interface LookupProps {
-  pipeline?: PipelineStage.Lookup["$lookup"]["pipeline"],
+  pipeline?: any[],
   unwindData?: boolean
 }

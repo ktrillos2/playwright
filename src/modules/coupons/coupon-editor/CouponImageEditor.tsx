@@ -1,29 +1,25 @@
 "use client";
+import clsx from "clsx";
+import Lottie from "lottie-react";
 import React, { useEffect, useRef, useState } from "react";
 import FilerobotImageEditor, {
   TABS,
   TOOLS,
   getCurrentImgDataFunction,
 } from "react-filerobot-image-editor";
-import Lottie from "lottie-react";
-import clsx from "clsx";
 
 import { Coupon, CouponLayout } from "@/interfaces";
 
-import loadingImage from "../../../../public/lottie/loading-image.json";
-import loadingEditor from "../../../../public/lottie/loading-editor.json";
+import { Info } from "@/enums";
 import { Button } from "@nextui-org/react";
-import Link from "next/link";
-import { CookiesKeys, Info } from "@/enums";
-import { kumoneraService } from "@/service/cloud.service";
+import loadingEditor from "../../../../public/lottie/loading-editor.json";
+import loadingImage from "../../../../public/lottie/loading-image.json";
 
-import Cookies from "js-cookie";
-import { convertBase64ToFile } from "@/helpers";
-import { saveCouponDetail } from "@/actions/coupon-details/coupon-detail.actions";
 import toast from "react-hot-toast";
+import { couponDetailActions } from "@/actions";
 
 interface Props {
-  coupon: Coupon;
+  coupon: Coupon & { _id: string };
   selectedLayout: CouponLayout;
   clearSelection: () => void;
   transparentIsLoading: boolean;
@@ -91,7 +87,7 @@ export const CouponImageEditor: React.FC<Props> = ({
     try {
       const imgBase64 = editedImage.current?.({}).imageData.imageBase64;
 
-      const couponDetail = await saveCouponDetail(imgBase64, coupon._id)
+      const couponDetail = await couponDetailActions.saveCouponDetail(imgBase64, coupon._id)
 
       window.open(`${Info.KUMONERA_ADMIN}/platform/external-companies/create-coupon?scraper=${couponDetail._id}`, '_blank', 'noopener,noreferrer');
       window.open(coupon.url, '_blank',);
