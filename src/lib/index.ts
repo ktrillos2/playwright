@@ -6,6 +6,5 @@ export * from './models/commerce.model';
 export * from './models/coupon-details';
 export * from './models/coupons.model';
 export * from './models/log-message.model';
-export * from './services/inmueble.service';
 export * from './services/log-message.service';
 export * from './utils';
