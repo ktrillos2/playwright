@@ -1,9 +1,8 @@
 "use server";
 
 import { convertBase64ToFile, transformData } from "@/helpers";
-import { categoryLookup, commerceLookup, CouponDetailModel, couponLookup, dbConnect, validateMongoId } from "@/lib";
+import { commerceLookup, CouponDetailModel, couponLookup, dbConnect, validateMongoId } from "@/lib";
 import { kumoneraService } from "@/service/cloud.service";
-import { stringToObjectId } from '../../lib/utils';
 
 dbConnect();
 const couponDetailModel = CouponDetailModel;
