@@ -10,7 +10,7 @@ interface Commerce {
 
 interface Props extends Omit<SelectProps, "children"> {
   commerces: Commerce[];
-  valueKey?: keyof Commerce
+  valueKey?: keyof Commerce | string
 }
 
 export const SelectCommerce: React.FC<Props> = ({
