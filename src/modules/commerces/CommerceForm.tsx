@@ -43,7 +43,7 @@ export interface IForm {
   [FieldsForm.CATEGORIES]: string[];
 }
 
-const validationForm: Record<string, RegisterOptions> = {
+const validationForm: any = {
   [FieldsForm.NAME]: { required: "El nombre del comercio es requerido" },
   [FieldsForm.URL]: {
     required: "La url del comercio es requerida",
