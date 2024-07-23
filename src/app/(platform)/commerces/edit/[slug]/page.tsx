@@ -19,6 +19,6 @@ export default async function CommerceEditPage({
   if (!commerce) notFound();
 
   return (
-    <CommerceForm commerce={commerce} isEditForm categories={categories} />
+    <CommerceForm commerce={commerce} isEditForm categories={categories} externalCompanies={[]} />
   );
 }

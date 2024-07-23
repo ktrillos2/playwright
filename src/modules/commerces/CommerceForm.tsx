@@ -5,33 +5,28 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Divider,
-  Image,
   Input,
-  Link,
+  Link
 } from "@nextui-org/react";
-import React, { useEffect, useMemo, useState } from "react";
 import confetti from "canvas-confetti";
-import { IoIosImages } from "react-icons/io";
+import React, { useEffect, useMemo, useState } from "react";
 
+import { commerceActions } from "@/actions";
+import { PagePaths } from "@/enums";
+import { Category, DBCommerce } from "@/interfaces";
+import { kumoneraService } from "@/service/cloud.service";
+import { motion } from "framer-motion";
 import {
   RegisterOptions,
   SubmitHandler,
-  useFieldArray,
-  useForm,
+  useForm
 } from "react-hook-form";
-import { commerceActions } from "@/actions";
 import toast from "react-hot-toast";
 import { useBoolean } from "usehooks-ts";
-import { CardCommerce } from "./CardCommerce";
-import { motion } from "framer-motion";
-import { Category, Commerce, DBCommerce } from "@/interfaces";
-import { PagePaths } from "@/enums";
-import { useCustomSearchParams } from "@/hooks";
 import { SelectCommerce } from "../coupons";
-import { kumoneraService } from "@/service/cloud.service";
+import { CardCommerce } from "./CardCommerce";
 
 export enum FieldsForm {
   NAME = "name",
